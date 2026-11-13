@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ENEC - Admin Total</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<style>body{font-family:system-ui;padding:16px;max-width:800px;margin:auto}input,textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px}button{background:#0a7a42;color:#fff;border:0;padding:10px 16px;border-radius:20px;font-weight:700;cursor:pointer;margin:4px 0}.card{border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}.tab{display:inline-block;padding:8px 12px;border:1px solid #ddd;border-radius:20px;margin:2px;cursor:pointer}.tab.on{background:#0a2a5e;color:#fff}h2{color:#0a2a5e}</style>
+</head><body>
+<h1>ENEC - Admin Total</h1>
+<p id="status">Connexion...</p>
+<div id="login"><input id="email" placeholder="admin@enec.cd"><input id="pass" type="password" placeholder="Mot de passe"><button onclick="login()">Se connecter</button></div>
+<div id="app" style="display:none">
+<button onclick="logout()">Deconnexion</button>
+<div><span class="tab on" onclick="show('contenu',this)">Contenu du site</span><span class="tab" onclick="show('services',this)">Services</span><span class="tab" onclick="show('equipe',this)">Equipe</span><span class="tab" onclick="show('laureats',this)">Laureats</span><span class="tab" onclick="show('messages',this)">Messages</span></div>
+
+<div id="contenu" class="sec"><h2>Contenu du site - tout est modifiable ici</h2>
+<label>Slogan</label><textarea id="c-slogan" rows="2"></textarea>
+<label>Titre Hero</label><input id="c-hero_titre">
+<label>Texte Hero</label><textarea id="c-hero_texte" rows="3"></textarea>
+<label>A propos</label><textarea id="c-a_propos" rows="4"></textarea>
+<label>Telephone</label><input id="c-telephone"><label>Email</label><input id="c-email"><label>Adresse</label><textarea id="c-adresse" rows="2"></textarea>
+<button onclick="saveContenu()">Enregistrer le contenu dans Supabase</button><p id="msg-contenu"></p></div>
+
+<div id="services" class="sec" style="display:none"><h2>Services</h2><input id="s-titre" placeholder="Titre"><textarea id="s-desc" placeholder="Description"></textarea><input id="s-icone" placeholder="Icone emoji ex: 🌾"><button onclick="addService()">Enregistrer le service</button><div id="list-services"></div></div>
+
+<div id="equipe" class="sec" style="display:none"><h2>Equipe</h2><input id="e-nom" placeholder="Nom complet"><input id="e-poste" placeholder="Poste ex: Directeur"><input id="e-photo" placeholder="Lien photo (ou laisse vide)"><textarea id="e-bio" placeholder="Petite presentation"></textarea><button onclick="addEquipe()">Enregistrer le membre</button><div id="list-equipe"></div></div>
+
+<div id="laureats" class="sec" style="display:none"><h2>Laureats</h2><input id="l-nom" placeholder="Nom du laureat"><input id="l-photo" placeholder="Lien photo"><button onclick="addLaureat()">Enregistrer le laureat</button><div id="list-laureats"></div></div>
+
+<div id="messages" class="sec" style="display:none"><h2>Messages recus</h2><div id="list-messages"></div></div>
+</div>
+<script>
+let sb=null;
+async function init(){ if(window.ENEC_SUPABASE_URL && window.ENEC_SUPABASE_URL.indexOf('supabase.co')>-1 && window.ENEC_SUPABASE_ANON_KEY && window.ENEC_SUPABASE_ANON_KEY.indexOf('eyJ')===0){ sb=window.supabase.createClient(window.ENEC_SUPABASE_URL, window.ENEC_SUPABASE_ANON_KEY); document.getElementById('status').textContent='Supabase connecte. Connecte-toi.'; const {data}=await sb.auth.getSession(); if(data.session){ showApp(); } } else { document.getElementById('status').textContent='ERREUR: supabase-config.js pas correct. Verifie URL + cle anon.'; } }
+async function login(){ const {error}=await sb.auth.signInWithPassword({email:document.getElementById('email').value, password:document.getElementById('pass').value}); if(error) alert(error.message); else showApp(); }
+async function logout(){ await sb.auth.signOut(); location.reload(); }
+async function showApp(){ document.getElementById('login').style.display='none'; document.getElementById('app').style.display='block'; document.getElementById('status').textContent='Connecte'; loadContenu(); loadServices(); loadEquipe(); loadLaureats(); loadMessages(); }
+function show(id,el){ document.querySelectorAll('.sec').forEach(s=>s.style.display='none'); document.getElementById(id).style.display='block'; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); }
+async function loadContenu(){ const {data}=await sb.from('site_content').select('*'); if(!data) return; data.forEach(r=>{ const el=document.getElementById('c-'+r.cle); if(el) el.value=r.valeur; }); }
+async function saveContenu(){ const keys=['slogan','hero_titre','hero_texte','a_propos','telephone','email','adresse']; for(const k of keys){ const v=document.getElementById('c-'+k).value; await sb.from('site_content').upsert({cle:k, valeur:v}, {onConflict:'cle'}); } document.getElementById('msg-contenu').textContent='Enregistre ! Rafraichis ton site, tu verras le changement.'; }
+async function loadServices(){ const {data}=await sb.from('services').select('*').order('id'); document.getElementById('list-services').innerHTML=(data||[]).map(s=>`<div class="card"><b>${s.titre}</b><br>${s.description||''}<br><button onclick="delService(${s.id})">Supprimer</button></div>`).join('')||'Aucun'; }
+async function addService(){ const t=document.getElementById('s-titre').value, d=document.getElementById('s-desc').value; if(!t||!d) return alert('Titre + description requis'); await sb.from('services').insert({titre:t, description:d, icone:document.getElementById('s-icone').value||'✦'}); loadServices(); }
+async function delService(id){ if(confirm('Supprimer ?')){ await sb.from('services').delete().eq('id',id); loadServices(); } }
+async function loadEquipe(){ const {data}=await sb.from('equipe').select('*').order('id'); document.getElementById('list-equipe').innerHTML=(data||[]).map(e=>`<div class="card"><b>${e.nom}</b> - ${e.poste||''}<br>${e.bio||''}<br><button onclick="delEquipe(${e.id})">Supprimer</button></div>`).join('')||'Aucun membre. Ajoute ton equipe ici.'; }
+async function addEquipe(){ const n=document.getElementById('e-nom').value; if(!n) return alert('Nom requis'); await sb.from('equipe').insert({nom:n, poste:document.getElementById('e-poste').value, photo_url:document.getElementById('e-photo').value, bio:document.getElementById('e-bio').value}); loadEquipe(); }
+async function delEquipe(id){ if(confirm('Supprimer ?')){ await sb.from('equipe').delete().eq('id',id); loadEquipe(); } }
+async function loadLaureats(){ const {data}=await sb.from('laureats').select('*').order('id'); document.getElementById('list-laureats').innerHTML=(data||[]).map(l=>`<div class="card"><b>${l.nom}</b><br><button onclick="delLaureat(${l.id})">Supprimer</button></div>`).join('')||'Aucun'; }
+async function addLaureat(){ const n=document.getElementById('l-nom').value; if(!n) return alert('Nom requis'); await sb.from('laureats').insert({nom:n, photo_url:document.getElementById('l-photo').value}); loadLaureats(); }
+async function delLaureat(id){ if(confirm('Supprimer ?')){ await sb.from('laureats').delete().eq('id',id); loadLaureats(); } }
+async function loadMessages(){ const {data}=await sb.from('messages').select('*').order('id',{ascending:false}); document.getElementById('list-messages').innerHTML=(data||[]).map(m=>`<div class="card"><b>${m.nom}</b> - ${m.email||''}<br>${m.message||''}</div>`).join('')||'Aucun message'; }
+init();
+</script></body></html>
