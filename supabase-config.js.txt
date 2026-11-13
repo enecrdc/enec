@@ -1,0 +1,7 @@
+// ENEC — Configuration Supabase
+// 1. Crée un projet sur https://supabase.com/dashboard
+// 2. Settings -> API : copie Project URL + anon public key
+// 3. Colle-les ci-dessous, commit, push sur GitHub.
+// ⚠️ UNIQUEMENT la clé ANON (publique). Jamais service_role.
+window.ENEC_SUPABASE_URL = "https://TON-PROJET.supabase.co";
+window.ENEC_SUPABASE_ANON_KEY = "TA-CLE-ANON-PUBLIQUE-ICI";

@@ -1,0 +1,55 @@
+-- ENEC — Supabase SQL : colle ce fichier dans Supabase → SQL Editor → Run
+-- 1. TABLES
+create table if not exists public.services (
+  id bigint generated always as identity primary key,
+  titre text not null, description text not null,
+  icone text default '✦', actif boolean default true,
+  ordre int default 0, created_at timestamptz default now()
+);
+create table if not exists public.laureats (
+  id bigint generated always as identity primary key,
+  nom text not null, legende text default 'Lauréats de la formation en anglais – EETC',
+  photo_url text, created_at timestamptz default now()
+);
+create table if not exists public.messages (
+  id bigint generated always as identity primary key,
+  nom text not null, email text, telephone text,
+  service text, message text not null,
+  statut text default 'nouveau', created_at timestamptz default now()
+);
+create table if not exists public.settings (
+  id int primary key, telephone text, email text, adresse text, updated_at timestamptz default now()
+);
+-- 2. DONNÉES PAR DÉFAUT (les 9 services ENEC)
+insert into public.services (titre,description,icone,ordre) values
+('1. Éducation et formation linguistique','Anglais, français, chinois, espagnol, lingala, kiswahili et autres langues. Oral + écrit.','🎓',1),
+('2. Informatique et numérique','Initiation, bureautique, création de sites web, programmation, design graphique, montage vidéo.','💻',2),
+('3. Formations professionnelles et techniques','Coupe et couture, conduite automobile, filmage et photographie, montage vidéo.','🛠️',3),
+('4. Traduction et interprétation','Traduction de documents et contenus professionnels, interprétation réunions et conférences.','🌍',4),
+('5. Communication, audiovisuel et événementiel','Photographie, filmage, montage vidéo, animation de cérémonies.','🎥',5),
+('6. Nettoyage, entretien et services généraux','Nettoyage, personnel domestique, chauffeurs, agents de sécurité.','🧹',6),
+('7. Peinture et décoration','Peinture intérieure/extérieure, décoration d’espaces et événementielle.','🎨',7),
+('8. Conception et accompagnement de projets','Notes conceptuelles, propositions de projets, structuration, documents.','📋',8),
+('9. Intermédiation immobilière et location','Recherche de maisons à louer, mise en relation propriétaires / locataires.','🏠',9)
+on conflict do nothing;
+insert into public.settings (id,telephone,email,adresse) values (1,'+243 970 204 871','enecenglish2026@gmail.com','Avenue de la Bière, Ibanda, Bukavu, Sud-Kivu, RDC')
+on conflict (id) do nothing;
+-- 3. RLS : lecture publique, écriture réservée aux admins connectés
+alter table public.services enable row level security;
+alter table public.laureats enable row level security;
+alter table public.messages enable row level security;
+alter table public.settings enable row level security;
+-- Lecture publique
+create policy "lecture publique services" on public.services for select using (true);
+create policy "lecture publique laureats" on public.laureats for select using (true);
+create policy "lecture publique settings" on public.settings for select using (true);
+-- Tout le monde peut envoyer un message (formulaire public)
+create policy "envoyer message" on public.messages for insert with check (true);
+-- Admins connectés : tout gérer
+create policy "admin services" on public.services for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+create policy "admin laureats" on public.laureats for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+create policy "admin messages" on public.messages for select using (auth.role() = 'authenticated');
+create policy "admin messages delete" on public.messages for delete using (auth.role() = 'authenticated');
+create policy "admin settings" on public.settings for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+-- 4. STORAGE pour photos lauréats : crée le bucket 'laureats' en Public, puis :
+-- Storage → Policies → laureats → SELECT public, INSERT/UPDATE/DELETE pour authenticated.
