@@ -23,7 +23,12 @@ textarea{width:100%;padding:12px;border:1.5px solid #E2E6EC;border-radius:12px;f
 .btn{background:#0A2540;color:#fff;border:0;padding:11px 18px;border-radius:999px;font-weight:800;cursor:pointer}
 .btn.green{background:#0E7A4A}.btn.red{background:#C0392B}
 .item{border:1px solid #EEE;border-radius:16px;padding:14px;margin:12px 0}
-.counters{display:flex;gap:8px;flex-wrap:wrap}.counters span{background:#FFF6C9;padding:8px 14px;border-radius:999px;font-weight:800}
+.counters{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800}
+.badge.pub{background:#D4EDDA;color:#155724}.badge.draft{background:#FFEAA7;color:#6B5900}
+.btn.small{padding:7px 12px;font-size:13px}.btn.gold2{background:#D4AF37;color:#0A2540}
+.btn.grey{background:#6C7A89}
+.counters span{background:#FFF6C9;padding:8px 14px;border-radius:999px;font-weight:800}
 </style></head>
 <body>
 
@@ -64,9 +69,9 @@ textarea{width:100%;padding:12px;border:1.5px solid #E2E6EC;border-radius:12px;f
 <label>Slogan</label><input id="a-slogan" value="Un nouvel espoir, de multiples opportunités !">
 <label>Texte d'accueil</label><textarea id="a-text">Bienvenue chez ENEC — Un nouvel espoir, de multiples opportunités ! L’Entreprise Nouvel Espoir du Congo (ENEC) est une entreprise multisectorielle basée à Bukavu.</textarea>
 </div></div>
-<div id="tab-domaines" style="display:none"><div class="sec"><h2>Domaines d'intervention</h2><p><span id="n-dep">9</span> domaines</p><div id="list-dep"></div><button class="btn-gold" style="width:auto" onclick="addDomaine()">+ Nouvel element</button></div></div>
-<div id="tab-equipe" style="display:none"><div class="sec"><h2>Notre équipe</h2><p><span id="n-eq">8</span> membres</p><div id="list-eq"></div><button class="btn-gold" style="width:auto" onclick="addMembre()">+ Nouvel element</button></div></div>
-<div id="tab-actualites" style="display:none"><div class="sec"><h2>Actualites</h2><p><span id="n-actu">0</span> element(s)</p><div id="list-actu"></div><button class="btn-gold" style="width:auto" onclick="addActu()">+ Nouvel element</button></div></div>
+<div id="tab-domaines" style="display:none"><div class="sec"><h2>Domaines d'intervention</h2><p>📝 <b>Brouillon</b> = caché, toi seul le vois. ✅ <b>Publié</b> = tout le monde le voit sur le site.</p><p><span id="n-dep">9</span> domaines</p><div id="list-dep"></div><button class="btn-gold" style="width:auto" onclick="addDomaine()">+ Ajouter un élément (Brouillon)</button></div></div>
+<div id="tab-equipe" style="display:none"><div class="sec"><h2>Notre équipe</h2><p>📝 <b>Brouillon</b> = caché. ✅ <b>Publié</b> = visible sur le site.</p><p><span id="n-eq">8</span> membres</p><div id="list-eq"></div><button class="btn-gold" style="width:auto" onclick="addMembre()">+ Ajouter un élément (Brouillon)</button></div></div>
+<div id="tab-actualites" style="display:none"><div class="sec"><h2>Actualites</h2><p>📝 <b>Brouillon</b> = caché. ✅ <b>Publié</b> = visible sur le site.</p><p><span id="n-actu">0</span> element(s)</p><div id="list-actu"></div><button class="btn-gold" style="width:auto" onclick="addActu()">+ Ajouter un élément (Brouillon)</button></div></div>
 <div id="tab-textes" style="display:none"><div class="sec"><h2>Mission & Vision</h2>
 <label>NOTRE MISSION</label><textarea id="t-mission">Offrir des formations de qualité, des services professionnels et des solutions innovantes dans divers secteurs d'activité, afin de développer les compétences, de soutenir l'entrepreneuriat, de répondre aux besoins des particuliers et des organisations et de contribuer durablement au développement socioéconomique des communautés.</textarea>
 <label>NOTRE VISION</label><textarea id="t-vision">Devenir une entreprise multisectorielle de référence en République démocratique du Congo et dans la région des Grands Lacs, reconnue pour son excellence, son innovation, la diversité de ses domaines d’intervention et sa contribution à la création d’opportunités économiques et professionnelles.</textarea>
@@ -164,17 +169,28 @@ async function doLogin(){
 }
 function showTab(id,btn){ document.querySelectorAll('[id^="tab-"]').forEach(e=>e.style.display='none'); document.getElementById('tab-'+id).style.display='block'; document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
 function render(){
- document.getElementById('list-dep').innerHTML=domaines.map((x,i)=>`<div class="item"><b>Domaine ${i+1}</b> <button class="btn red" style="float:right" onclick="domaines.splice(${i},1);render()">Supprimer</button><label>Titre</label><input data-dep="${i}" data-k="n" value="${x.n.replace(/"/g,'&quot;')}"><label>Description</label><textarea data-dep="${i}" data-k="d">${x.d}</textarea></div>`).join('');
- document.getElementById('list-eq').innerHTML=equipe.map((x,i)=>`<div class="item"><b>Membre ${i+1}</b> <button class="btn red" style="float:right" onclick="equipe.splice(${i},1);render()">Supprimer</button><label>Nom</label><input data-eq="${i}" data-k="n" value="${x.n}"><label>Rôle</label><input data-eq="${i}" data-k="r" value="${x.r}"><label>Département</label><input data-eq="${i}" data-k="d" value="${x.d}"><label>Biographie</label><textarea data-eq="${i}" data-k="bio">${x.bio}</textarea></div>`).join('');
- document.getElementById('list-actu').innerHTML=actus.map((x,i)=>`<div class="item"><b>Actualité ${i+1}</b> <button class="btn red" style="float:right" onclick="actus.splice(${i},1);render()">Supprimer</button><label>Titre</label><input data-actu="${i}" data-k="t" value="${x.t}"><label>Description</label><textarea data-actu="${i}" data-k="d">${x.d}</textarea></div>`).join('')||'Aucune actualité.';
- document.getElementById('n-dep').textContent=domaines.length; document.getElementById('n-eq').textContent=equipe.length; document.getElementById('n-actu').textContent=actus.length; document.getElementById('c-actu').textContent=actus.length+' actualites';
+ document.getElementById('list-dep').innerHTML=domaines.map((x,i)=>{
+   var st=x.status||'publie';
+   return `<div class="item"><b>Domaine ${i+1}</b> <span class="badge ${st==='publie'?'pub':'draft'}">${st==='publie'?'✅ PUBLIÉ':'📝 BROUILLON'}</span> <button class="btn red small" style="float:right" onclick="if(confirm('Supprimer ce domaine ? Il sera supprimé dans Supabase aussi.')){domaines.splice(${i},1);render()}">🗑️ Supprimer</button><br><br><button class="btn small gold2" onclick="setStatus(domaines,${i},'publie')">✅ Publier</button> <button class="btn small grey" onclick="setStatus(domaines,${i},'brouillon')">📝 Brouillon</button><label>Titre</label><input data-dep="${i}" data-k="n" value="${(x.n||'').replace(/"/g,'&quot;')}"><label>Description</label><textarea data-dep="${i}" data-k="d">${x.d||''}</textarea></div>`;
+ }).join('');
+ document.getElementById('list-eq').innerHTML=equipe.map((x,i)=>{
+   var st=x.status||'publie';
+   return `<div class="item"><b>Membre ${i+1}</b> <span class="badge ${st==='publie'?'pub':'draft'}">${st==='publie'?'✅ PUBLIÉ':'📝 BROUILLON'}</span> <button class="btn red small" style="float:right" onclick="if(confirm('Supprimer ce membre ?')){equipe.splice(${i},1);render()}">🗑️ Supprimer</button><br><br><button class="btn small gold2" onclick="setStatus(equipe,${i},'publie')">✅ Publier</button> <button class="btn small grey" onclick="setStatus(equipe,${i},'brouillon')">📝 Brouillon</button><label>Nom</label><input data-eq="${i}" data-k="n" value="${x.n||''}"><label>Rôle</label><input data-eq="${i}" data-k="r" value="${x.r||''}"><label>Département</label><input data-eq="${i}" data-k="d" value="${x.d||''}"><label>Biographie</label><textarea data-eq="${i}" data-k="bio">${x.bio||''}</textarea></div>`;
+ }).join('');
+ document.getElementById('list-actu').innerHTML=actus.map((x,i)=>{
+   var st=x.status||'publie';
+   return `<div class="item"><b>Actualité ${i+1}</b> <span class="badge ${st==='publie'?'pub':'draft'}">${st==='publie'?'✅ PUBLIÉ':'📝 BROUILLON'}</span> <button class="btn red small" style="float:right" onclick="if(confirm('Supprimer cette actualité ?')){actus.splice(${i},1);render()}">🗑️ Supprimer</button><br><br><button class="btn small gold2" onclick="setStatus(actus,${i},'publie')">✅ Publier</button> <button class="btn small grey" onclick="setStatus(actus,${i},'brouillon')">📝 Brouillon</button><label>Titre</label><input data-actu="${i}" data-k="t" value="${x.t||''}"><label>Description</label><textarea data-actu="${i}" data-k="d">${x.d||''}</textarea></div>`;
+ }).join('')||'Aucune actualité. Clique sur + Ajouter un élément (Brouillon) pour ajouter.';
+ document.getElementById('n-dep').textContent=domaines.length; document.getElementById('n-eq').textContent=equipe.length; document.getElementById('n-actu').textContent=actus.length; document.getElementById('c-actu').textContent=actus.filter(a=>(a.status||'publie')==='publie').length+' actualites publiées';
 }
+function setStatus(list,i,st){ collect(); list[i].status=st; render(); }
 function collect(){ document.querySelectorAll('[data-dep]').forEach(el=>domaines[el.dataset.dep][el.dataset.k]=el.value); document.querySelectorAll('[data-eq]').forEach(el=>equipe[el.dataset.eq][el.dataset.k]=el.value); document.querySelectorAll('[data-actu]').forEach(el=>actus[el.dataset.actu][el.dataset.k]=el.value); }
-function addDomaine(){ domaines.push({n:"Nouveau domaine",d:""}); render(); }
-function addMembre(){ equipe.push({n:"Nouveau membre",r:"Responsable — ",d:"",bio:""}); render(); }
-function addActu(){ actus.push({t:"Nouvelle actualité",d:""}); render(); }
+function addDomaine(){ collect(); domaines.push({n:"Nouveau domaine",d:"",status:"brouillon"}); render(); alert('✅ Nouvel élément ajouté en BROUILLON. Remplis-le, puis clique sur Publier pour que tout le monde le voie.'); }
+function addMembre(){ collect(); equipe.push({n:"Nouveau membre",r:"Responsable — ",d:"",bio:"",status:"brouillon"}); render(); alert('✅ Nouvel élément ajouté en BROUILLON. Remplis-le, puis clique sur Publier.'); }
+function addActu(){ collect(); actus.push({t:"Nouvelle actualité",d:"",status:"brouillon"}); render(); alert('✅ Nouvel élément ajouté en BROUILLON. Remplis-le, puis clique sur Publier.'); }
 async function saveAll(){
  collect();
+ const payloadPub={domaines:domaines.filter(x=>(x.status||'publie')==='publie'),equipe:equipe.filter(x=>(x.status||'publie')==='publie'),actus:actus.filter(x=>(x.status||'publie')==='publie')};
  const payload={accueil:{t1:document.getElementById('a-t1').value,t2:document.getElementById('a-t2').value,slogan:document.getElementById('a-slogan').value,text:document.getElementById('a-text').value},domaines,equipe,actus,mission:document.getElementById('t-mission').value,vision:document.getElementById('t-vision').value,contact:{adr:document.getElementById('c-adr').value,tel:document.getElementById('c-tel').value,email:document.getElementById('c-email').value},images};
  localStorage.setItem('enec_admin_final', JSON.stringify(payload));
  if(SB_KEY && SB_TOKEN){
