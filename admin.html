@@ -1,153 +1,122 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ENEC — Admin du vrai site</title>
+<title>ENEC — Admin complet | Tout modifier</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<script src="supabase-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:#EFF3F8}
-.top{background:#fff;border-bottom:1px solid #E6EAF0;padding:14px 16px}.top b{font-size:22px;color:#0A2540}
-.wrap{max-width:780px;margin:auto;padding:14px}
-.counters{background:#fff;border:1px solid #E6EAF0;border-radius:22px;padding:12px;display:flex;gap:8px;flex-wrap:wrap}
-.counters span{background:#FFF6C9;padding:8px 14px;border-radius:999px;font-weight:800}
-.tabs{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
-.tabs button{background:#fff;border:1px solid #E2E6EC;padding:12px 18px;border-radius:999px;font-weight:800;cursor:pointer}
-.tabs button.on{background:#0A2540;color:#fff}
-.card{background:#fff;border:1px solid #E6EAF0;border-radius:22px;padding:20px;margin-bottom:14px}
-.card h2{font-size:26px;margin:0}.card p{color:#6B7A8F}
-.btn-gold{background:#D4AF37;color:#0A2540;border:0;padding:13px 20px;border-radius:999px;font-weight:900;cursor:pointer}
-.btn{background:#0A2540;color:#fff;border:0;padding:10px 16px;border-radius:999px;font-weight:800;cursor:pointer}
-.btn.green{background:#0E7A4A}.btn.red{background:#C0392B}.btn.ghost{background:#EEF1F5;color:#111}
-label{font-size:13px;font-weight:800;display:block;margin:13px 0 5px}
-input,textarea,select{width:100%;padding:12px;border:1.5px solid #E2E6EC;border-radius:12px;font-family:inherit;font-size:14px}
-textarea{min-height:88px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.row{grid-template-columns:1fr}}
-.item{border:1px solid #EEE;border-radius:16px;padding:14px;margin:12px 0}
-.small{font-size:13px;color:#666}.ok{background:#D4EDDA;padding:10px;border-radius:10px;margin:10px 0}.err{background:#F8D7DA;padding:10px;border-radius:10px;margin:10px 0}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:#F3F5F7;color:#111}
+.top{background:#0A2A5E;color:#fff;padding:14px 16px;position:sticky;top:0;z-index:10}
+.top b{font-size:20px}.top span{display:block;font-size:11px;letter-spacing:.12em;color:#FFD84D;font-weight:800}
+.wrap{max-width:1080px;margin:auto;padding:16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.tabs button{border:1px solid #ddd;background:#fff;padding:10px 14px;border-radius:999px;font-weight:700;cursor:pointer}
+.tabs button.on{background:#0A2A5E;color:#fff}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;border:1px solid #eee}
+.card h3{margin:0 0 10px;color:#0A2A5E}
+label{font-size:13px;font-weight:700;display:block;margin:12px 0 5px}
+input,textarea,select{width:100%;padding:11px;border:1.5px solid #ddd;border-radius:10px;font-family:inherit;font-size:14px}
+textarea{min-height:90px} .row{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media(max-width:700px){.row{grid-template-columns:1fr}}
+.btn{background:#0E7A4A;color:#fff;border:0;padding:12px 18px;border-radius:999px;font-weight:800;cursor:pointer}
+.btn.blue{background:#0A2A5E}.btn.red{background:#C0392B}.btn.ghost{background:#eee;color:#111}
+.item{border:1px solid #eee;border-radius:12px;padding:12px;margin:10px 0}
+.small{font-size:13px;color:#555}.ok{background:#D4EDDA;padding:10px;border-radius:10px;margin:10px 0}.err{background:#F8D7DA;padding:10px;border-radius:10px;margin:10px 0}
 </style></head>
 <body>
-<div class="top"><b>ENEC — Admin du vrai site</b><br><span>Basé sur ta copie du site ENEC • Modifie l'accueil, les domaines, l'équipe, les actualités...</span></div>
+<div class="top"><b>ENEC — Admin complet</b><span>ENTREPRISE NOUVEL ESPOIR DU CONGO • TOUT MODIFIER</span></div>
 <div class="wrap">
-<div id="login" class="card"><h2>Connexion Supabase</h2><p class="small">Base de données : Supabase. Si Supabase n'est pas encore configuré, utilise le bouton vert — l'admin s'ouvrira quand même en local.</p><label>Email</label><input id="email" value="furahahabamungu2005@gmail.com"><label>Mot de passe</label><input id="pwd" type="password" placeholder="Mot de passe Supabase"><br><br><button class="btn-gold" onclick="login()">Se connecter</button> <button class="btn green" onclick="enterApp()">▶ Entrer sans Supabase (Mode local)</button><div id="loginMsg"></div><div id="cfgMsg"></div></div>
+<div id="login" class="card"><h3>Connexion Admin</h3><label>Email</label><input id="email" value="furahahabamungu2005@gmail.com"><label>Mot de passe</label><input id="pwd" type="password" placeholder="Ton mot de passe Supabase"><br><br><button class="btn blue" onclick="login()">Se connecter</button><div id="loginMsg"></div><p class="small">Compte admin : furahahabamungu2005@gmail.com — Si tu as oublié le mot de passe, va dans Supabase → Authentication → Users → Reset.</p></div>
 <div id="app" style="display:none">
-<div class="card" id="supaBox" style="background:#FFF6C9"><b>🔌 Supabase :</b> <span id="supaText">Vérification...</span> <button class="btn" onclick="testSupabase()">Tester</button><br><small id="supaUrl"></small></div>
-<div class="counters"><span id="c-actu">0 actualites</span><span id="c-msg">0 messages</span><span id="c-cand">0 candidatures</span></div>
-<p style="text-align:right"><span id="who"></span> • <a href="#" onclick="logout();return false">Déconnexion</a> • <a href="https://enecrdc.github.io/enec/" target="_blank">Voir le site →</a></p>
+<p><b>Connecté :</b> <span id="who"></span> <button class="btn ghost" onclick="logout()">Déconnexion</button> <a href="https://enecrdc.github.io/enec/" target="_blank" style="color:#0A2A5E;font-weight:800">Voir le site →</a></p>
 <div class="tabs">
-<button class="on" onclick="showTab('accueil',this)">Accueil</button>
-<button onclick="showTab('domaines',this)">Domaines</button>
-<button onclick="showTab('equipe',this)">Equipe</button>
-<button onclick="showTab('actualites',this)">Actualites</button>
-<button onclick="showTab('projets',this)">Projets</button>
-<button onclick="showTab('partenaires',this)">Partenaires</button>
-<button onclick="showTab('opportunites',this)">Opportunites</button>
-<button onclick="showTab('messages',this)">Messages</button>
-<button onclick="showTab('candidatures',this)">Candidatures</button>
-<button onclick="showTab('textes',this)">Textes & coordonnees</button>
-<button onclick="showTab('photos',this)">Photos WebP</button>
+<button class="on" onclick="show('site',this)">🏠 Site & Textes</button><button onclick="show('domaines',this)">📚 Domaines d'intervention</button><button onclick="show('equipe',this)">👥 Équipe</button><button onclick="show('real',this)">🏆 Réalisations</button><button onclick="show('contact',this)">📞 Contact & Pied de page</button><button onclick="show('messages',this)">💬 Messages reçus</button>
 </div>
-
-<!-- ACCUEIL - d'apres le vrai site -->
-<div id="tab-accueil"><div class="card"><h2>Accueil</h2><p>Ce que le visiteur voit en premier sur ton vrai site.</p>
-<label>Nom complet (en-tête)</label><input id="a-nom" value="ENTREPRISE NOUVEL ESPOIR DU CONGO (ENEC)">
-<label>Titre bannière — ligne 1</label><input id="a-t1" value="Un nouvel espoir,">
-<label>Titre bannière — ligne 2</label><input id="a-t2" value="de multiples opportunités !">
-<label>Slogan</label><input id="a-slogan" value="Un nouvel espoir, de multiples opportunités !">
-<label>Texte d'accueil (Bienvenue chez ENEC...)</label><textarea id="a-text">Bienvenue chez ENEC — Un nouvel espoir, de multiples opportunités ! L’Entreprise Nouvel Espoir du Congo (ENEC) est une entreprise multisectorielle basée à Bukavu. Nous proposons des formations, des services professionnels et des solutions commerciales pensées pour faire grandir les personnes, les projets et les organisations.</textarea>
-<label>Présentation de l'entreprise (À propos)</label><textarea id="a-about">ENEC réunit des compétences complémentaires pour accompagner chaque étape d’un projet : apprendre, créer, communiquer, entretenir, construire, vendre et produire. Notre approche est concrète, humaine et orientée résultats.</textarea>
-<label>Pourquoi choisir ENEC ?</label><textarea id="a-why">Votre réussite est notre priorité. Avec ENEC, transformez vos idées en opportunités et vos ambitions en réalisations.</textarea>
-</div><button class="btn green" onclick="saveAccueil()">💾 Enregistrer l'accueil</button><div id="msg-accueil"></div></div>
-
-<!-- DOMAINES - les vrais 10 du site -->
-<div id="tab-domaines" style="display:none"><div class="card"><h2>Domaines d'intervention</h2><p><span id="n-dep">0</span> element(s) — Les vrais domaines de ton site, avec leurs photos d'origine conservées.</p><div id="list-dep"></div><button class="btn-gold" onclick="addItem('dep')">+ Nouvel element</button> <button class="btn green" onclick="saveAll('dep')">💾 Enregistrer</button><div id="msg-dep"></div></div></div>
-
-<!-- EQUIPE - les vrais 8 -->
-<div id="tab-equipe" style="display:none"><div class="card"><h2>Notre équipe</h2><p><span id="n-eq">0</span> element(s) — La vraie équipe de ton site.</p><div id="list-eq"></div><button class="btn-gold" onclick="addItem('eq')">+ Nouvel element</button> <button class="btn green" onclick="saveAll('eq')">💾 Enregistrer</button><div id="msg-eq"></div></div></div>
-
-<!-- ACTUALITES -->
-<div id="tab-actualites" style="display:none"><div class="card"><h2>Actualites</h2><p><span id="n-actu">0</span> element(s)</p><div id="list-actu"></div><button class="btn-gold" onclick="addItem('actu')">+ Nouvel element</button> <button class="btn green" onclick="saveAll('actu')">💾 Enregistrer</button><div id="msg-actu"></div></div></div>
-
-<!-- PROJETS = REALISATIONS -->
-<div id="tab-projets" style="display:none"><div class="card"><h2>Projets — Nos réalisations</h2><p><span id="n-proj">0</span> element(s) — Les vraies réalisations de ton site.</p><div id="list-proj"></div><button class="btn-gold" onclick="addItem('proj')">+ Nouvel element</button> <button class="btn green" onclick="saveAll('proj')">💾 Enregistrer</button><div id="msg-proj"></div></div></div>
-
-<div id="tab-partenaires" style="display:none"><div class="card"><h2>Partenaires</h2><p><span id="n-part">0</span> element(s)</p><div id="list-part"></div><button class="btn-gold" onclick="addItem('part')">+ Nouvel element</button> <button class="btn green" onclick="saveAll('part')">💾 Enregistrer</button><div id="msg-part"></div></div></div>
-<div id="tab-opportunites" style="display:none"><div class="card"><h2>Opportunites</h2><p><span id="n-opp">0</span> element(s)</p><div id="list-opp"></div><button class="btn-gold" onclick="addItem('opp')">+ Nouvel element</button> <button class="btn green" onclick="saveAll('opp')">💾 Enregistrer</button><div id="msg-opp"></div></div></div>
-<div id="tab-messages" style="display:none"><div class="card"><h2>Messages</h2><p><span id="n-msg">0</span> element(s)</p><div id="list-msg">Chargement...</div></div></div>
-<div id="tab-candidatures" style="display:none"><div class="card"><h2>Candidatures</h2><p><span id="n-cand">0</span> element(s)</p><div id="list-cand"></div><button class="btn-gold" onclick="addItem('cand')">+ Nouvel element</button> <button class="btn green" onclick="saveAll('cand')">💾 Enregistrer</button><div id="msg-cand"></div></div></div>
-
-<!-- TEXTES -->
-<div id="tab-textes" style="display:none"><div class="card"><h2>Textes & coordonnees</h2><p>Mission, Vision, Contact, Sites web, Pied de page.</p>
-<label>NOTRE MISSION — nouvelle formulation officielle</label><textarea id="t-mission">Offrir des formations de qualité, des services professionnels et des solutions innovantes dans divers secteurs d'activité, afin de développer les compétences, de soutenir l'entrepreneuriat, de répondre aux besoins des particuliers et des organisations et de contribuer durablement au développement socioéconomique des communautés.</textarea>
-<label>NOTRE VISION — nouvelle formulation officielle</label><textarea id="t-vision">Devenir une entreprise multisectorielle de référence en République démocratique du Congo et dans la région des Grands Lacs, reconnue pour son excellence, son innovation, la diversité de ses domaines d’intervention et sa contribution à la création d’opportunités économiques et professionnelles.</textarea>
-<label>Adresse</label><input id="t-adr" value="Avenue de la Bière, commune d’Ibanda, Bukavu, Sud-Kivu, RDC">
-<div class="row"><div><label>Téléphone / WhatsApp</label><input id="t-tel" value="+243 970 204 871"></div><div><label>Email</label><input id="t-email" value="furahahabamungu2005@gmail.com"></div></div>
-<label>Site 1</label><input id="t-site1" value="https://enec-cd.netlify.app"><label>Site 2</label><input id="t-site2" value="https://enecrdc.github.io/enec/">
-<label>Texte pied de page</label><textarea id="t-footer">Formations, services professionnels et solutions commerciales — pour transformer les compétences en opportunités.</textarea>
-</div><button class="btn green" onclick="saveTextes()">💾 Enregistrer</button><div id="msg-textes"></div></div>
-
-<!-- PHOTOS -->
-<div id="tab-photos" style="display:none"><div class="card"><h2>Photos WebP</h2><p>JPG / PNG → conversion automatique en WebP. Supprimer = suppression automatique dans Supabase.</p><label>Choisir une photo</label><input type="file" id="photoInput" accept=".jpg,.jpeg,.png,.webp" onchange="handlePhoto(this)"><label>Nom</label><input id="photoName" placeholder="Ex : equipe-justin"><br><button class="btn-gold" onclick="uploadPhoto()">📤 Convertir en WebP + Envoyer</button><div id="photoMsg"></div><img id="photoPreview" style="max-width:100%;border-radius:14px;margin-top:10px;display:none"></div><div class="card"><h2>Mes photos</h2><div id="photoList"></div></div></div>
-
+<!-- SITE -->
+<div id="tab-site">
+<div class="card"><h3>🏠 Accueil & Présentation</h3>
+<label>Nom complet (en-tête)</label><input id="f-nom" value="ENTREPRISE NOUVEL ESPOIR DU CONGO (ENEC)">
+<label>Slogan</label><input id="f-slogan" value="Un nouvel espoir, de multiples opportunités !">
+<label>Texte de présentation (Accueil)</label><textarea id="f-pres">L’ENTREPRISE NOUVEL ESPOIR DU CONGO (ENEC) est une entreprise multisectorielle congolaise basée à Bukavu. Nous formons, nous accompagnons et nous fournissons des services professionnels de qualité — pour les particuliers, les entreprises, les organisations et les communautés.</textarea>
+<label>Pourquoi choisir ENEC ?</label><textarea id="f-why">Un partenaire fiable, de l’idée au résultat. Votre réussite est notre priorité. Avec ENEC, transformez vos idées en opportunités et vos ambitions en réalisations.</textarea></div>
+<div class="card"><h3>🎯 Mission & Vision — nouvelles formulations officielles</h3>
+<label>NOTRE MISSION</label><textarea id="f-mission">Offrir des formations de qualité, des services professionnels et des solutions innovantes dans divers secteurs d'activité, afin de développer les compétences, de soutenir l'entrepreneuriat, de répondre aux besoins des particuliers et des organisations et de contribuer durablement au développement socioéconomique des communautés.</textarea>
+<label>NOTRE VISION</label><textarea id="f-vision">Devenir une entreprise multisectorielle de référence en République démocratique du Congo et dans la région des Grands Lacs, reconnue pour son excellence, son innovation, la diversité de ses domaines d’intervention et sa contribution à la création d’opportunités économiques et professionnelles.</textarea></div>
+<div class="card"><h3>🌐 Nos 2 sites web</h3><label>Site 1</label><input id="f-site1" value="https://enec-cd.netlify.app"><label>Site 2</label><input id="f-site2" value="https://enecrdc.github.io/enec/"></div>
+<button class="btn" onclick="saveSite()">💾 Enregistrer Site & Textes</button><div id="siteMsg"></div>
+</div>
+<!-- DOMAINES -->
+<div id="tab-domaines" style="display:none">
+<div class="card"><h3>📚 Domaines d'intervention — 10 domaines</h3><p class="small">Modifie le titre, la description détaillée, les prestations, les bénéficiaires et la valeur ajoutée. Les photos d'origine ne sont pas supprimées — tu peux changer l'image seulement si tu veux, en collant une nouvelle URL.</p><div id="domainesList"></div><button class="btn" onclick="addDomaine()">+ Ajouter un domaine</button> <button class="btn blue" onclick="saveDomaines()">💾 Enregistrer tous les domaines</button><div id="domMsg"></div></div>
+</div>
+<!-- EQUIPE -->
+<div id="tab-equipe" style="display:none">
+<div class="card"><h3>👥 Équipe — tous les membres</h3><p class="small">Nom, rôle, département, biographie, photo (URL ou laisse vide pour garder la photo d'origine).</p><div id="equipeList"></div><button class="btn" onclick="addMembre()">+ Ajouter un membre</button> <button class="btn blue" onclick="saveEquipe()">💾 Enregistrer l'équipe</button><div id="eqMsg"></div></div>
+</div>
+<!-- REALISATIONS -->
+<div id="tab-real" style="display:none">
+<div class="card"><h3>🏆 Réalisations & Expériences</h3><div id="realList"></div><button class="btn" onclick="addReal()">+ Ajouter une réalisation</button> <button class="btn blue" onclick="saveReal()">💾 Enregistrer les réalisations</button><div id="realMsg"></div></div>
+</div>
+<!-- CONTACT -->
+<div id="tab-contact" style="display:none">
+<div class="card"><h3>📞 Contact & Pied de page</h3>
+<label>Adresse</label><input id="c-adresse" value="Avenue de la Bière, commune d’Ibanda, Bukavu, Sud-Kivu, RDC">
+<div class="row"><div><label>Téléphone / WhatsApp</label><input id="c-tel" value="+243 970 204 871"></div><div><label>Email</label><input id="c-email" value="furahahabamungu2005@gmail.com"></div></div>
+<label>Texte pied de page</label><textarea id="c-footer">Formations, services professionnels et solutions commerciales — pour transformer les compétences en opportunités.</textarea>
+<label>Mentions légales</label><input id="c-legal" value="© 2026 ENEC — Tous droits réservés.">
+</div><button class="btn" onclick="saveContact()">💾 Enregistrer Contact</button><div id="contactMsg"></div>
+</div>
+<!-- MESSAGES -->
+<div id="tab-messages" style="display:none"><div class="card"><h3>💬 Messages reçus (formulaire du site)</h3><div id="msgList">Chargement...</div></div></div>
 </div></div>
 <script>
-// Supabase : lit supabase-config.js, sinon utilise ton projet connu
-const SUPABASE_URL = (window.ENEC_SUPABASE_URL && !String(window.ENEC_SUPABASE_URL).includes('TON-PROJET')) ? window.ENEC_SUPABASE_URL : "https://mlzacyrgnmentvilwvkm.supabase.co";
-const SUPABASE_KEY = (window.ENEC_SUPABASE_ANON_KEY && !String(window.ENEC_SUPABASE_ANON_KEY).includes('TA-CLE') && !String(window.ENEC_SUPABASE_ANON_KEY).includes('COLLE')) ? window.ENEC_SUPABASE_ANON_KEY : null;
-let sb = null;
-try{ if(SUPABASE_KEY) sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }catch(e){}
-if(!SUPABASE_KEY){ document.getElementById('cfgMsg').innerHTML='<div class="err">⚠️ Supabase non configuré : ta clé ANON manque dans supabase-config.js. Utilise le bouton vert (Mode local) pour l’instant, ou envoie-moi ta clé ANON depuis Supabase → Settings → API.</div>'; }
-let data={
-actu:[],
-proj:[{t:"Formation et renforcement des capacités",d:"En 2023-2024, l’ENEC a assuré une formation en anglais au profit des agents d’Afriland First Bank, agence de Bukavu."},
-{t:"Agriculture et production agricole",d:"Plusieurs activités de production de légumes et fruits à Kabare et Walungu, Sud-Kivu. Sécurité alimentaire et initiatives locales."},
-{t:"Traduction et interprétation",d:"Traduction de plusieurs documents pour différentes organisations : administratifs, institutionnels et professionnels."},
-{t:"Autres prestations professionnelles",d:"Informatique, communication audiovisuelle, formations techniques, conception de projets et services professionnels."}],
-dep:[{n:"Éducation, Formation Linguistique, Traduction et Interprétation",d:"Formations en langues et traduction professionnelle.",p:"Anglais, français, chinois, espagnol, lingala, kiswahili — cours en groupe, particuliers, préparation examens",b:"Élèves, étudiants, professionnels, entreprises, ONG",v:"Méthodes pratiques, suivi personnalisé, attestations"},
-{n:"Informatique et numérique",d:"Bureautique, web et accompagnement numérique.",p:"Word, Excel, PowerPoint, sites web, programmation, design, montage vidéo",b:"Jeunes, entrepreneurs, entreprises, écoles",v:"Formations sur projets réels"},
-{n:"Formations professionnelles et techniques",d:"Formations pratiques pour l’emploi.",p:"Coupe et couture, conduite, filmage et photographie",b:"Jeunes, femmes entrepreneures, artisans",v:"80% de pratique, stages"},
+// ===== CONFIG SUPABASE - MEME PROJET QUE LE SITE =====
+const SUPABASE_URL = "https://mlzacyrgnmentvilwvkm.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M3R1U_9i3qYdB2s5iJ2s2LQ_eVw7V9Jg";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let domaines = [
+{n:"Éducation et formation linguistique",d:"Formations en langues pour tous niveaux : anglais, français, chinois, espagnol, lingala, kiswahili.",p:"Cours en groupe, particuliers, préparation examens, formations entreprises",b:"Élèves, étudiants, professionnels, entreprises, ONG",v:"Méthodes pratiques, suivi personnalisé, attestations"},
+{n:"Informatique et numérique",d:"Bureautique, web et accompagnement numérique.",p:"Word, Excel, PowerPoint, sites web, programmation, design, montage vidéo",b:"Jeunes, entrepreneurs, entreprises, écoles",v:"Formations sur projets réels, accompagnement jusqu’à la mise en ligne"},
+{n:"Formations professionnelles et techniques",d:"Formations pratiques pour l’emploi.",p:"Coupe et couture, conduite, filmage et photographie",b:"Jeunes, femmes entrepreneures, artisans",v:"80% de pratique, stages, accompagnement à l’insertion"},
 {n:"Traduction et interprétation",d:"Traduction et interprétation professionnelle.",p:"Documents officiels, rapports, contrats ; interprétation réunions, conférences",b:"ONG, entreprises, institutions, particuliers",v:"Rapidité, confidentialité, relecture"},
-{n:"Communication, Audiovisuel et Événementiel",d:"Photographie, vidéo et événements.",p:"Photographie, filmage, montage, design, animation, couverture médiatique",b:"Entreprises, mariages, conférences, ONG",v:"Équipe complète, matériel professionnel"},
-{n:"Nettoyage, Peinture, Décoration et Services Généraux",d:"Nettoyage, peinture, décoration et services généraux.",p:"Nettoyage bureaux et maisons, personnel domestique, chauffeurs, gardiennage, peinture, décoration",b:"Particuliers, entreprises, écoles, hôpitaux, ONG",v:"Personnel sélectionné et supervisé"},
-{n:"Conception et Gestion des Projets",d:"De l’idée au projet financé.",p:"Notes conceptuelles, propositions, business plans, suivi-évaluation",b:"Entrepreneurs, associations, coopératives, ONG",v:"Méthodologie professionnelle"},
-{n:"Intermédiation Immobilière et Location",d:"Maison, bureau ou parcelle en toute confiance.",p:"Recherche maisons, bureaux, parcelles ; visite et négociation",b:"Familles, nouveaux arrivants, entreprises, propriétaires",v:"Offres vérifiées, transparence"},
-{n:"Agriculture et Élevage — Dirigé par M. Justin Ahadi Byamungu",d:"Production agricole et élevage pour la sécurité alimentaire.",p:"Production légumes et fruits, pratiques durables, accompagnement producteurs, élevage, compétences agricoles",b:"Producteurs, coopératives, jeunes entrepreneurs agricoles",v:"Techniques modernes, accompagnement de terrain, Kabare et Walungu"}],
-eq:[{n:"Madame Élodie Koko",r:"Responsable — Formations professionnelles et techniques",d:"Formations professionnelles et techniques",bio:""},
-{n:"Iragi Boss Mugosa",r:"Responsable — Informatique et numérique",d:"Informatique et numérique",bio:"Professionnel du numérique, diplômé en Informatique de Gestion (ISP/Bukavu)."},
-{n:"Monsieur Samy Bayongwa",r:"Responsable — Communication, Audiovisuel et Événementiel",d:"Communication, Audiovisuel et Événementiel",bio:""},
-{n:"Monsieur Bienfait Reagan",r:"Responsable — Intermédiation immobilière et location",d:"Intermédiation immobilière et location",bio:""},
-{n:"Monsieur Jean de Dieu Mwene Bahaya",r:"Responsable — Conception et Gestion des Projets",d:"Conception et Gestion des Projets",bio:""},
-{n:"Monsieur Daniel Basima",r:"Responsable — Nettoyage, Peinture, Décoration et Services Généraux",d:"Nettoyage, Peinture, Décoration et Services Généraux",bio:""},
-{n:"Monsieur Imani Citunga Darius",r:"Responsable — Éducation, Formation Linguistique, Traduction et Interprétation",d:"Éducation, Formation Linguistique, Traduction et Interprétation",bio:""},
-{n:"Monsieur Ahadi Byamungu Justin",r:"Responsable — Agriculture et Élevage",d:"Agriculture et Élevage",bio:"Dirige le département Agriculture et Élevage. Production à Kabare et Walungu, Sud-Kivu."}],
-part:[], opp:[], cand:[]
-};
-function showTab(id,btn){ document.querySelectorAll('[id^="tab-"]').forEach(e=>e.style.display='none'); document.getElementById('tab-'+id).style.display='block'; document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); if(id=='messages') loadMessages(); if(id=='photos') loadPhotos(); }
-function updateCounts(){ document.getElementById('c-actu').textContent=data.actu.length+' actualites'; document.getElementById('c-cand').textContent=data.cand.length+' candidatures'; document.getElementById('n-actu').textContent=data.actu.length; document.getElementById('n-proj').textContent=data.proj.length; document.getElementById('n-dep').textContent=data.dep.length; document.getElementById('n-eq').textContent=data.eq.length; document.getElementById('n-part').textContent=data.part.length; document.getElementById('n-opp').textContent=data.opp.length; document.getElementById('n-cand').textContent=data.cand.length; }
-function renderAll(){
- document.getElementById('list-actu').innerHTML=data.actu.map((x,i)=>`<div class="item"><b>Actualité ${i+1}</b> <button class="btn red" style="float:right" onclick="data.actu.splice(${i},1);renderAll()">Supprimer</button><label>Titre</label><input data-actu="${i}" data-k="t" value="${x.t||''}"><label>Description</label><textarea data-actu="${i}" data-k="d">${x.d||''}</textarea></div>`).join('');
- document.getElementById('list-proj').innerHTML=data.proj.map((x,i)=>`<div class="item"><b>Projet ${i+1}</b> <button class="btn red" style="float:right" onclick="data.proj.splice(${i},1);renderAll()">Supprimer</button><label>Titre</label><input data-proj="${i}" data-k="t" value="${x.t}"><label>Description</label><textarea data-proj="${i}" data-k="d">${x.d}</textarea></div>`).join('');
- document.getElementById('list-dep').innerHTML=data.dep.map((x,i)=>`<div class="item"><b>Departement ${i+1}</b> <button class="btn red" style="float:right" onclick="data.dep.splice(${i},1);renderAll()">Supprimer</button><label>Titre — comme dans ton vrai site</label><input data-dep="${i}" data-k="n" value="${x.n}"><label>Description</label><textarea data-dep="${i}" data-k="d">${x.d}</textarea><label>Prestations concrètes</label><textarea data-dep="${i}" data-k="p">${x.p}</textarea><div class="row"><div><label>Bénéficiaires</label><input data-dep="${i}" data-k="b" value="${x.b}"></div><div><label>Valeur ajoutée</label><input data-dep="${i}" data-k="v" value="${x.v}"></div></div></div>`).join('');
- document.getElementById('list-eq').innerHTML=data.eq.map((x,i)=>`<div class="item"><b>Membre ${i+1}</b> <button class="btn red" style="float:right" onclick="data.eq.splice(${i},1);renderAll()">Supprimer</button><label>Nom — comme dans ton vrai site</label><input data-eq="${i}" data-k="n" value="${x.n}"><label>Rôle</label><input data-eq="${i}" data-k="r" value="${x.r}"><label>Département</label><input data-eq="${i}" data-k="d" value="${x.d}"><label>Biographie</label><textarea data-eq="${i}" data-k="bio">${x.bio}</textarea></div>`).join('');
- document.getElementById('list-part').innerHTML=data.part.map((x,i)=>`<div class="item"><b>Partenaire ${i+1}</b> <button class="btn red" style="float:right" onclick="data.part.splice(${i},1);renderAll()">Supprimer</button><label>Nom</label><input data-part="${i}" data-k="t" value="${x.t||''}"><label>Description</label><textarea data-part="${i}" data-k="d">${x.d||''}</textarea></div>`).join('');
- document.getElementById('list-opp').innerHTML=data.opp.map((x,i)=>`<div class="item"><b>Opportunité ${i+1}</b> <button class="btn red" style="float:right" onclick="data.opp.splice(${i},1);renderAll()">Supprimer</button><label>Titre</label><input data-opp="${i}" data-k="t" value="${x.t||''}"><label>Description</label><textarea data-opp="${i}" data-k="d">${x.d||''}</textarea></div>`).join('');
- document.getElementById('list-cand').innerHTML=data.cand.map((x,i)=>`<div class="item"><b>Candidature ${i+1}</b> <button class="btn red" style="float:right" onclick="data.cand.splice(${i},1);renderAll()">Supprimer</button><label>Nom</label><input data-cand="${i}" data-k="t" value="${x.t||''}"><label>Détails</label><textarea data-cand="${i}" data-k="d">${x.d||''}</textarea></div>`).join('');
- updateCounts();
-}
-function collect(){ ['actu','proj','dep','eq','part','opp','cand'].forEach(k=>{ document.querySelectorAll('[data-'+k+']').forEach(el=>{ data[k][el.dataset[k]][el.dataset.k]=el.value; }); }); }
-function addItem(k){ if(k=='dep') data.dep.push({n:"Nouveau departement",d:"",p:"",b:"",v:""}); else if(k=='eq') data.eq.push({n:"Nouveau membre",r:"Responsable — ",d:"",bio:""}); else data[k].push({t:"Nouvel element",d:""}); renderAll(); }
-async function saveSupabase(key,value){ if(!sb) return; try{ await sb.from('site_content').upsert({key:key, value:JSON.stringify(value)},{onConflict:'key'}); }catch(e){ console.log(e); } }
-function saveAll(k){ collect(); localStorage.setItem('enec_'+k, JSON.stringify(data[k])); const m=document.getElementById('msg-'+k); if(m) m.innerHTML='<div class="ok">✅ Enregistré dans Supabase + local : '+data[k].length+' element(s).</div>'; saveSupabase(k, data[k]); updateCounts(); }
-function saveAccueil(){ const d={nom:document.getElementById('a-nom').value,t1:document.getElementById('a-t1').value,t2:document.getElementById('a-t2').value,slogan:document.getElementById('a-slogan').value,text:document.getElementById('a-text').value,about:document.getElementById('a-about').value,why:document.getElementById('a-why').value}; localStorage.setItem('enec_accueil',JSON.stringify(d)); document.getElementById('msg-accueil').innerHTML='<div class="ok">✅ Accueil enregistré dans Supabase.</div>'; saveSupabase('accueil', d); }
-function saveTextes(){ const d={mission:document.getElementById('t-mission').value,vision:document.getElementById('t-vision').value,adr:document.getElementById('t-adr').value,tel:document.getElementById('t-tel').value,email:document.getElementById('t-email').value,site1:document.getElementById('t-site1').value,site2:document.getElementById('t-site2').value,footer:document.getElementById('t-footer').value}; localStorage.setItem('enec_textes',JSON.stringify(d)); document.getElementById('msg-textes').innerHTML='<div class="ok">✅ Textes & coordonnées enregistrés dans Supabase.</div>'; saveSupabase('textes', d); }
-function enterApp(){ document.getElementById('login').style.display='none'; document.getElementById('app').style.display='block'; document.getElementById('who').textContent=document.getElementById('email').value+' (Mode local — Supabase à configurer)'; try{ ['actu','proj','dep','eq','part','opp','cand'].forEach(k=>{ const s=JSON.parse(localStorage.getItem('enec_'+k)||'null'); if(s) data[k]=s; }); }catch(e){} renderAll(); testSupabase(); }
-async function login(){ try{ if(!sb){ enterApp(); return; } const {data:u,[STRIPPED] = await sb.auth.signInWithPassword({email:document.getElementById('email').value,password:document.getElementById('pwd').value}); if(error) throw error; document.getElementById('who').textContent=u.user.email+' (Supabase)'; }catch(e){ document.getElementById('loginMsg').innerHTML='<div class="err">Supabase : '+e.message+' — J’ouvre en Mode local, tes modifications sont quand même enregistrées.</div>'; } enterApp(); }
-async function logout(){ try{ if(sb) await sb.auth.signOut(); }catch(e){} location.reload(); }
-async function testSupabase(){ document.getElementById('supaUrl').textContent='URL : '+SUPABASE_URL; if(!sb){ document.getElementById('supaText').textContent='❌ NON CONNECTÉ : clé ANON manquante dans supabase-config.js. Mode local actif.'; return; } try{ const {error}=await sb.from('site_content').select('key').limit(1); if(error) throw error; document.getElementById('supaText').textContent='✅ CONNECTÉ à Supabase — ta base de données fonctionne.'; }catch(e){ document.getElementById('supaText').textContent='❌ NON CONNECTÉ : '+e.message; } }
-async function loadMessages(){ if(!sb){ document.getElementById('list-msg').innerHTML='<div class="ok">Mode local : pas de messages Supabase (clé manquante).</div>'; document.getElementById('n-msg').textContent='0'; return; } const {data:rows,[STRIPPED] = await sb.from('messages').select('*').order('created_at',{ascending:false}).limit(50); if(error){ document.getElementById('list-msg').innerHTML='<div class="err">'+error.message+'</div>'; return; } document.getElementById('n-msg').textContent=rows?rows.length:0; document.getElementById('c-msg').textContent=(rows?rows.length:0)+' messages'; document.getElementById('list-msg').innerHTML=!rows||!rows.length?'Aucun message.':rows.map(m=>`<div class="item"><b>${m.name||''}</b> — ${m.email||''} — ${m.phone||''}<br><small>${m.created_at||''} • ${m.service||''}</small><p>${m.message||''}</p></div>`).join(''); }
-// Photos WebP
-let webpBlob=null, webpFileName="";
-function handlePhoto(input){ const file=input.files[0]; if(!file) return; document.getElementById('photoMsg').innerHTML='<div class="ok">⏳ Conversion en WebP...</div>'; const img=new Image(); const url=URL.createObjectURL(file); img.onload=function(){ const c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight; c.getContext('2d').drawImage(img,0,0); c.toBlob(function(blob){ webpBlob=blob; let base=(document.getElementById('photoName').value||file.name.replace(/\.(jpg|jpeg|png|webp)$/i,'')).replace(/[^a-z0-9\-_]/gi,'-').toLowerCase(); webpFileName=base+'.webp'; document.getElementById('photoPreview').src=URL.createObjectURL(blob); document.getElementById('photoPreview').style.display='block'; document.getElementById('photoMsg').innerHTML='<div class="ok">✅ Converti : '+Math.round(file.size/1024)+' Ko → <b>'+Math.round(blob.size/1024)+' Ko</b> WebP — Prêt : '+webpFileName+'</div>'; },'image/webp',0.82); URL.revokeObjectURL(url); }; img.src=url; }
-async function uploadPhoto(){ if(!webpBlob){ document.getElementById('photoMsg').innerHTML='<div class="err">Choisis d’abord une photo.</div>'; return; } if(!sb){ document.getElementById('photoMsg').innerHTML='<div class="err">Supabase non configuré — photo convertie mais non envoyée. Mets ta clé ANON dans supabase-config.js.</div>'; return; } const path='photos/'+webpFileName; const {error}=await sb.storage.from('enec-photos').upload(path,webpBlob,{contentType:'image/webp',upsert:true}); if(error){ document.getElementById('photoMsg').innerHTML='<div class="err">'+error.message+'</div>'; return; } const {data:pub}=sb.storage.from('enec-photos').getPublicUrl(path); try{ await sb.from('photos').insert({name:webpFileName,url:pub.publicUrl}); }catch(e){} document.getElementById('photoMsg').innerHTML='<div class="ok">✅ Envoyé en WebP !<br><a href="'+pub.publicUrl+'" target="_blank">'+pub.publicUrl+'</a></div>'; loadPhotos(); }
-async function loadPhotos(){ if(!sb){ document.getElementById('photoList').innerHTML='Supabase non configuré — photos locales uniquement.'; return; } try{ const {data}=await sb.from('photos').select('*').order('created_at',{ascending:false}).limit(50); if(!data||!data.length){ document.getElementById('photoList').innerHTML='Aucune photo.'; return; } document.getElementById('photoList').innerHTML=data.map((p,i)=>`<div class="item"><img src="${p.url}" style="width:100%;max-width:320px;border-radius:10px"><br><b>${p.name||''}</b><br><small style="word-break:break-all">${p.url}</small><br><button class="btn" onclick="navigator.clipboard.writeText('${p.url}');alert('Lien copié')">📋 Copier</button> <button class="btn red" onclick="deletePhoto('${p.name}','${p.name}')">🗑️ Supprimer (Supabase aussi)</button></div>`).join(''); }catch(e){ document.getElementById('photoList').innerHTML='<div class="err">'+e.message+'</div>'; } }
-async function deletePhoto(path,name){ if(!confirm('Supprimer ? Elle sera supprimée AUTOMATIQUEMENT dans Supabase aussi.')) return; try{ await sb.storage.from('enec-photos').remove(['photos/'+name]); await sb.from('photos').delete().eq('name',name); }catch(e){} alert('✅ Supprimée dans Supabase + admin.'); loadPhotos(); }
-renderAll();
+{n:"Communication, audiovisuel et événementiel",d:"Photographie, vidéo et événements.",p:"Photographie, filmage, montage, design, animation, couverture médiatique",b:"Entreprises, mariages, conférences, ONG",v:"Équipe complète, matériel professionnel, livraison rapide"},
+{n:"Nettoyage, entretien et services généraux",d:"Nettoyage et services généraux.",p:"Nettoyage bureaux et maisons, personnel domestique, chauffeurs, gardiennage",b:"Particuliers, entreprises, écoles, hôpitaux, ONG",v:"Personnel sélectionné, vérifié et supervisé"},
+{n:"Peinture et décoration",d:"Peinture et décoration soignée.",p:"Peinture intérieure et extérieure, décoration, rénovation, conseils couleurs",b:"Particuliers, bureaux, hôtels, écoles, boutiques",v:"Devis gratuit, matériaux de qualité, finition soignée"},
+{n:"Conception et accompagnement de projets",d:"De l’idée au projet financé.",p:"Notes conceptuelles, propositions, business plans, suivi-évaluation",b:"Entrepreneurs, associations, coopératives, ONG",v:"Méthodologie professionnelle, accompagnement pas à pas"},
+{n:"Intermédiation immobilière et location",d:"Trouver maison, bureau ou parcelle en toute confiance.",p:"Recherche maisons, bureaux, parcelles ; visite et négociation",b:"Familles, nouveaux arrivants, entreprises, propriétaires",v:"Offres vérifiées, transparence, accompagnement jusqu’à la signature"},
+{n:"Agriculture et Élevage — Dirigé par M. Justin Ahadi Byamungu",d:"Production agricole et élevage pour la sécurité alimentaire.",p:"Production légumes et fruits, pratiques durables, accompagnement producteurs, élevage, compétences agricoles",b:"Producteurs, coopératives, jeunes entrepreneurs agricoles, organisations",v:"Techniques modernes, accompagnement de terrain, lien avec le marché"},
+];
+let equipe = [
+{n:"Madame Élodie Koko",r:"Responsable — Formations professionnelles et techniques",d:"Formations professionnelles et techniques",bio:""},
+{n:"Iragi Mugosa Boss",r:"Responsable — Informatique et numérique",d:"Informatique et numérique",bio:"Professionnel du numérique, diplômé en Informatique de Gestion (ISP/Bukavu)."},
+{n:"Monsieur Samy Bayongwa",r:"Responsable — Communication, Audiovisuel et Événementiel",d:"Communication",bio:""},
+{n:"Monsieur Bienfait Reagan",r:"Responsable — Intermédiation immobilière et location",d:"Immobilier",bio:""},
+{n:"Monsieur Jean de Dieu Mwene Bahaya",r:"Responsable — Conception et Gestion des Projets",d:"Projets",bio:""},
+{n:"Monsieur Daniel Basima",r:"Responsable — Nettoyage, Peinture, Décoration et Services Généraux",d:"Services généraux",bio:""},
+{n:"Monsieur Imani Citunga Darius",r:"Responsable — Éducation, Formation Linguistique, Traduction et Interprétation",d:"Éducation",bio:""},
+{n:"Monsieur Justin Ahadi Byamungu",r:"Responsable — Agriculture et Élevage",d:"Agriculture et Élevage",bio:"Dirige le département Agriculture et Élevage. Production à Kabare et Walungu, Sud-Kivu."},
+];
+let reals = [
+{t:"Formation — Afriland First Bank, Bukavu (2023-2024)",d:"Formation en anglais au profit des agents d’Afriland First Bank, agence de Bukavu. Renforcement des compétences linguistiques du personnel."},
+{t:"Agriculture — Kabare et Walungu, Sud-Kivu",d:"Production de différentes variétés de légumes et de fruits. Sécurité alimentaire et développement des initiatives locales."},
+{t:"Traduction et interprétation",d:"Traduction de plusieurs documents pour différentes organisations : administratifs, institutionnels et professionnels."},
+{t:"Formations dans plusieurs domaines",d:"Formations dispensées dans plusieurs domaines : langues, informatique, formations professionnelles et techniques."},
+];
+function show(id,btn){ document.querySelectorAll('[id^="tab-"]').forEach(e=>e.style.display='none'); document.getElementById('tab-'+id).style.display='block'; document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); if(id=='messages') loadMessages(); }
+function renderDomaines(){ document.getElementById('domainesList').innerHTML = domaines.map((d,i)=>`<div class="item"><b>Domaine ${i+1}</b> <button class="btn red" style="float:right" onclick="domaines.splice(${i},1);renderDomaines()">Supprimer</button><label>Titre</label><input data-dom="${i}" data-k="n" value="${d.n}"><label>Description détaillée</label><textarea data-dom="${i}" data-k="d">${d.d}</textarea><label>Prestations concrètes</label><textarea data-dom="${i}" data-k="p">${d.p}</textarea><div class="row"><div><label>Bénéficiaires</label><input data-dom="${i}" data-k="b" value="${d.b}"></div><div><label>Valeur ajoutée</label><input data-dom="${i}" data-k="v" value="${d.v}"></div></div></div>`).join(''); }
+function renderEquipe(){ document.getElementById('equipeList').innerHTML = equipe.map((m,i)=>`<div class="item"><b>Membre ${i+1}</b> <button class="btn red" style="float:right" onclick="equipe.splice(${i},1);renderEquipe()">Supprimer</button><label>Nom complet</label><input data-eq="${i}" data-k="n" value="${m.n}"><label>Rôle / Titre</label><input data-eq="${i}" data-k="r" value="${m.r}"><label>Département</label><input data-eq="${i}" data-k="d" value="${m.d}"><label>Biographie</label><textarea data-eq="${i}" data-k="bio">${m.bio}</textarea></div>`).join(''); }
+function renderReal(){ document.getElementById('realList').innerHTML = reals.map((r,i)=>`<div class="item"><b>Réalisation ${i+1}</b> <button class="btn red" style="float:right" onclick="reals.splice(${i},1);renderReal()">Supprimer</button><label>Titre</label><input data-real="${i}" data-k="t" value="${r.t}"><label>Description</label><textarea data-real="${i}" data-k="d">${r.d}</textarea></div>`).join(''); }
+function collect(){ document.querySelectorAll('[data-dom]').forEach(el=>{ domaines[el.dataset.dom][el.dataset.k]=el.value; }); document.querySelectorAll('[data-eq]').forEach(el=>{ equipe[el.dataset.eq][el.dataset.k]=el.value; }); document.querySelectorAll('[data-real]').forEach(el=>{ reals[el.dataset.real][el.dataset.k]=el.value; }); }
+function addDomaine(){ domaines.push({n:"Nouveau domaine",d:"",p:"",b:"",v:""}); renderDomaines(); }
+function addMembre(){ equipe.push({n:"Nouveau membre",r:"Responsable — ",d:"",bio:""}); renderEquipe(); }
+function addReal(){ reals.push({t:"Nouvelle réalisation",d:""}); renderReal(); }
+async function login(){ const {data,error} = await sb.auth.signInWithPassword({email:document.getElementById('email').value, password:document.getElementById('pwd').value}); if(error){ document.getElementById('loginMsg').innerHTML='<div class="err">'+error.message+'</div>'; return; } document.getElementById('login').style.display='none'; document.getElementById('app').style.display='block'; document.getElementById('who').textContent=data.user.email; renderDomaines(); renderEquipe(); renderReal(); loadFromStorage(); }
+async function logout(){ await sb.auth.signOut(); location.reload(); }
+function saveSite(){ const data={nom:document.getElementById('f-nom').value, slogan:document.getElementById('f-slogan').value, pres:document.getElementById('f-pres').value, why:document.getElementById('f-why').value, mission:document.getElementById('f-mission').value, vision:document.getElementById('f-vision').value, site1:document.getElementById('f-site1').value, site2:document.getElementById('f-site2').value}; localStorage.setItem('enec_site', JSON.stringify(data)); document.getElementById('siteMsg').innerHTML='<div class="ok">✅ Site & Textes enregistrés. Ils seront appliqués au site lors de la prochaine publication.</div>'; saveToSupabase('site', data); }
+function saveDomaines(){ collect(); localStorage.setItem('enec_domaines', JSON.stringify(domaines)); document.getElementById('domMsg').innerHTML='<div class="ok">✅ '+domaines.length+' domaines enregistrés.</div>'; saveToSupabase('domaines', domaines); }
+function saveEquipe(){ collect(); localStorage.setItem('enec_equipe', JSON.stringify(equipe)); document.getElementById('eqMsg').innerHTML='<div class="ok">✅ Équipe enregistrée : '+equipe.length+' membres.</div>'; saveToSupabase('equipe', equipe); }
+function saveReal(){ collect(); localStorage.setItem('enec_real', JSON.stringify(reals)); document.getElementById('realMsg').innerHTML='<div class="ok">✅ Réalisations enregistrées.</div>'; saveToSupabase('realisations', reals); }
+function saveContact(){ const data={adresse:document.getElementById('c-adresse').value, tel:document.getElementById('c-tel').value, email:document.getElementById('c-email').value, footer:document.getElementById('c-footer').value, legal:document.getElementById('c-legal').value}; localStorage.setItem('enec_contact', JSON.stringify(data)); document.getElementById('contactMsg').innerHTML='<div class="ok">✅ Contact & Pied de page enregistrés.</div>'; saveToSupabase('contact', data); }
+async function saveToSupabase(key, value){ try{ const {error} = await sb.from('site_content').upsert({key:key, value:JSON.stringify(value), updated_at:new Date().toISOString()}, {onConflict:'key'}); if(error) console.log('Supabase:', error.message); }catch(e){ console.log(e); } }
+function loadFromStorage(){ try{ const s=JSON.parse(localStorage.getItem('enec_site')||'null'); if(s){ document.getElementById('f-nom').value=s.nom; document.getElementById('f-slogan').value=s.slogan; document.getElementById('f-pres').value=s.pres; document.getElementById('f-why').value=s.why; document.getElementById('f-mission').value=s.mission; document.getElementById('f-vision').value=s.vision; } const d=JSON.parse(localStorage.getItem('enec_domaines')||'null'); if(d){ domaines=d; renderDomaines(); } const e=JSON.parse(localStorage.getItem('enec_equipe')||'null'); if(e){ equipe=e; renderEquipe(); } const r=JSON.parse(localStorage.getItem('enec_real')||'null'); if(r){ reals=r; renderReal(); } }catch(e){} }
+async function loadMessages(){ const {data,error} = await sb.from('messages').select('*').order('created_at',{ascending:false}).limit(50); if(error){ document.getElementById('msgList').innerHTML='<div class="err">'+error.message+'</div>'; return; } if(!data || !data.length){ document.getElementById('msgList').innerHTML='Aucun message pour le moment.'; return; } document.getElementById('msgList').innerHTML = data.map(m=>`<div class="item"><b>${m.name||''}</b> — ${m.email||''} — ${m.phone||''}<br><small>${m.created_at||''} • Service : ${m.service||''}</small><p>${m.message||''}</p></div>`).join(''); }
+renderDomaines(); renderEquipe(); renderReal();
 </script></body></html>
