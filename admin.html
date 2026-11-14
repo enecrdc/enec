@@ -1,51 +1,122 @@
 <!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ENEC - Admin Total</title>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ENEC — Admin complet | Tout modifier</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
-<style>body{font-family:system-ui;padding:16px;max-width:800px;margin:auto}input,textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px}button{background:#0a7a42;color:#fff;border:0;padding:10px 16px;border-radius:20px;font-weight:700;cursor:pointer;margin:4px 0}.card{border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}.tab{display:inline-block;padding:8px 12px;border:1px solid #ddd;border-radius:20px;margin:2px;cursor:pointer}.tab.on{background:#0a2a5e;color:#fff}h2{color:#0a2a5e}</style>
-</head><body>
-<h1>ENEC - Admin Total</h1>
-<p id="status">Connexion...</p>
-<div id="login"><input id="email" placeholder="admin@enec.cd"><input id="pass" type="password" placeholder="Mot de passe"><button onclick="login()">Se connecter</button></div>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:#F3F5F7;color:#111}
+.top{background:#0A2A5E;color:#fff;padding:14px 16px;position:sticky;top:0;z-index:10}
+.top b{font-size:20px}.top span{display:block;font-size:11px;letter-spacing:.12em;color:#FFD84D;font-weight:800}
+.wrap{max-width:1080px;margin:auto;padding:16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.tabs button{border:1px solid #ddd;background:#fff;padding:10px 14px;border-radius:999px;font-weight:700;cursor:pointer}
+.tabs button.on{background:#0A2A5E;color:#fff}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;border:1px solid #eee}
+.card h3{margin:0 0 10px;color:#0A2A5E}
+label{font-size:13px;font-weight:700;display:block;margin:12px 0 5px}
+input,textarea,select{width:100%;padding:11px;border:1.5px solid #ddd;border-radius:10px;font-family:inherit;font-size:14px}
+textarea{min-height:90px} .row{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media(max-width:700px){.row{grid-template-columns:1fr}}
+.btn{background:#0E7A4A;color:#fff;border:0;padding:12px 18px;border-radius:999px;font-weight:800;cursor:pointer}
+.btn.blue{background:#0A2A5E}.btn.red{background:#C0392B}.btn.ghost{background:#eee;color:#111}
+.item{border:1px solid #eee;border-radius:12px;padding:12px;margin:10px 0}
+.small{font-size:13px;color:#555}.ok{background:#D4EDDA;padding:10px;border-radius:10px;margin:10px 0}.err{background:#F8D7DA;padding:10px;border-radius:10px;margin:10px 0}
+</style></head>
+<body>
+<div class="top"><b>ENEC — Admin complet</b><span>ENTREPRISE NOUVEL ESPOIR DU CONGO • TOUT MODIFIER</span></div>
+<div class="wrap">
+<div id="login" class="card"><h3>Connexion Admin</h3><label>Email</label><input id="email" value="furahahabamungu2005@gmail.com"><label>Mot de passe</label><input id="pwd" type="password" placeholder="Ton mot de passe Supabase"><br><br><button class="btn blue" onclick="login()">Se connecter</button><div id="loginMsg"></div><p class="small">Compte admin : furahahabamungu2005@gmail.com — Si tu as oublié le mot de passe, va dans Supabase → Authentication → Users → Reset.</p></div>
 <div id="app" style="display:none">
-<button onclick="logout()">Deconnexion</button>
-<div><span class="tab on" onclick="show('contenu',this)">Contenu du site</span><span class="tab" onclick="show('services',this)">Services</span><span class="tab" onclick="show('equipe',this)">Equipe</span><span class="tab" onclick="show('laureats',this)">Laureats</span><span class="tab" onclick="show('messages',this)">Messages</span></div>
-
-<div id="contenu" class="sec"><h2>Contenu du site - tout est modifiable ici</h2>
-<label>Slogan</label><textarea id="c-slogan" rows="2"></textarea>
-<label>Titre Hero</label><input id="c-hero_titre">
-<label>Texte Hero</label><textarea id="c-hero_texte" rows="3"></textarea>
-<label>A propos</label><textarea id="c-a_propos" rows="4"></textarea>
-<label>Telephone</label><input id="c-telephone"><label>Email</label><input id="c-email"><label>Adresse</label><textarea id="c-adresse" rows="2"></textarea>
-<button onclick="saveContenu()">Enregistrer le contenu dans Supabase</button><p id="msg-contenu"></p></div>
-
-<div id="services" class="sec" style="display:none"><h2>Services</h2><input id="s-titre" placeholder="Titre"><textarea id="s-desc" placeholder="Description"></textarea><input id="s-icone" placeholder="Icone emoji ex: 🌾"><button onclick="addService()">Enregistrer le service</button><div id="list-services"></div></div>
-
-<div id="equipe" class="sec" style="display:none"><h2>Equipe</h2><input id="e-nom" placeholder="Nom complet"><input id="e-poste" placeholder="Poste ex: Directeur"><input id="e-photo" placeholder="Lien photo (ou laisse vide)"><textarea id="e-bio" placeholder="Petite presentation"></textarea><button onclick="addEquipe()">Enregistrer le membre</button><div id="list-equipe"></div></div>
-
-<div id="laureats" class="sec" style="display:none"><h2>Laureats</h2><input id="l-nom" placeholder="Nom du laureat"><input id="l-photo" placeholder="Lien photo"><button onclick="addLaureat()">Enregistrer le laureat</button><div id="list-laureats"></div></div>
-
-<div id="messages" class="sec" style="display:none"><h2>Messages recus</h2><div id="list-messages"></div></div>
+<p><b>Connecté :</b> <span id="who"></span> <button class="btn ghost" onclick="logout()">Déconnexion</button> <a href="https://enecrdc.github.io/enec/" target="_blank" style="color:#0A2A5E;font-weight:800">Voir le site →</a></p>
+<div class="tabs">
+<button class="on" onclick="show('site',this)">🏠 Site & Textes</button><button onclick="show('domaines',this)">📚 Domaines d'intervention</button><button onclick="show('equipe',this)">👥 Équipe</button><button onclick="show('real',this)">🏆 Réalisations</button><button onclick="show('contact',this)">📞 Contact & Pied de page</button><button onclick="show('messages',this)">💬 Messages reçus</button>
 </div>
+<!-- SITE -->
+<div id="tab-site">
+<div class="card"><h3>🏠 Accueil & Présentation</h3>
+<label>Nom complet (en-tête)</label><input id="f-nom" value="ENTREPRISE NOUVEL ESPOIR DU CONGO (ENEC)">
+<label>Slogan</label><input id="f-slogan" value="Un nouvel espoir, de multiples opportunités !">
+<label>Texte de présentation (Accueil)</label><textarea id="f-pres">L’ENTREPRISE NOUVEL ESPOIR DU CONGO (ENEC) est une entreprise multisectorielle congolaise basée à Bukavu. Nous formons, nous accompagnons et nous fournissons des services professionnels de qualité — pour les particuliers, les entreprises, les organisations et les communautés.</textarea>
+<label>Pourquoi choisir ENEC ?</label><textarea id="f-why">Un partenaire fiable, de l’idée au résultat. Votre réussite est notre priorité. Avec ENEC, transformez vos idées en opportunités et vos ambitions en réalisations.</textarea></div>
+<div class="card"><h3>🎯 Mission & Vision — nouvelles formulations officielles</h3>
+<label>NOTRE MISSION</label><textarea id="f-mission">Offrir des formations de qualité, des services professionnels et des solutions innovantes dans divers secteurs d'activité, afin de développer les compétences, de soutenir l'entrepreneuriat, de répondre aux besoins des particuliers et des organisations et de contribuer durablement au développement socioéconomique des communautés.</textarea>
+<label>NOTRE VISION</label><textarea id="f-vision">Devenir une entreprise multisectorielle de référence en République démocratique du Congo et dans la région des Grands Lacs, reconnue pour son excellence, son innovation, la diversité de ses domaines d’intervention et sa contribution à la création d’opportunités économiques et professionnelles.</textarea></div>
+<div class="card"><h3>🌐 Nos 2 sites web</h3><label>Site 1</label><input id="f-site1" value="https://enec-cd.netlify.app"><label>Site 2</label><input id="f-site2" value="https://enecrdc.github.io/enec/"></div>
+<button class="btn" onclick="saveSite()">💾 Enregistrer Site & Textes</button><div id="siteMsg"></div>
+</div>
+<!-- DOMAINES -->
+<div id="tab-domaines" style="display:none">
+<div class="card"><h3>📚 Domaines d'intervention — 10 domaines</h3><p class="small">Modifie le titre, la description détaillée, les prestations, les bénéficiaires et la valeur ajoutée. Les photos d'origine ne sont pas supprimées — tu peux changer l'image seulement si tu veux, en collant une nouvelle URL.</p><div id="domainesList"></div><button class="btn" onclick="addDomaine()">+ Ajouter un domaine</button> <button class="btn blue" onclick="saveDomaines()">💾 Enregistrer tous les domaines</button><div id="domMsg"></div></div>
+</div>
+<!-- EQUIPE -->
+<div id="tab-equipe" style="display:none">
+<div class="card"><h3>👥 Équipe — tous les membres</h3><p class="small">Nom, rôle, département, biographie, photo (URL ou laisse vide pour garder la photo d'origine).</p><div id="equipeList"></div><button class="btn" onclick="addMembre()">+ Ajouter un membre</button> <button class="btn blue" onclick="saveEquipe()">💾 Enregistrer l'équipe</button><div id="eqMsg"></div></div>
+</div>
+<!-- REALISATIONS -->
+<div id="tab-real" style="display:none">
+<div class="card"><h3>🏆 Réalisations & Expériences</h3><div id="realList"></div><button class="btn" onclick="addReal()">+ Ajouter une réalisation</button> <button class="btn blue" onclick="saveReal()">💾 Enregistrer les réalisations</button><div id="realMsg"></div></div>
+</div>
+<!-- CONTACT -->
+<div id="tab-contact" style="display:none">
+<div class="card"><h3>📞 Contact & Pied de page</h3>
+<label>Adresse</label><input id="c-adresse" value="Avenue de la Bière, commune d’Ibanda, Bukavu, Sud-Kivu, RDC">
+<div class="row"><div><label>Téléphone / WhatsApp</label><input id="c-tel" value="+243 970 204 871"></div><div><label>Email</label><input id="c-email" value="furahahabamungu2005@gmail.com"></div></div>
+<label>Texte pied de page</label><textarea id="c-footer">Formations, services professionnels et solutions commerciales — pour transformer les compétences en opportunités.</textarea>
+<label>Mentions légales</label><input id="c-legal" value="© 2026 ENEC — Tous droits réservés.">
+</div><button class="btn" onclick="saveContact()">💾 Enregistrer Contact</button><div id="contactMsg"></div>
+</div>
+<!-- MESSAGES -->
+<div id="tab-messages" style="display:none"><div class="card"><h3>💬 Messages reçus (formulaire du site)</h3><div id="msgList">Chargement...</div></div></div>
+</div></div>
 <script>
-let sb=null;
-async function init(){ if(window.ENEC_SUPABASE_URL && window.ENEC_SUPABASE_URL.indexOf('supabase.co')>-1 && window.ENEC_SUPABASE_ANON_KEY && window.ENEC_SUPABASE_ANON_KEY.indexOf('eyJ')===0){ sb=window.supabase.createClient(window.ENEC_SUPABASE_URL, window.ENEC_SUPABASE_ANON_KEY); document.getElementById('status').textContent='Supabase connecte. Connecte-toi.'; const {data}=await sb.auth.getSession(); if(data.session){ showApp(); } } else { document.getElementById('status').textContent='ERREUR: supabase-config.js pas correct. Verifie URL + cle anon.'; } }
-async function login(){ const {error}=await sb.auth.signInWithPassword({email:document.getElementById('email').value, password:document.getElementById('pass').value}); if(error) alert(error.message); else showApp(); }
+// ===== CONFIG SUPABASE - MEME PROJET QUE LE SITE =====
+const SUPABASE_URL = "https://mlzacyrgnmentvilwvkm.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M3R1U_9i3qYdB2s5iJ2s2LQ_eVw7V9Jg";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let domaines = [
+{n:"Éducation et formation linguistique",d:"Formations en langues pour tous niveaux : anglais, français, chinois, espagnol, lingala, kiswahili.",p:"Cours en groupe, particuliers, préparation examens, formations entreprises",b:"Élèves, étudiants, professionnels, entreprises, ONG",v:"Méthodes pratiques, suivi personnalisé, attestations"},
+{n:"Informatique et numérique",d:"Bureautique, web et accompagnement numérique.",p:"Word, Excel, PowerPoint, sites web, programmation, design, montage vidéo",b:"Jeunes, entrepreneurs, entreprises, écoles",v:"Formations sur projets réels, accompagnement jusqu’à la mise en ligne"},
+{n:"Formations professionnelles et techniques",d:"Formations pratiques pour l’emploi.",p:"Coupe et couture, conduite, filmage et photographie",b:"Jeunes, femmes entrepreneures, artisans",v:"80% de pratique, stages, accompagnement à l’insertion"},
+{n:"Traduction et interprétation",d:"Traduction et interprétation professionnelle.",p:"Documents officiels, rapports, contrats ; interprétation réunions, conférences",b:"ONG, entreprises, institutions, particuliers",v:"Rapidité, confidentialité, relecture"},
+{n:"Communication, audiovisuel et événementiel",d:"Photographie, vidéo et événements.",p:"Photographie, filmage, montage, design, animation, couverture médiatique",b:"Entreprises, mariages, conférences, ONG",v:"Équipe complète, matériel professionnel, livraison rapide"},
+{n:"Nettoyage, entretien et services généraux",d:"Nettoyage et services généraux.",p:"Nettoyage bureaux et maisons, personnel domestique, chauffeurs, gardiennage",b:"Particuliers, entreprises, écoles, hôpitaux, ONG",v:"Personnel sélectionné, vérifié et supervisé"},
+{n:"Peinture et décoration",d:"Peinture et décoration soignée.",p:"Peinture intérieure et extérieure, décoration, rénovation, conseils couleurs",b:"Particuliers, bureaux, hôtels, écoles, boutiques",v:"Devis gratuit, matériaux de qualité, finition soignée"},
+{n:"Conception et accompagnement de projets",d:"De l’idée au projet financé.",p:"Notes conceptuelles, propositions, business plans, suivi-évaluation",b:"Entrepreneurs, associations, coopératives, ONG",v:"Méthodologie professionnelle, accompagnement pas à pas"},
+{n:"Intermédiation immobilière et location",d:"Trouver maison, bureau ou parcelle en toute confiance.",p:"Recherche maisons, bureaux, parcelles ; visite et négociation",b:"Familles, nouveaux arrivants, entreprises, propriétaires",v:"Offres vérifiées, transparence, accompagnement jusqu’à la signature"},
+{n:"Agriculture et Élevage — Dirigé par M. Justin Ahadi Byamungu",d:"Production agricole et élevage pour la sécurité alimentaire.",p:"Production légumes et fruits, pratiques durables, accompagnement producteurs, élevage, compétences agricoles",b:"Producteurs, coopératives, jeunes entrepreneurs agricoles, organisations",v:"Techniques modernes, accompagnement de terrain, lien avec le marché"},
+];
+let equipe = [
+{n:"Madame Élodie Koko",r:"Responsable — Formations professionnelles et techniques",d:"Formations professionnelles et techniques",bio:""},
+{n:"Iragi Mugosa Boss",r:"Responsable — Informatique et numérique",d:"Informatique et numérique",bio:"Professionnel du numérique, diplômé en Informatique de Gestion (ISP/Bukavu)."},
+{n:"Monsieur Samy Bayongwa",r:"Responsable — Communication, Audiovisuel et Événementiel",d:"Communication",bio:""},
+{n:"Monsieur Bienfait Reagan",r:"Responsable — Intermédiation immobilière et location",d:"Immobilier",bio:""},
+{n:"Monsieur Jean de Dieu Mwene Bahaya",r:"Responsable — Conception et Gestion des Projets",d:"Projets",bio:""},
+{n:"Monsieur Daniel Basima",r:"Responsable — Nettoyage, Peinture, Décoration et Services Généraux",d:"Services généraux",bio:""},
+{n:"Monsieur Imani Citunga Darius",r:"Responsable — Éducation, Formation Linguistique, Traduction et Interprétation",d:"Éducation",bio:""},
+{n:"Monsieur Justin Ahadi Byamungu",r:"Responsable — Agriculture et Élevage",d:"Agriculture et Élevage",bio:"Dirige le département Agriculture et Élevage. Production à Kabare et Walungu, Sud-Kivu."},
+];
+let reals = [
+{t:"Formation — Afriland First Bank, Bukavu (2023-2024)",d:"Formation en anglais au profit des agents d’Afriland First Bank, agence de Bukavu. Renforcement des compétences linguistiques du personnel."},
+{t:"Agriculture — Kabare et Walungu, Sud-Kivu",d:"Production de différentes variétés de légumes et de fruits. Sécurité alimentaire et développement des initiatives locales."},
+{t:"Traduction et interprétation",d:"Traduction de plusieurs documents pour différentes organisations : administratifs, institutionnels et professionnels."},
+{t:"Formations dans plusieurs domaines",d:"Formations dispensées dans plusieurs domaines : langues, informatique, formations professionnelles et techniques."},
+];
+function show(id,btn){ document.querySelectorAll('[id^="tab-"]').forEach(e=>e.style.display='none'); document.getElementById('tab-'+id).style.display='block'; document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); if(id=='messages') loadMessages(); }
+function renderDomaines(){ document.getElementById('domainesList').innerHTML = domaines.map((d,i)=>`<div class="item"><b>Domaine ${i+1}</b> <button class="btn red" style="float:right" onclick="domaines.splice(${i},1);renderDomaines()">Supprimer</button><label>Titre</label><input data-dom="${i}" data-k="n" value="${d.n}"><label>Description détaillée</label><textarea data-dom="${i}" data-k="d">${d.d}</textarea><label>Prestations concrètes</label><textarea data-dom="${i}" data-k="p">${d.p}</textarea><div class="row"><div><label>Bénéficiaires</label><input data-dom="${i}" data-k="b" value="${d.b}"></div><div><label>Valeur ajoutée</label><input data-dom="${i}" data-k="v" value="${d.v}"></div></div></div>`).join(''); }
+function renderEquipe(){ document.getElementById('equipeList').innerHTML = equipe.map((m,i)=>`<div class="item"><b>Membre ${i+1}</b> <button class="btn red" style="float:right" onclick="equipe.splice(${i},1);renderEquipe()">Supprimer</button><label>Nom complet</label><input data-eq="${i}" data-k="n" value="${m.n}"><label>Rôle / Titre</label><input data-eq="${i}" data-k="r" value="${m.r}"><label>Département</label><input data-eq="${i}" data-k="d" value="${m.d}"><label>Biographie</label><textarea data-eq="${i}" data-k="bio">${m.bio}</textarea></div>`).join(''); }
+function renderReal(){ document.getElementById('realList').innerHTML = reals.map((r,i)=>`<div class="item"><b>Réalisation ${i+1}</b> <button class="btn red" style="float:right" onclick="reals.splice(${i},1);renderReal()">Supprimer</button><label>Titre</label><input data-real="${i}" data-k="t" value="${r.t}"><label>Description</label><textarea data-real="${i}" data-k="d">${r.d}</textarea></div>`).join(''); }
+function collect(){ document.querySelectorAll('[data-dom]').forEach(el=>{ domaines[el.dataset.dom][el.dataset.k]=el.value; }); document.querySelectorAll('[data-eq]').forEach(el=>{ equipe[el.dataset.eq][el.dataset.k]=el.value; }); document.querySelectorAll('[data-real]').forEach(el=>{ reals[el.dataset.real][el.dataset.k]=el.value; }); }
+function addDomaine(){ domaines.push({n:"Nouveau domaine",d:"",p:"",b:"",v:""}); renderDomaines(); }
+function addMembre(){ equipe.push({n:"Nouveau membre",r:"Responsable — ",d:"",bio:""}); renderEquipe(); }
+function addReal(){ reals.push({t:"Nouvelle réalisation",d:""}); renderReal(); }
+async function login(){ const {data,error} = await sb.auth.signInWithPassword({email:document.getElementById('email').value, password:document.getElementById('pwd').value}); if(error){ document.getElementById('loginMsg').innerHTML='<div class="err">'+error.message+'</div>'; return; } document.getElementById('login').style.display='none'; document.getElementById('app').style.display='block'; document.getElementById('who').textContent=data.user.email; renderDomaines(); renderEquipe(); renderReal(); loadFromStorage(); }
 async function logout(){ await sb.auth.signOut(); location.reload(); }
-async function showApp(){ document.getElementById('login').style.display='none'; document.getElementById('app').style.display='block'; document.getElementById('status').textContent='Connecte'; loadContenu(); loadServices(); loadEquipe(); loadLaureats(); loadMessages(); }
-function show(id,el){ document.querySelectorAll('.sec').forEach(s=>s.style.display='none'); document.getElementById(id).style.display='block'; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); }
-async function loadContenu(){ const {data}=await sb.from('site_content').select('*'); if(!data) return; data.forEach(r=>{ const el=document.getElementById('c-'+r.cle); if(el) el.value=r.valeur; }); }
-async function saveContenu(){ const keys=['slogan','hero_titre','hero_texte','a_propos','telephone','email','adresse']; for(const k of keys){ const v=document.getElementById('c-'+k).value; await sb.from('site_content').upsert({cle:k, valeur:v}, {onConflict:'cle'}); } document.getElementById('msg-contenu').textContent='Enregistre ! Rafraichis ton site, tu verras le changement.'; }
-async function loadServices(){ const {data}=await sb.from('services').select('*').order('id'); document.getElementById('list-services').innerHTML=(data||[]).map(s=>`<div class="card"><b>${s.titre}</b><br>${s.description||''}<br><button onclick="delService(${s.id})">Supprimer</button></div>`).join('')||'Aucun'; }
-async function addService(){ const t=document.getElementById('s-titre').value, d=document.getElementById('s-desc').value; if(!t||!d) return alert('Titre + description requis'); await sb.from('services').insert({titre:t, description:d, icone:document.getElementById('s-icone').value||'✦'}); loadServices(); }
-async function delService(id){ if(confirm('Supprimer ?')){ await sb.from('services').delete().eq('id',id); loadServices(); } }
-async function loadEquipe(){ const {data}=await sb.from('equipe').select('*').order('id'); document.getElementById('list-equipe').innerHTML=(data||[]).map(e=>`<div class="card"><b>${e.nom}</b> - ${e.poste||''}<br>${e.bio||''}<br><button onclick="delEquipe(${e.id})">Supprimer</button></div>`).join('')||'Aucun membre. Ajoute ton equipe ici.'; }
-async function addEquipe(){ const n=document.getElementById('e-nom').value; if(!n) return alert('Nom requis'); await sb.from('equipe').insert({nom:n, poste:document.getElementById('e-poste').value, photo_url:document.getElementById('e-photo').value, bio:document.getElementById('e-bio').value}); loadEquipe(); }
-async function delEquipe(id){ if(confirm('Supprimer ?')){ await sb.from('equipe').delete().eq('id',id); loadEquipe(); } }
-async function loadLaureats(){ const {data}=await sb.from('laureats').select('*').order('id'); document.getElementById('list-laureats').innerHTML=(data||[]).map(l=>`<div class="card"><b>${l.nom}</b><br><button onclick="delLaureat(${l.id})">Supprimer</button></div>`).join('')||'Aucun'; }
-async function addLaureat(){ const n=document.getElementById('l-nom').value; if(!n) return alert('Nom requis'); await sb.from('laureats').insert({nom:n, photo_url:document.getElementById('l-photo').value}); loadLaureats(); }
-async function delLaureat(id){ if(confirm('Supprimer ?')){ await sb.from('laureats').delete().eq('id',id); loadLaureats(); } }
-async function loadMessages(){ const {data}=await sb.from('messages').select('*').order('id',{ascending:false}); document.getElementById('list-messages').innerHTML=(data||[]).map(m=>`<div class="card"><b>${m.nom}</b> - ${m.email||''}<br>${m.message||''}</div>`).join('')||'Aucun message'; }
-init();
+function saveSite(){ const data={nom:document.getElementById('f-nom').value, slogan:document.getElementById('f-slogan').value, pres:document.getElementById('f-pres').value, why:document.getElementById('f-why').value, mission:document.getElementById('f-mission').value, vision:document.getElementById('f-vision').value, site1:document.getElementById('f-site1').value, site2:document.getElementById('f-site2').value}; localStorage.setItem('enec_site', JSON.stringify(data)); document.getElementById('siteMsg').innerHTML='<div class="ok">✅ Site & Textes enregistrés. Ils seront appliqués au site lors de la prochaine publication.</div>'; saveToSupabase('site', data); }
+function saveDomaines(){ collect(); localStorage.setItem('enec_domaines', JSON.stringify(domaines)); document.getElementById('domMsg').innerHTML='<div class="ok">✅ '+domaines.length+' domaines enregistrés.</div>'; saveToSupabase('domaines', domaines); }
+function saveEquipe(){ collect(); localStorage.setItem('enec_equipe', JSON.stringify(equipe)); document.getElementById('eqMsg').innerHTML='<div class="ok">✅ Équipe enregistrée : '+equipe.length+' membres.</div>'; saveToSupabase('equipe', equipe); }
+function saveReal(){ collect(); localStorage.setItem('enec_real', JSON.stringify(reals)); document.getElementById('realMsg').innerHTML='<div class="ok">✅ Réalisations enregistrées.</div>'; saveToSupabase('realisations', reals); }
+function saveContact(){ const data={adresse:document.getElementById('c-adresse').value, tel:document.getElementById('c-tel').value, email:document.getElementById('c-email').value, footer:document.getElementById('c-footer').value, legal:document.getElementById('c-legal').value}; localStorage.setItem('enec_contact', JSON.stringify(data)); document.getElementById('contactMsg').innerHTML='<div class="ok">✅ Contact & Pied de page enregistrés.</div>'; saveToSupabase('contact', data); }
+async function saveToSupabase(key, value){ try{ const {error} = await sb.from('site_content').upsert({key:key, value:JSON.stringify(value), updated_at:new Date().toISOString()}, {onConflict:'key'}); if(error) console.log('Supabase:', error.message); }catch(e){ console.log(e); } }
+function loadFromStorage(){ try{ const s=JSON.parse(localStorage.getItem('enec_site')||'null'); if(s){ document.getElementById('f-nom').value=s.nom; document.getElementById('f-slogan').value=s.slogan; document.getElementById('f-pres').value=s.pres; document.getElementById('f-why').value=s.why; document.getElementById('f-mission').value=s.mission; document.getElementById('f-vision').value=s.vision; } const d=JSON.parse(localStorage.getItem('enec_domaines')||'null'); if(d){ domaines=d; renderDomaines(); } const e=JSON.parse(localStorage.getItem('enec_equipe')||'null'); if(e){ equipe=e; renderEquipe(); } const r=JSON.parse(localStorage.getItem('enec_real')||'null'); if(r){ reals=r; renderReal(); } }catch(e){} }
+async function loadMessages(){ const {data,error} = await sb.from('messages').select('*').order('created_at',{ascending:false}).limit(50); if(error){ document.getElementById('msgList').innerHTML='<div class="err">'+error.message+'</div>'; return; } if(!data || !data.length){ document.getElementById('msgList').innerHTML='Aucun message pour le moment.'; return; } document.getElementById('msgList').innerHTML = data.map(m=>`<div class="item"><b>${m.name||''}</b> — ${m.email||''} — ${m.phone||''}<br><small>${m.created_at||''} • Service : ${m.service||''}</small><p>${m.message||''}</p></div>`).join(''); }
+renderDomaines(); renderEquipe(); renderReal();
 </script></body></html>
