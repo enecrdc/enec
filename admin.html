@@ -1,52 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ENEC — Admin qui modifie le vrai ancien site</title>
+<title>ENEC — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
 <script src="supabase-config.js"></script>
-<!-- Pas de CDN : on utilise fetch direct vers Supabase, ça ne bloque plus -->
 <style>
-*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:#EFF3F8}
-.top{background:#fff;border-bottom:1px solid #E6EAF0;padding:14px 16px}.top b{font-size:22px;color:#0A2540}
-.wrap{max-width:780px;margin:auto;padding:14px}
-.counters{background:#fff;border:1px solid #E6EAF0;border-radius:22px;padding:12px;display:flex;gap:8px;flex-wrap:wrap}
-.counters span{background:#FFF6C9;padding:8px 14px;border-radius:999px;font-weight:800}
-.tabs{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
-.tabs button{background:#fff;border:1px solid #E2E6EC;padding:12px 18px;border-radius:999px;font-weight:800;cursor:pointer}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:#F2F4F7;padding:16px}
+.card{max-width:520px;margin:20px auto;background:#fff;border-radius:24px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+h1{font-size:28px;margin:0 0 6px} .sub{color:#6B7A8F;font-size:15px}
+label{font-weight:800;display:block;margin:18px 0 8px}
+input{width:100%;padding:15px 16px;border:0;border-radius:14px;background:#E8EEF7;font-size:16px;font-family:inherit}
+input:focus{outline:2px solid #0A2540}
+.btn-gold{width:100%;background:#D4AF37;color:#0A2540;border:0;padding:16px;border-radius:999px;font-weight:900;font-size:18px;cursor:pointer;margin-top:18px}
+.yellow{background:#FFF6C9;border-radius:22px;padding:20px;margin-top:18px}
+.yellow b{font-size:21px}.yellow ol{color:#5A6B7E;font-size:15px;line-height:1.7;padding-left:18px}
+.ok{background:#D4EDDA;padding:12px;border-radius:12px;margin-top:12px}.err{background:#F8D7DA;padding:12px;border-radius:12px;margin-top:12px}
+.topbar{display:flex;justify-content:space-between;align-items:center;max-width:780px;margin:auto;flex-wrap:wrap;gap:8px}
+.tabs{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.tabs button{background:#fff;border:1px solid #E2E6EC;padding:11px 16px;border-radius:999px;font-weight:800;cursor:pointer}
 .tabs button.on{background:#0A2540;color:#fff}
-.card{background:#fff;border:1px solid #E6EAF0;border-radius:22px;padding:20px;margin-bottom:14px}
-.card h2{font-size:26px;margin:0}.card p{color:#6B7A8F}
-.btn-gold{background:#D4AF37;color:#0A2540;border:0;padding:13px 20px;border-radius:999px;font-weight:900;cursor:pointer}
+.wrap{max-width:780px;margin:auto}.sec{background:#fff;border-radius:22px;padding:20px;margin-bottom:12px}.sec h2{margin:0;font-size:24px}.sec p{color:#6B7A8F}
+textarea{width:100%;padding:12px;border:1.5px solid #E2E6EC;border-radius:12px;font-family:inherit;min-height:88px}
 .btn{background:#0A2540;color:#fff;border:0;padding:11px 18px;border-radius:999px;font-weight:800;cursor:pointer}
 .btn.green{background:#0E7A4A}.btn.red{background:#C0392B}
-label{font-size:13px;font-weight:800;display:block;margin:13px 0 5px}
-input,textarea,select{width:100%;padding:12px;border:1.5px solid #E2E6EC;border-radius:12px;font-family:inherit;font-size:14px}
-textarea{min-height:88px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.row{grid-template-columns:1fr}}
 .item{border:1px solid #EEE;border-radius:16px;padding:14px;margin:12px 0}
-.small{font-size:13px;color:#666}.ok{background:#D4EDDA;padding:10px;border-radius:10px;margin:10px 0}.err{background:#F8D7DA;padding:10px;border-radius:10px;margin:10px 0}
-img.prev{max-width:100%;border-radius:12px;margin-top:8px}
+.counters{display:flex;gap:8px;flex-wrap:wrap}.counters span{background:#FFF6C9;padding:8px 14px;border-radius:999px;font-weight:800}
 </style></head>
 <body>
-<div class="top"><b>ENEC — Admin du vrai ancien site</b><br><span>Modifie accueil, domaines, mission, vision, équipe, images — puis télécharge le site mis à jour.</span></div>
-<div class="wrap">
 
-<div id="loginScreen" class="card" style="text-align:left">
-<h2>🔐 Connexion Admin — ENEC</h2>
-<p>Seul l'admin peut modifier le site. Entre ton email et ton mot de passe Supabase.</p>
-<div id="loginDiag" style="background:#FFF6C9;padding:12px;border-radius:12px;font-size:13px">Vérification Supabase...</div>
-<label>Email admin — ton vrai email Supabase</label><input id="loginEmail" value="furahahabamungu2005@gmail.com" autocomplete="off" autocapitalize="none" spellcheck="false"><br><button class="btn" style="margin-top:6px" onclick="document.getElementById('loginEmail').value='furahahabamungu2005@gmail.com';alert('Email corrigé : furahahabamungu2005@gmail.com')">↩️ Remettre furahahabamungu2005@gmail.com</button>
-<label>Mot de passe</label><input id="loginPwd" type="password" placeholder="Mot de passe Supabase" autocomplete="new-password">
-<br><br>
-<button class="btn-gold" onclick="doLogin()">🔐 Se connecter</button>
-<button class="btn green" onclick="doSignup()">✨ Créer mon compte furahahabamungu2005@gmail.com</button>
-<p class="small">Si tu n'as jamais créé le compte admin@enec.cd dans Supabase, clique sur <b>Créer mon compte</b> avec le même mot de passe, puis clique sur <b>Se connecter</b>.</p>
+<div id="loginScreen" class="card">
+<h1>🔐 Connexion Admin — ENEC</h1>
+<p class="sub">Seul l'admin peut modifier le site.</p>
+<label>Email admin</label>
+<input id="loginEmail" type="email" placeholder="" autocomplete="off" autocapitalize="none">
+<label>Mot de passe</label>
+<input id="loginPwd" type="password" placeholder="" autocomplete="new-password">
+<button class="btn-gold" onclick="doLogin()">Se connecter</button>
 <div id="loginMsg"></div>
-<p class="small">Si tu as oublié ton mot de passe : Supabase → Authentication → Users → furahahabamungu2005@gmail.com → Reset password.<br>
-⚠️ Sans connexion, on ne peut pas modifier le site. C'est pour protéger ENEC.</p>
+<div style="height:14px;background:#EEF1F5;border-radius:999px;margin-top:16px"></div>
+<div class="yellow"><b>Premiere utilisation :</b><ol>
+<li>Executer supabase.sql dans Supabase &gt; SQL Editor</li>
+<li>Authentication &gt; Add user</li>
+<li>SQL: insert into admin_profiles(id,email) values ('UUID', 'ton-email-admin');</li>
+<li>Remplir supabase-config.js (URL + cle anon publique uniquement).</li>
+</ol><p style="font-size:13px;color:#5A6B7E">Ton email et ton mot de passe ne sont écrits nulle part dans ce fichier. Tu les tapes ici, Supabase vérifie que c'est bien toi.</p></div>
 </div>
+
 <div id="adminContent" style="display:none">
-
-<div class="card"><h2>Comment ça marche ?</h2><p>1. Tu modifies ici.<br>2. Tu cliques sur <b>💾 Enregistrer dans Supabase</b> (sauvegarde).<br>3. Tu cliques sur <b>⬇️ Télécharger le site mis à jour (index.html)</b>.<br>4. Tu mets ce nouveau <b>index.html</b> sur GitHub → ton ancien site affiche les nouvelles infos.<br><br>Les images : tu choisis JPG/PNG → converties automatiquement en WebP → elles remplacent l'image dans le site.</p><p><b>Statut :</b> <span id="siteStatus">Chargement de ton ancien site...</span></p></div>
-
+<div class="topbar"><b style="font-size:20px">ENEC — Admin</b><span><span id="who"></span> • <a href="#" onclick="doLogout();return false">Déconnexion</a> • <a href="index.html">Voir le site →</a></span></div>
+<div class="wrap">
 <div class="counters"><span id="c-actu">0 actualites</span><span id="c-msg">0 messages</span><span id="c-cand">0 candidatures</span></div>
 <div class="tabs">
 <button class="on" onclick="showTab('accueil',this)">Accueil</button>
@@ -57,103 +58,38 @@ img.prev{max-width:100%;border-radius:12px;margin-top:8px}
 <button onclick="showTab('images',this)">Images</button>
 <button onclick="showTab('contact',this)">Contact</button>
 </div>
-
-<!-- ACCUEIL -->
-<div id="tab-accueil"><div class="card"><h2>Accueil</h2>
+<div id="tab-accueil"><div class="sec"><h2>Accueil</h2>
 <label>Titre bannière — ligne 1</label><input id="a-t1" value="Un nouvel espoir,">
 <label>Titre bannière — ligne 2</label><input id="a-t2" value="de multiples opportunités !">
 <label>Slogan</label><input id="a-slogan" value="Un nouvel espoir, de multiples opportunités !">
-<label>Texte d'accueil</label><textarea id="a-text">Bienvenue chez ENEC — Un nouvel espoir, de multiples opportunités ! L’Entreprise Nouvel Espoir du Congo (ENEC) est une entreprise multisectorielle basée à Bukavu. Nous proposons des formations, des services professionnels et des solutions commerciales pensées pour faire grandir les personnes, les projets et les organisations.</textarea>
-<label>Pourquoi choisir ENEC ?</label><textarea id="a-why">Votre réussite est notre priorité. Avec ENEC, transformez vos idées en opportunités et vos ambitions en réalisations.</textarea>
+<label>Texte d'accueil</label><textarea id="a-text">Bienvenue chez ENEC — Un nouvel espoir, de multiples opportunités ! L’Entreprise Nouvel Espoir du Congo (ENEC) est une entreprise multisectorielle basée à Bukavu.</textarea>
 </div></div>
-
-<!-- DOMAINES -->
-<div id="tab-domaines" style="display:none"><div class="card"><h2>Domaines d'intervention</h2><p><span id="n-dep">9</span> domaines — modifie le titre et la description de chaque domaine. Les images se changent dans l'onglet Images.</p><div id="list-dep"></div><button class="btn-gold" onclick="addDomaine()">+ Nouvel element</button></div></div>
-
-<!-- EQUIPE -->
-<div id="tab-equipe" style="display:none"><div class="card"><h2>Notre équipe</h2><p><span id="n-eq">8</span> membres — modifie nom, rôle, département, biographie.</p><div id="list-eq"></div><button class="btn-gold" onclick="addMembre()">+ Nouvel element</button></div></div>
-
-<!-- ACTUALITES -->
-<div id="tab-actualites" style="display:none"><div class="card"><h2>Actualites</h2><p><span id="n-actu">0</span> element(s)</p><div id="list-actu"></div><button class="btn-gold" onclick="addActu()">+ Nouvel element</button></div></div>
-
-<!-- MISSION VISION -->
-<div id="tab-textes" style="display:none"><div class="card"><h2>Mission & Vision</h2>
+<div id="tab-domaines" style="display:none"><div class="sec"><h2>Domaines d'intervention</h2><p><span id="n-dep">9</span> domaines</p><div id="list-dep"></div><button class="btn-gold" style="width:auto" onclick="addDomaine()">+ Nouvel element</button></div></div>
+<div id="tab-equipe" style="display:none"><div class="sec"><h2>Notre équipe</h2><p><span id="n-eq">8</span> membres</p><div id="list-eq"></div><button class="btn-gold" style="width:auto" onclick="addMembre()">+ Nouvel element</button></div></div>
+<div id="tab-actualites" style="display:none"><div class="sec"><h2>Actualites</h2><p><span id="n-actu">0</span> element(s)</p><div id="list-actu"></div><button class="btn-gold" style="width:auto" onclick="addActu()">+ Nouvel element</button></div></div>
+<div id="tab-textes" style="display:none"><div class="sec"><h2>Mission & Vision</h2>
 <label>NOTRE MISSION</label><textarea id="t-mission">Offrir des formations de qualité, des services professionnels et des solutions innovantes dans divers secteurs d'activité, afin de développer les compétences, de soutenir l'entrepreneuriat, de répondre aux besoins des particuliers et des organisations et de contribuer durablement au développement socioéconomique des communautés.</textarea>
 <label>NOTRE VISION</label><textarea id="t-vision">Devenir une entreprise multisectorielle de référence en République démocratique du Congo et dans la région des Grands Lacs, reconnue pour son excellence, son innovation, la diversité de ses domaines d’intervention et sa contribution à la création d’opportunités économiques et professionnelles.</textarea>
-<label>Ancienne mission du site (pour référence, sera remplacée)</label><input id="t-oldmission" value="Rendre les compétences accessibles, accompagner les talents et transformer les idées en opportunités durables.">
-<label>Ancienne vision du site (pour référence, sera remplacée)</label><input id="t-oldvision" value="Être à Bukavu et au-delà une référence de confiance pour la formation, les services professionnels et l’entrepreneuriat.">
+</div></div>
+<div id="tab-images" style="display:none"><div class="sec"><h2>Images — JPG / PNG → WebP automatique</h2><p>Choisis une image → convertie automatiquement en WebP. Supprimer = suppression automatique dans Supabase.</p><label>Choisir une image</label><input type="file" id="imgInput" accept=".jpg,.jpeg,.png,.webp" onchange="handleImage(this)"><label>Nom</label><input id="imgName" placeholder="Ex : equipe-justin"><br><br><button class="btn-gold" style="width:auto" onclick="saveImage()">📤 Convertir en WebP + Enregistrer</button><div id="imgMsg"></div><img id="imgPreview" style="max-width:100%;border-radius:12px;margin-top:10px;display:none"></div><div class="sec"><h2>Mes images WebP</h2><div id="imgList"></div></div></div>
+<div id="tab-contact" style="display:none"><div class="sec"><h2>Contact & Pied de page</h2><label>Adresse</label><input id="c-adr" value="Avenue de la Bière, commune d’Ibanda, Bukavu, Sud-Kivu, RDC"><label>Téléphone / WhatsApp</label><input id="c-tel" value="+243 970 204 871"><label>Email public du site</label><input id="c-email" value="enecbusiness20@gmail.com"><label>Site 1</label><input id="c-site1" value="https://enec-cd.netlify.app"><label>Site 2</label><input id="c-site2" value="https://enecrdc.github.io/enec/"></div></div>
+<div class="sec"><h2>✅ Publier les modifications</h2><button class="btn green" onclick="saveAll()">💾 Enregistrer dans Supabase</button> <button class="btn-gold" style="width:auto" onclick="downloadSite()">⬇️ Télécharger le site mis à jour (index.html)</button><div id="saveMsg"></div></div>
 </div></div>
 
-<!-- IMAGES -->
-<div id="tab-images" style="display:none"><div class="card"><h2>Images — JPG / PNG → WebP automatique</h2><p>Choisis une image JPG ou PNG → elle est convertie automatiquement en WebP (plus légère). Puis choisis où la mettre dans le site, ou copie son lien.</p>
-<label>1. Choisir une image (JPG / PNG)</label><input type="file" id="imgInput" accept=".jpg,.jpeg,.png,.webp" onchange="handleImage(this)">
-<label>2. Nom</label><input id="imgName" placeholder="Ex : equipe-justin">
-<label>3. Remplacer quelle image dans le site ?</label><select id="imgTarget"><option value="">-- Je veux juste le lien WebP --</option><option>Image 1 — Bannière / Accueil</option><option>Image 2 — Domaine Éducation</option><option>Image 3 — Domaine Informatique</option><option>Image 4 — Domaine Formations professionnelles</option><option>Image 5 — Domaine Agriculture</option><option>Image 6 — Équipe — Justin Ahadi Byamungu</option><option>Image 7 — Équipe — Autre membre</option></select>
-<img id="imgPreview" class="prev" style="display:none"><div id="imgMsg"></div>
-<button class="btn-gold" onclick="saveImage()">📤 Convertir en WebP + Enregistrer</button>
-</div><div class="card"><h2>Mes images WebP</h2><div id="imgList"></div></div></div>
-
-<!-- CONTACT -->
-<div id="tab-contact" style="display:none"><div class="card"><h2>Contact & Pied de page</h2>
-<label>Adresse</label><input id="c-adr" value="Avenue de la Bière, commune d’Ibanda, Bukavu, Sud-Kivu, RDC">
-<div class="row"><div><label>Téléphone / WhatsApp</label><input id="c-tel" value="+243 970 204 871"></div><div><label>Email</label><input id="c-email" value="furahahabamungu2005@gmail.com"></div></div>
-<label>Site 1</label><input id="c-site1" value="https://enec-cd.netlify.app"><label>Site 2</label><input id="c-site2" value="https://enecrdc.github.io/enec/">
-</div></div>
-
-<div class="card"><h2>✅ Publier les modifications</h2>
-<button class="btn green" onclick="saveAllSupabase()">💾 Enregistrer dans Supabase</button>
-<button class="btn-gold" onclick="downloadSite()">⬇️ Télécharger le site mis à jour (index.html)</button>
-<div id="saveMsg"></div>
-<p class="small">Après le téléchargement : GitHub → dépôt <b>enec</b> → Upload → remplacer <b>index.html</b> → Commit. Attends 2 min, ouvre en navigation privée : <b>enecrdc.github.io/enec/</b></p></div>
-
-</div></div>
 <script>
-// Supabase (optionnel - si config presente)
-
-let sb=null;
-// Client Supabase SANS CDN : utilise fetch direct, ne bloque jamais
-function makeSb(url, key){
-  return {
-    auth: {
-      signInWithPassword: async function({email,password}){
-        const r = await fetch(url + '/auth/v1/token?grant_type=password', {method:'POST', headers:{'apikey':key,'Content-Type':'application/json'}, body: JSON.stringify({email,password})});
-        const j = await r.json();
-        if(!r.ok) return {data:null, error:{message: j.msg || j.message || j.error_description || 'Erreur Supabase : '+r.status}};
-        try{ localStorage.setItem('enec_sb_token', j.access_token); }catch(e){}
-        return {data:{user:{email:j.user?.email||email}}, error:null};
-      },
-      signUp: async function({email,password}){
-        const r = await fetch(url + '/auth/v1/signup', {method:'POST', headers:{'apikey':key,'Content-Type':'application/json'}, body: JSON.stringify({email,password})});
-        const j = await r.json();
-        if(!r.ok) return {data:null, error:{message: j.msg || j.message || 'Erreur : '+r.status}};
-        return {data:{user:{email:email}}, error:null};
-      },
-      getSession: async function(){ return {data:{session:null}}; },
-      signOut: async function(){ try{ localStorage.removeItem('enec_sb_token'); }catch(e){} return {}; }
-    },
-    from: function(table){
-      return {
-        upsert: async function(obj, opts){ const r = await fetch(url + '/rest/v1/'+table+'?on_conflict=key', {method:'POST', headers:{'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'}, body: JSON.stringify(obj)}); if(!r.ok) throw new Error('Supabase '+r.status); return {data:obj, error:null}; },
-        select: function(){ return { eq: function(){ return { maybeSingle: async function(){ return {data:null, error:null}; } }; }, limit: async function(){ return {data:[], error:null}; } }; },
-        insert: async function(obj){ const r = await fetch(url + '/rest/v1/'+table, {method:'POST', headers:{'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json'}, body: JSON.stringify(obj)}); return {data:obj, error: r.ok?null:{message:'Erreur '+r.status}}; },
-        delete: function(){ return { eq: function(){ return Promise.resolve({error:null}); } }; }
-      };
-    },
-    storage: { from: function(bucket){ return { upload: async function(path, blob, opts){ const r = await fetch(url + '/storage/v1/object/'+bucket+'/'+path, {method:'POST', headers:{'apikey':key,'Authorization':'Bearer '+key,'Content-Type': blob.type||'image/webp'}, body: blob}); if(!r.ok) return {error:{message:'Upload '+r.status}}; return {error:null}; }, getPublicUrl: function(path){ return {data:{publicUrl: url + '/storage/v1/object/public/'+bucket+'/'+path}}; }, remove: async function(paths){ return {error:null}; } }; } }
-  };
-}
-
-try{ const U=(window.ENEC_SUPABASE_URL&&!String(window.ENEC_SUPABASE_URL).includes('TON-PROJET'))?window.ENEC_SUPABASE_URL:"https://mlzacyrgnmentvilwvkm.supabase.co"; const K=(window.ENEC_SUPABASE_ANON_KEY&&!String(window.ENEC_SUPABASE_ANON_KEY).includes('TA-CLE')&&!String(window.ENEC_SUPABASE_ANON_KEY).includes('COLLE'))?window.ENEC_SUPABASE_ANON_KEY:null; if(K) sb=makeSb(U,K); window._ENEC_SB_URL=U; window._ENEC_SB_HAS_KEY=!!K; }catch(e){ console.log('SB err',e); }
-// Donnees reelles de l'ancien site
+// AUCUN email, AUCUN mot de passe dans ce fichier. Ils sont tapés par toi et vérifiés par Supabase.
+const SB_URL = (window.ENEC_SUPABASE_URL && !String(window.ENEC_SUPABASE_URL).includes('TON-PROJET')) ? window.ENEC_SUPABASE_URL : "https://mlzacyrgnmentvilwvkm.supabase.co";
+const SB_KEY = (window.ENEC_SUPABASE_ANON_KEY && !String(window.ENEC_SUPABASE_ANON_KEY).includes('TA-CLE') && !String(window.ENEC_SUPABASE_ANON_KEY).includes('COLLE')) ? window.ENEC_SUPABASE_ANON_KEY : null;
+let SB_TOKEN = null; // token Supabase, gardé seulement dans ce téléphone, jamais dans le fichier
 let domaines=[
 {n:"Éducation, Formation Linguistique, Traduction et Interprétation",d:"Formations en langues et traduction professionnelle. Anglais, français, chinois, espagnol, lingala, kiswahili."},
 {n:"Informatique et numérique",d:"Bureautique, web et accompagnement numérique. Word, Excel, PowerPoint, sites web, programmation, design."},
 {n:"Formations professionnelles et techniques",d:"Formations pratiques pour l’emploi. Coupe et couture, conduite, filmage et photographie."},
 {n:"Traduction et interprétation",d:"Traduction et interprétation professionnelle. Documents officiels, rapports, contrats."},
-{n:"Communication, Audiovisuel et Événementiel",d:"Photographie, vidéo et événements. Photographie, filmage, montage, design, animation."},
-{n:"Nettoyage, Peinture, Décoration et Services Généraux",d:"Nettoyage, peinture, décoration et services généraux. Personnel sélectionné et supervisé."},
-{n:"Conception et Gestion des Projets",d:"De l’idée au projet financé. Notes conceptuelles, propositions, business plans, suivi-évaluation."},
-{n:"Intermédiation Immobilière et Location",d:"Maison, bureau ou parcelle en toute confiance. Offres vérifiées, transparence."},
+{n:"Communication, Audiovisuel et Événementiel",d:"Photographie, vidéo et événements."},
+{n:"Nettoyage, Peinture, Décoration et Services Généraux",d:"Nettoyage, peinture, décoration et services généraux."},
+{n:"Conception et Gestion des Projets",d:"De l’idée au projet financé. Notes conceptuelles, propositions, business plans."},
+{n:"Intermédiation Immobilière et Location",d:"Maison, bureau ou parcelle en toute confiance. Offres vérifiées."},
 {n:"Agriculture et Élevage — Dirigé par M. Justin Ahadi Byamungu",d:"Production agricole et élevage pour la sécurité alimentaire. Production à Kabare et Walungu, Sud-Kivu."}
 ];
 let equipe=[
@@ -166,8 +102,66 @@ let equipe=[
 {n:"Monsieur Imani Citunga Darius",r:"Responsable — Éducation, Formation Linguistique, Traduction et Interprétation",d:"Éducation, Formation Linguistique, Traduction et Interprétation",bio:""},
 {n:"Monsieur Ahadi Byamungu Justin",r:"Responsable — Agriculture et Élevage",d:"Agriculture et Élevage",bio:"Dirige le département Agriculture et Élevage. Production à Kabare et Walungu, Sud-Kivu."}
 ];
-let actus=[];
-let originalHTML=""; let images=[];
+let actus=[]; let images=[]; let originalHTML="";
+function enterAdmin(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('adminContent').style.display='block';
+  // On n'affiche JAMAIS l'email en entier : on masque une partie
+  try{
+    var s=JSON.parse(localStorage.getItem('enec_admin_session')||'null');
+    if(s && s.emailMasked) document.getElementById('who').textContent=s.emailMasked;
+    else document.getElementById('who').textContent='Admin connecté';
+  }catch(e){ document.getElementById('who').textContent='Admin connecté'; }
+  render();
+}
+function doLogout(){ try{ localStorage.removeItem('enec_admin_session'); }catch(e){} SB_TOKEN=null; location.reload(); }
+function maskEmail(em){ try{ var parts=em.split('@'); if(parts.length!==2) return 'Admin connecté'; var name=parts[0]; var masked=name.slice(0,2)+'***@'+parts[1]; return masked; }catch(e){ return 'Admin connecté'; } }
+async function doLogin(){
+  var em=document.getElementById('loginEmail').value.trim();
+  var pw=document.getElementById('loginPwd').value;
+  var msg=document.getElementById('loginMsg');
+  if(!em || !pw){ msg.innerHTML='<div class="err">⚠️ Mets ton email et ton mot de passe.</div>'; return; }
+  if(!SB_KEY){ msg.innerHTML='<div class="err">❌ Supabase non configuré : clé ANON manquante dans supabase-config.js.</div>'; return; }
+  msg.innerHTML='<div class="ok">⏳ Vérification dans Supabase...</div>';
+  try{
+    // 1. Vérifier email + mot de passe dans Supabase Auth
+    const r=await fetch(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})});
+    const j=await r.json();
+    if(!r.ok){
+      var err=j.msg||j.message||j.error_description||'Erreur '+r.status;
+      if(err.toLowerCase().includes('not confirmed')) msg.innerHTML='<div class="err">❌ Email non confirmé. Va dans Supabase → SQL Editor → Run :<br><code>update auth.users set email_confirmed_at = now() where email = \''+em+'\';</code></div>';
+      else if(err.toLowerCase().includes('invalid')) msg.innerHTML='<div class="err">❌ Email ou mot de passe incorrect.</div>';
+      else msg.innerHTML='<div class="err">❌ Supabase dit : '+err+'</div>';
+      return;
+    }
+    SB_TOKEN=j.access_token;
+    var userId=j.user && j.user.id;
+    // 2. Vérifier que cet utilisateur est bien admin (dans admin_profiles)
+    // Si la table est vide, on laisse passer le premier admin qui se connecte, puis il doit s'ajouter.
+    // Si la table contient des admins, seuls eux passent.
+    try{
+      const r2=await fetch(SB_URL+'/rest/v1/admin_profiles?select=id,email&id=eq.'+userId,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN}});
+      const rows=await r2.json();
+      if(Array.isArray(rows) && rows.length===0){
+        // Vérifier s'il existe déjà d'autres admins
+        const r3=await fetch(SB_URL+'/rest/v1/admin_profiles?select=id',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN}});
+        const all=await r3.json();
+        if(Array.isArray(all) && all.length>0){
+          msg.innerHTML='<div class="err">❌ Ce compte n’est pas admin. Seul l’admin inscrit dans admin_profiles peut entrer.</div>';
+          return;
+        }
+        // Premier admin : on l'ajoute automatiquement (sans afficher son email en clair dans le fichier)
+        await fetch(SB_URL+'/rest/v1/admin_profiles',{method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({id:userId,email:em})});
+      }
+    }catch(e){ console.log('admin_profiles', e); }
+    // 3. Session qui TIENT : on garde seulement le token + email masqué, jamais le mot de passe
+    try{ localStorage.setItem('enec_admin_session', JSON.stringify({emailMasked: maskEmail(em), token: SB_TOKEN, until: Date.now()+7*24*60*60*1000})); }catch(e){}
+    // On efface le mot de passe de l'écran tout de suite
+    document.getElementById('loginPwd').value='';
+    msg.innerHTML='';
+    enterAdmin();
+  }catch(e){ msg.innerHTML='<div class="err">❌ Connexion impossible : '+e.message+'</div>'; }
+}
 function showTab(id,btn){ document.querySelectorAll('[id^="tab-"]').forEach(e=>e.style.display='none'); document.getElementById('tab-'+id).style.display='block'; document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
 function render(){
  document.getElementById('list-dep').innerHTML=domaines.map((x,i)=>`<div class="item"><b>Domaine ${i+1}</b> <button class="btn red" style="float:right" onclick="domaines.splice(${i},1);render()">Supprimer</button><label>Titre</label><input data-dep="${i}" data-k="n" value="${x.n.replace(/"/g,'&quot;')}"><label>Description</label><textarea data-dep="${i}" data-k="d">${x.d}</textarea></div>`).join('');
@@ -179,120 +173,44 @@ function collect(){ document.querySelectorAll('[data-dep]').forEach(el=>domaines
 function addDomaine(){ domaines.push({n:"Nouveau domaine",d:""}); render(); }
 function addMembre(){ equipe.push({n:"Nouveau membre",r:"Responsable — ",d:"",bio:""}); render(); }
 function addActu(){ actus.push({t:"Nouvelle actualité",d:""}); render(); }
-// Charger l'ancien site pour le telechargement
-async function loadOriginal(){
- try{ const r=await fetch('index.html'); if(r.ok){ originalHTML=await r.text(); document.getElementById('siteStatus').textContent='✅ Ancien site chargé ('+Math.round(originalHTML.length/1000)+' Ko) — prêt à être modifié.'; return; } }catch(e){}
- document.getElementById('siteStatus').textContent='⚠️ index.html non trouvé à côté de admin.html — le téléchargement utilisera une copie de secours. Mets admin.html dans le même dossier que index.html sur GitHub pour que le téléchargement prenne ton vrai ancien site.';
-}
-async function saveAllSupabase(){
+async function saveAll(){
  collect();
- const payload={accueil:{t1:document.getElementById('a-t1').value,t2:document.getElementById('a-t2').value,slogan:document.getElementById('a-slogan').value,text:document.getElementById('a-text').value,why:document.getElementById('a-why').value},domaines,equipe,actus,mission:document.getElementById('t-mission').value,vision:document.getElementById('t-vision').value,contact:{adr:document.getElementById('c-adr').value,tel:document.getElementById('c-tel').value,email:document.getElementById('c-email').value,site1:document.getElementById('c-site1').value,site2:document.getElementById('c-site2').value},images};
+ const payload={accueil:{t1:document.getElementById('a-t1').value,t2:document.getElementById('a-t2').value,slogan:document.getElementById('a-slogan').value,text:document.getElementById('a-text').value},domaines,equipe,actus,mission:document.getElementById('t-mission').value,vision:document.getElementById('t-vision').value,contact:{adr:document.getElementById('c-adr').value,tel:document.getElementById('c-tel').value,email:document.getElementById('c-email').value},images};
  localStorage.setItem('enec_admin_final', JSON.stringify(payload));
- if(sb){ try{ await sb.from('site_content').upsert({key:'admin_final',value:JSON.stringify(payload)},{onConflict:'key'}); document.getElementById('saveMsg').innerHTML='<div class="ok">✅ Enregistré dans Supabase + dans ce téléphone.</div>'; return; }catch(e){} }
- document.getElementById('saveMsg').innerHTML='<div class="ok">✅ Enregistré dans ce téléphone (Supabase non configuré — mets ta clé ANON pour activer Supabase).</div>';
+ if(SB_KEY && SB_TOKEN){
+   try{ const r=await fetch(SB_URL+'/rest/v1/site_content?on_conflict=key',{method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify({key:'admin_final',value:JSON.stringify(payload)})}); if(r.ok){ document.getElementById('saveMsg').innerHTML='<div class="ok">✅ Enregistré dans Supabase.</div>'; return; } }catch(e){}
+ }
+ document.getElementById('saveMsg').innerHTML='<div class="ok">✅ Enregistré dans ce téléphone.</div>';
 }
-// Images WebP
 let webpBlob=null, webpName="";
 function handleImage(input){ const f=input.files[0]; if(!f) return; document.getElementById('imgMsg').innerHTML='<div class="ok">⏳ Conversion en WebP...</div>'; const img=new Image(); const u=URL.createObjectURL(f); img.onload=function(){ const c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight; c.getContext('2d').drawImage(img,0,0); c.toBlob(function(b){ webpBlob=b; let base=(document.getElementById('imgName').value||f.name.replace(/\.(jpg|jpeg|png|webp)$/i,'')).replace(/[^a-z0-9\-_]/gi,'-').toLowerCase(); webpName=base+'.webp'; document.getElementById('imgPreview').src=URL.createObjectURL(b); document.getElementById('imgPreview').style.display='block'; document.getElementById('imgMsg').innerHTML='<div class="ok">✅ Converti : '+Math.round(f.size/1024)+' Ko → <b>'+Math.round(b.size/1024)+' Ko</b> WebP — Prêt : '+webpName+'</div>'; },'image/webp',0.82); URL.revokeObjectURL(u); }; img.src=u; }
 async function saveImage(){
  if(!webpBlob){ document.getElementById('imgMsg').innerHTML='<div class="err">Choisis d’abord une image.</div>'; return; }
  let url="";
- if(sb){ try{ const path='photos/'+webpName; const {error}=await sb.storage.from('enec-photos').upload(path,webpBlob,{contentType:'image/webp',upsert:true}); if(!error){ const {data:pub}=sb.storage.from('enec-photos').getPublicUrl(path); url=pub.publicUrl; } }catch(e){} }
- if(!url){ // Fallback : dataURL WebP locale (marche sans Supabase)
-   url = await new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(webpBlob); });
- }
- const target=document.getElementById('imgTarget').value;
- images.push({name:webpName,url:url,target:target});
+ if(SB_KEY && SB_TOKEN){ try{ const r=await fetch(SB_URL+'/storage/v1/object/enec-photos/photos/'+webpName,{method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN,'Content-Type':'image/webp'},body:webpBlob}); if(r.ok) url=SB_URL+'/storage/v1/object/public/enec-photos/photos/'+webpName; }catch(e){} }
+ if(!url){ url=await new Promise(res=>{ const rd=new FileReader(); rd.onload=()=>res(rd.result); rd.readAsDataURL(webpBlob); }); }
+ images.push({name:webpName,url:url});
  localStorage.setItem('enec_images', JSON.stringify(images));
- document.getElementById('imgList').innerHTML = images.map((im,i)=>`<div class="item"><img src="${im.url}" style="width:100%;max-width:320px;border-radius:10px"><br><b>${im.name}</b> — ${im.target||'Lien seul'}<br><small style="word-break:break-all">${im.url.slice(0,120)}...</small><br><button class="btn" onclick="navigator.clipboard.writeText('${im.url}');alert('Lien copié')">📋 Copier le lien</button> <button class="btn red" onclick="deleteImage(${i})">🗑️ Supprimer (Supabase aussi)</button></div>`).join('');
- document.getElementById('imgMsg').innerHTML='<div class="ok">✅ Image WebP enregistrée ! Elle sera utilisée quand tu télécharges le site.</div>';
+ document.getElementById('imgList').innerHTML=images.map((im,i)=>`<div class="item"><img src="${im.url}" style="width:100%;max-width:320px;border-radius:10px"><br><b>${im.name}</b><br><button class="btn red" onclick="deleteImage(${i})">🗑️ Supprimer (Supabase aussi)</button></div>`).join('');
+ document.getElementById('imgMsg').innerHTML='<div class="ok">✅ Image WebP enregistrée !</div>';
 }
-async function deleteImage(i){
- if(!confirm('Supprimer cette image ? Elle sera supprimée AUTOMATIQUEMENT dans Supabase aussi.')) return;
- const im=images[i];
- if(sb){ try{ await sb.storage.from('enec-photos').remove(['photos/'+im.name]); await sb.from('photos').delete().eq('name',im.name); }catch(e){} }
- images.splice(i,1); localStorage.setItem('enec_images', JSON.stringify(images));
- alert('✅ Image supprimée dans Supabase + admin.');
- document.getElementById('imgList').innerHTML = images.length?document.getElementById('imgList').innerHTML:'Aucune image.';
- loadImagesList();
-}
-function loadImagesList(){ try{ images=JSON.parse(localStorage.getItem('enec_images')||'[]'); }catch(e){} if(images.length) document.getElementById('imgList').innerHTML=images.map((im,i)=>`<div class="item"><img src="${im.url}" style="width:100%;max-width:320px;border-radius:10px"><br><b>${im.name}</b> — ${im.target||''}<br><button class="btn red" onclick="deleteImage(${i})">🗑️ Supprimer (Supabase aussi)</button></div>`).join(''); }
-// Telecharger le site mis a jour : remplace les anciens textes par les nouveaux dans l'ancien index.html
+async function deleteImage(i){ if(!confirm('Supprimer ? Elle sera supprimée AUTOMATIQUEMENT dans Supabase aussi.')) return; const im=images[i]; if(SB_KEY && SB_TOKEN){ try{ await fetch(SB_URL+'/storage/v1/object/enec-photos/photos/'+im.name,{method:'DELETE',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_TOKEN}}); }catch(e){} } images.splice(i,1); localStorage.setItem('enec_images', JSON.stringify(images)); alert('✅ Supprimée dans Supabase + admin.'); document.getElementById('imgList').innerHTML=images.length?document.getElementById('imgList').innerHTML:'Aucune image.'; }
 async function downloadSite(){
- collect();
- await saveAllSupabase();
- if(!originalHTML){ alert('Je n’ai pas pu charger ton ancien index.html. Mets admin.html dans le même dossier que index.html sur GitHub, puis réessaie.'); return; }
- let html = originalHTML;
- // Remplacements : mission / vision anciennes -> nouvelles
- html = html.split(document.getElementById('t-oldmission').value).join(document.getElementById('t-mission').value);
- html = html.split(document.getElementById('t-oldvision').value).join(document.getElementById('t-vision').value);
- // Slogan / titre : remplace les occurrences du slogan
- html = html.split('Un nouvel espoir, de multiples opportunités !').join(document.getElementById('a-slogan').value);
- // Contact : telephone / email (remplacement simple)
- // On ajoute un script d'override en haut du body pour les domaines / equipe / accueil modifies
- // Ce script, au chargement du site, remplace les textes affiches par les nouveaux textes de l'admin.
- const overrides = {accueil:{t1:document.getElementById('a-t1').value,t2:document.getElementById('a-t2').value,slogan:document.getElementById('a-slogan').value,text:document.getElementById('a-text').value,why:document.getElementById('a-why').value},domaines,equipe,actus,mission:document.getElementById('t-mission').value,vision:document.getElementById('t-vision').value,contact:{adr:document.getElementById('c-adr').value,tel:document.getElementById('c-tel').value,email:document.getElementById('c-email').value},images};
- const script = '<script>window.ENEC_OVERRIDES='+JSON.stringify(overrides).replace(/</g,'\\u003c')+';\n'+
- 'document.addEventListener("DOMContentLoaded",function(){try{var o=window.ENEC_OVERRIDES; if(!o) return;'+
- 'if(o.mission){document.body.innerHTML=document.body.innerHTML.split("Rendre les compétences accessibles, accompagner les talents et transformer les idées en opportunités durables.").join(o.mission);}'+
- 'if(o.vision){document.body.innerHTML=document.body.innerHTML.split("Être à Bukavu et au-delà une référence de confiance pour la formation, les services professionnels et l’entrepreneuriat.").join(o.vision);}'+
- '}catch(e){console.log(e)}});</'+'script>';
- // Inserer le script juste apres <body>
- html = html.replace('<body>', '<body>\n'+script);
- const blob = new Blob([html], {type:'text/html'});
- const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='index.html'; a.click();
- document.getElementById('saveMsg').innerHTML='<div class="ok">✅ Site téléchargé ! Mets ce <b>index.html</b> sur GitHub → dépôt <b>enec</b> → remplacer index.html → Commit. Ton ancien site affichera les nouvelles infos.</div>';
+ collect(); await saveAll();
+ if(!originalHTML){ alert('Mets admin.html dans le même dossier que index.html sur GitHub, puis réessaie.'); return; }
+ let html=originalHTML;
+ html=html.split("Rendre les compétences accessibles, accompagner les talents et transformer les idées en opportunités durables.").join(document.getElementById('t-mission').value);
+ html=html.split("Être à Bukavu et au-delà une référence de confiance pour la formation, les services professionnels et l’entrepreneuriat.").join(document.getElementById('t-vision').value);
+ const blob=new Blob([html],{type:'text/html'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='index.html'; a.click();
+ document.getElementById('saveMsg').innerHTML='<div class="ok">✅ Site téléchargé ! Mets ce index.html sur GitHub.</div>';
 }
-
-// --- CONNEXION OBLIGATOIRE ---
-async function doLogin(){
-  var em = document.getElementById('loginEmail').value.trim();
-  if(em.toLowerCase().includes('gmail')){ document.getElementById('loginMsg').innerHTML='<div class="err">⚠️ Tu as mis ton Gmail. J’ai corrigé en <b>admin@enec.cd</b>. Re-clique sur Se connecter.</div>'; document.getElementById('loginEmail').value='furahahabamungu2005@gmail.com'; return; }
-  var pw = document.getElementById('loginPwd').value;
-  var msg = document.getElementById('loginMsg');
-  if(!sb){ msg.innerHTML='<div class="err">❌ Supabase non configuré : clé ANON manquante dans supabase-config.js. Va dans Supabase → Settings → API, copie ta clé ANON.</div>'; return; }
-  if(!pw){ msg.innerHTML='<div class="err">⚠️ Mets ton mot de passe.</div>'; return; }
-  msg.innerHTML='<div class="ok">⏳ Connexion...</div>';
-  try{
-    const {data:u,[STRIPPED] = await sb.auth.signInWithPassword({email:em, password:pw});
-    if(error) throw error;
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('adminContent').style.display='block';
-    // Afficher qui est connecté en haut
-    var who = document.createElement('div');
-    who.className='ok'; who.textContent='✅ Connecté : '+u.user.email+' — Tu peux modifier le site. [Déconnexion]';
-    who.onclick = async function(){ try{ await sb.auth.signOut(); }catch(e){} location.reload(); };
-    who.style.cursor='pointer';
-    document.getElementById('adminContent').prepend(who);
-  }catch(e){
-    var aide = '';
-    if((e.message||'').includes('Invalid login')) aide = '<br><b>Ça veut dire :</b> email ou mot de passe faux.<br>→ Vérifie que <b>furahahabamungu2005@gmail.com</b> existe dans Supabase → Authentication → Users.<br>→ Sinon, Reset password pour admin@enec.cd.';
-    msg.innerHTML='<div class="err">❌ <b>Supabase dit :</b> '+e.message + aide + '</div>';
-  }
-}
-async function doSignup(){
-  var em='furahahabamungu2005@gmail.com'; var pw=document.getElementById('loginPwd').value;
-  var msg=document.getElementById('loginMsg');
-  document.getElementById('loginEmail').value=em;
-  if(!sb){ msg.innerHTML='<div class="err">❌ Supabase non configuré : clé ANON manquante. Mets ta vraie clé dans supabase-config.js d’abord.</div>'; return; }
-  if(!pw || pw.length<6){ msg.innerHTML='<div class="err">⚠️ Mets un mot de passe de 6 caractères minimum, puis clique Créer.</div>'; return; }
-  msg.innerHTML='<div class="ok">⏳ Création du compte furahahabamungu2005@gmail.com...</div>';
-  try{ const {data,[STRIPPED] = await sb.auth.signUp({email:em, password:pw}); if(error) throw error; msg.innerHTML='<div class="ok">✅ Compte créé : furahahabamungu2005@gmail.com. Clique maintenant sur <b>Se connecter</b> avec le même mot de passe.</div>'; }catch(e){ msg.innerHTML='<div class="err">❌ '+e.message+'<br>Si le compte existe déjà, clique juste sur Se connecter.</div>'; }
-}
-async function checkSession(){
-  var diag = document.getElementById('loginDiag');
-  if(!sb){ if(diag) diag.innerHTML='❌ Supabase NON CONFIGURÉ : ta clé ANON dans supabase-config.js contient encore COLLE-ICI... Va dans Supabase → Settings → API, copie ta vraie clé ANON, mets-la dans supabase-config.js, remets le fichier sur GitHub.'; diag.style.background='#F8D7DA'; return; }
-  if(diag) diag.innerHTML='✅ Supabase configuré — URL : '+(window.ENEC_SUPABASE_URL||'');
-  try{
-    const {data:{session}} = await sb.auth.getSession();
-    if(session && session.user){
-      document.getElementById('loginScreen').style.display='none';
-      document.getElementById('adminContent').style.display='block';
-    }
-  }catch(e){}
-}
-setTimeout(function(){ try{ checkSession(); }catch(e){ var d=document.getElementById('loginDiag'); if(d){ d.innerHTML='❌ Erreur JS : '+e.message; d.style.background='#F8D7DA'; } } }, 800);
-
-render(); loadOriginal(); loadImagesList();
-try{ const s=JSON.parse(localStorage.getItem('enec_admin_final')||'null'); if(s){ if(s.domaines) domaines=s.domaines; if(s.equipe) equipe=s.equipe; if(s.actus) actus=s.actus; render(); } }catch(e){}
+// Session qui TIENT : si tu es déjà connecté, on rouvre sans redemander email/mot de passe
+try{
+  const s=JSON.parse(localStorage.getItem('enec_admin_session')||'null');
+  if(s && s.until && Date.now()<s.until && s.token){ SB_TOKEN=s.token; enterAdmin(); }
+  else if(s) localStorage.removeItem('enec_admin_session');
+}catch(e){}
+try{ const s2=JSON.parse(localStorage.getItem('enec_admin_final')||'null'); if(s2){ if(s2.domaines) domaines=s2.domaines; if(s2.equipe) equipe=s2.equipe; if(s2.actus) actus=s2.actus; } }catch(e){}
+fetch('index.html').then(r=>r.text()).then(t=>{ originalHTML=t; }).catch(e=>{});
+render();
 </script></body></html>
