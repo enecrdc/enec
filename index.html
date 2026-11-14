@@ -2024,7 +2024,7 @@ img{
   }
 }
 </style>
-</head>
+<style>#enec-admin{display:none !important;}</style></head>
 <body>
   <div id="root"></div>
   
@@ -2056,9 +2056,9 @@ Error generating stack: `+n.message+`
 .enec-tabs button.active{background:#0A2A5A;color:#fff}.enec-note{background:#fff3cd;padding:10px 12px;border-radius:10px;font-size:13px}
 .enec-row{border-bottom:1px solid #eee;padding:8px 0;font-size:14px}
 </style>
-<button id="enec-admin-btn" onclick="document.getElementById('enec-admin').classList.add('open')">🔐 Espace Admin</button>
+<button id="enec-admin-btn" onclick="window.location.href='admin.html'">🔐 Espace Admin</button>
 <div id="enec-admin"><div class="enec-box">
-<div style="display:flex;justify-content:space-between;align-items:center"><h2>ENEC — Espace Admin</h2><button class="enec-btn ghost" onclick="document.getElementById('enec-admin').classList.remove('open')">✕ Fermer</button></div>
+<div style="display:flex;justify-content:space-between;align-items:center"><h2>ENEC — Espace Admin</h2><button class="enec-btn ghost" onclick="document.window.location.href='admin.html';//.classList.remove('open')">✕ Fermer</button></div>
 <div class="enec-note">🔐 Connexion via <b>Supabase Auth</b>. Crée ton admin dans Supabase → Authentication → Add user.<br>Sans Supabase configuré : mode démo <b>admin@enec.cd / enec2026</b> pour tester l'interface. Les données de la vitrine React restent telles quelles dans ce fichier compilé — l'admin gère les données Supabase (services, lauréats, messages) qui sont la source de vérité pour la V2 dynamique.</div>
 <div id="enec-login" style="margin-top:14px"><input id="enec-email" placeholder="Email admin ex: admin@enec.cd"><input id="enec-pass" type="password" placeholder="Mot de passe"><button class="enec-btn" onclick="enecLogin()">Se connecter</button><p id="enec-login-status"></p></div>
 <div id="enec-dash" style="display:none">
