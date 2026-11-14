@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://enecrdc.github.io/enec/sitemap.xml
+Sitemap: https://enec-cd.netlify.app/sitemap.xml
