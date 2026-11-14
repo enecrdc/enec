@@ -33,10 +33,12 @@ img.prev{max-width:100%;border-radius:12px;margin-top:8px}
 <h2>🔐 Connexion Admin — ENEC</h2>
 <p>Seul l'admin peut modifier le site. Entre ton email et ton mot de passe Supabase.</p>
 <div id="loginDiag" style="background:#FFF6C9;padding:12px;border-radius:12px;font-size:13px">Vérification Supabase...</div>
-<label>Email admin</label><input id="loginEmail" value="admin@enec.cd">
-<label>Mot de passe</label><input id="loginPwd" type="password" placeholder="Mot de passe créé dans Supabase Auth">
+<label>Email admin — NE PAS mettre ton Gmail</label><input id="loginEmail" value="admin@enec.cd" autocomplete="off" autocapitalize="none" spellcheck="false"><br><button class="btn" style="margin-top:6px" onclick="document.getElementById('loginEmail').value='admin@enec.cd';alert('Email corrigé : admin@enec.cd')">↩️ Remettre admin@enec.cd</button>
+<label>Mot de passe</label><input id="loginPwd" type="password" placeholder="Mot de passe Supabase" autocomplete="new-password">
 <br><br>
 <button class="btn-gold" onclick="doLogin()">🔐 Se connecter</button>
+<button class="btn green" onclick="doSignup()">✨ Créer mon compte admin@enec.cd</button>
+<p class="small">Si tu n'as jamais créé le compte admin@enec.cd dans Supabase, clique sur <b>Créer mon compte</b> avec le même mot de passe, puis clique sur <b>Se connecter</b>.</p>
 <div id="loginMsg"></div>
 <p class="small">Si tu as oublié ton mot de passe : Supabase → Authentication → Users → admin@enec.cd → Reset password.<br>
 ⚠️ Sans connexion, on ne peut pas modifier le site. C'est pour protéger ENEC.</p>
@@ -212,6 +214,7 @@ async function downloadSite(){
 // --- CONNEXION OBLIGATOIRE ---
 async function doLogin(){
   var em = document.getElementById('loginEmail').value.trim();
+  if(em.toLowerCase().includes('gmail')){ document.getElementById('loginMsg').innerHTML='<div class="err">⚠️ Tu as mis ton Gmail. J’ai corrigé en <b>admin@enec.cd</b>. Re-clique sur Se connecter.</div>'; document.getElementById('loginEmail').value='admin@enec.cd'; return; }
   var pw = document.getElementById('loginPwd').value;
   var msg = document.getElementById('loginMsg');
   if(!sb){ msg.innerHTML='<div class="err">❌ Supabase non configuré : clé ANON manquante dans supabase-config.js. Va dans Supabase → Settings → API, copie ta clé ANON.</div>'; return; }
@@ -234,9 +237,18 @@ async function doLogin(){
     msg.innerHTML='<div class="err">❌ <b>Supabase dit :</b> '+e.message + aide + '</div>';
   }
 }
+async function doSignup(){
+  var em='admin@enec.cd'; var pw=document.getElementById('loginPwd').value;
+  var msg=document.getElementById('loginMsg');
+  document.getElementById('loginEmail').value=em;
+  if(!sb){ msg.innerHTML='<div class="err">❌ Supabase non configuré : clé ANON manquante. Mets ta vraie clé dans supabase-config.js d’abord.</div>'; return; }
+  if(!pw || pw.length<6){ msg.innerHTML='<div class="err">⚠️ Mets un mot de passe de 6 caractères minimum, puis clique Créer.</div>'; return; }
+  msg.innerHTML='<div class="ok">⏳ Création du compte admin@enec.cd...</div>';
+  try{ const {data,[STRIPPED] = await sb.auth.signUp({email:em, password:pw}); if(error) throw error; msg.innerHTML='<div class="ok">✅ Compte créé : admin@enec.cd. Clique maintenant sur <b>Se connecter</b> avec le même mot de passe.</div>'; }catch(e){ msg.innerHTML='<div class="err">❌ '+e.message+'<br>Si le compte existe déjà, clique juste sur Se connecter.</div>'; }
+}
 async function checkSession(){
   var diag = document.getElementById('loginDiag');
-  if(!sb){ if(diag) diag.innerHTML='❌ Supabase non configuré : clé ANON manquante dans supabase-config.js'; return; }
+  if(!sb){ if(diag) diag.innerHTML='❌ Supabase NON CONFIGURÉ : ta clé ANON dans supabase-config.js contient encore COLLE-ICI... Va dans Supabase → Settings → API, copie ta vraie clé ANON, mets-la dans supabase-config.js, remets le fichier sur GitHub.'; diag.style.background='#F8D7DA'; return; }
   if(diag) diag.innerHTML='✅ Supabase configuré — URL : '+(window.ENEC_SUPABASE_URL||'');
   try{
     const {data:{session}} = await sb.auth.getSession();
