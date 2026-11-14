@@ -28,6 +28,21 @@ img.prev{max-width:100%;border-radius:12px;margin-top:8px}
 <body>
 <div class="top"><b>ENEC — Admin du vrai ancien site</b><br><span>Modifie accueil, domaines, mission, vision, équipe, images — puis télécharge le site mis à jour.</span></div>
 <div class="wrap">
+
+<div id="loginScreen" class="card" style="text-align:left">
+<h2>🔐 Connexion Admin — ENEC</h2>
+<p>Seul l'admin peut modifier le site. Entre ton email et ton mot de passe Supabase.</p>
+<div id="loginDiag" style="background:#FFF6C9;padding:12px;border-radius:12px;font-size:13px">Vérification Supabase...</div>
+<label>Email admin</label><input id="loginEmail" value="admin@enec.cd">
+<label>Mot de passe</label><input id="loginPwd" type="password" placeholder="Mot de passe créé dans Supabase Auth">
+<br><br>
+<button class="btn-gold" onclick="doLogin()">🔐 Se connecter</button>
+<div id="loginMsg"></div>
+<p class="small">Si tu as oublié ton mot de passe : Supabase → Authentication → Users → admin@enec.cd → Reset password.<br>
+⚠️ Sans connexion, on ne peut pas modifier le site. C'est pour protéger ENEC.</p>
+</div>
+<div id="adminContent" style="display:none">
+
 <div class="card"><h2>Comment ça marche ?</h2><p>1. Tu modifies ici.<br>2. Tu cliques sur <b>💾 Enregistrer dans Supabase</b> (sauvegarde).<br>3. Tu cliques sur <b>⬇️ Télécharger le site mis à jour (index.html)</b>.<br>4. Tu mets ce nouveau <b>index.html</b> sur GitHub → ton ancien site affiche les nouvelles infos.<br><br>Les images : tu choisis JPG/PNG → converties automatiquement en WebP → elles remplacent l'image dans le site.</p><p><b>Statut :</b> <span id="siteStatus">Chargement de ton ancien site...</span></p></div>
 
 <div class="counters"><span id="c-actu">0 actualites</span><span id="c-msg">0 messages</span><span id="c-cand">0 candidatures</span></div>
@@ -89,7 +104,7 @@ img.prev{max-width:100%;border-radius:12px;margin-top:8px}
 <div id="saveMsg"></div>
 <p class="small">Après le téléchargement : GitHub → dépôt <b>enec</b> → Upload → remplacer <b>index.html</b> → Commit. Attends 2 min, ouvre en navigation privée : <b>enecrdc.github.io/enec/</b></p></div>
 
-</div>
+</div></div>
 <script>
 // Supabase (optionnel - si config presente)
 let sb=null;
@@ -193,6 +208,46 @@ async function downloadSite(){
  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='index.html'; a.click();
  document.getElementById('saveMsg').innerHTML='<div class="ok">✅ Site téléchargé ! Mets ce <b>index.html</b> sur GitHub → dépôt <b>enec</b> → remplacer index.html → Commit. Ton ancien site affichera les nouvelles infos.</div>';
 }
+
+// --- CONNEXION OBLIGATOIRE ---
+async function doLogin(){
+  var em = document.getElementById('loginEmail').value.trim();
+  var pw = document.getElementById('loginPwd').value;
+  var msg = document.getElementById('loginMsg');
+  if(!sb){ msg.innerHTML='<div class="err">❌ Supabase non configuré : clé ANON manquante dans supabase-config.js. Va dans Supabase → Settings → API, copie ta clé ANON.</div>'; return; }
+  if(!pw){ msg.innerHTML='<div class="err">⚠️ Mets ton mot de passe.</div>'; return; }
+  msg.innerHTML='<div class="ok">⏳ Connexion...</div>';
+  try{
+    const {data:u,[STRIPPED] = await sb.auth.signInWithPassword({email:em, password:pw});
+    if(error) throw error;
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminContent').style.display='block';
+    // Afficher qui est connecté en haut
+    var who = document.createElement('div');
+    who.className='ok'; who.textContent='✅ Connecté : '+u.user.email+' — Tu peux modifier le site. [Déconnexion]';
+    who.onclick = async function(){ try{ await sb.auth.signOut(); }catch(e){} location.reload(); };
+    who.style.cursor='pointer';
+    document.getElementById('adminContent').prepend(who);
+  }catch(e){
+    var aide = '';
+    if((e.message||'').includes('Invalid login')) aide = '<br><b>Ça veut dire :</b> email ou mot de passe faux.<br>→ Vérifie que <b>admin@enec.cd</b> existe dans Supabase → Authentication → Users.<br>→ Sinon, Reset password pour admin@enec.cd.';
+    msg.innerHTML='<div class="err">❌ <b>Supabase dit :</b> '+e.message + aide + '</div>';
+  }
+}
+async function checkSession(){
+  var diag = document.getElementById('loginDiag');
+  if(!sb){ if(diag) diag.innerHTML='❌ Supabase non configuré : clé ANON manquante dans supabase-config.js'; return; }
+  if(diag) diag.innerHTML='✅ Supabase configuré — URL : '+(window.ENEC_SUPABASE_URL||'');
+  try{
+    const {data:{session}} = await sb.auth.getSession();
+    if(session && session.user){
+      document.getElementById('loginScreen').style.display='none';
+      document.getElementById('adminContent').style.display='block';
+    }
+  }catch(e){}
+}
+setTimeout(checkSession, 600);
+
 render(); loadOriginal(); loadImagesList();
 try{ const s=JSON.parse(localStorage.getItem('enec_admin_final')||'null'); if(s){ if(s.domaines) domaines=s.domaines; if(s.equipe) equipe=s.equipe; if(s.actus) actus=s.actus; render(); } }catch(e){}
 </script></body></html>
