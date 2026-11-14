@@ -2071,30 +2071,5 @@ Error generating stack: `+n.message+`
 </div></div></div>
 <script src="app-admin.js"></script>
 <!-- ═════════ FIN ENEC ADMIN ═════════ -->
-
-<!-- ===== SEULE MODIFICATION : NOS 2 SITES WEB - RIEN D'AUTRE MODIFIE ===== -->
-<script>
-(function(){
-  // Apres affichage du site, trouver tous les liens vers l'ancien seul site (netlify)
-  // et ajouter juste a cote le 2e site (github), pour que seules nos 2 adresses apparaissent.
-  function addGithub(){
-    var links = document.querySelectorAll('a[href="https://enec-cd.netlify.app"]');
-    links.forEach(function(a){
-      if(a.nextSibling && a.nextSibling.textContent && a.nextSibling.textContent.indexOf('enecrdc.github.io')!==-1) return;
-      if(a.parentNode.querySelector('.enec-2e-site')) return;
-      var br = document.createElement('br');
-      var g = document.createElement('a');
-      g.href = 'https://enecrdc.github.io/enec/';
-      g.target = '_blank'; g.rel = 'noopener'; g.className = 'enec-2e-site break-all underline';
-      g.textContent = 'https://enecrdc.github.io/enec/';
-      // Inserer apres le lien netlify
-      a.parentNode.insertBefore(br, a.nextSibling);
-      a.parentNode.insertBefore(g, br.nextSibling);
-    });
-  }
-  var tries=0; var timer=setInterval(function(){ tries++; addGithub(); if(tries>15) clearInterval(timer); }, 1000);
-})();
-</script>
-<!-- ===== FIN MODIFICATION SITES WEB ===== -->
 </body>
 </html>
