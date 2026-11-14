@@ -3,7 +3,7 @@
 <title>ENEC — Admin qui modifie le vrai ancien site</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
 <script src="supabase-config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Pas de CDN : on utilise fetch direct vers Supabase, ça ne bloque plus -->
 <style>
 *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:#EFF3F8}
 .top{background:#fff;border-bottom:1px solid #E6EAF0;padding:14px 16px}.top b{font-size:22px;color:#0A2540}
@@ -109,8 +109,41 @@ img.prev{max-width:100%;border-radius:12px;margin-top:8px}
 </div></div>
 <script>
 // Supabase (optionnel - si config presente)
+
 let sb=null;
-try{ const U=(window.ENEC_SUPABASE_URL&&!String(window.ENEC_SUPABASE_URL).includes('TON-PROJET'))?window.ENEC_SUPABASE_URL:"https://mlzacyrgnmentvilwvkm.supabase.co"; const K=(window.ENEC_SUPABASE_ANON_KEY&&!String(window.ENEC_SUPABASE_ANON_KEY).includes('TA-CLE')&&!String(window.ENEC_SUPABASE_ANON_KEY).includes('COLLE'))?window.ENEC_SUPABASE_ANON_KEY:null; if(K) sb=supabase.createClient(U,K); }catch(e){}
+// Client Supabase SANS CDN : utilise fetch direct, ne bloque jamais
+function makeSb(url, key){
+  return {
+    auth: {
+      signInWithPassword: async function({email,password}){
+        const r = await fetch(url + '/auth/v1/token?grant_type=password', {method:'POST', headers:{'apikey':key,'Content-Type':'application/json'}, body: JSON.stringify({email,password})});
+        const j = await r.json();
+        if(!r.ok) return {data:null, error:{message: j.msg || j.message || j.error_description || 'Erreur Supabase : '+r.status}};
+        try{ localStorage.setItem('enec_sb_token', j.access_token); }catch(e){}
+        return {data:{user:{email:j.user?.email||email}}, error:null};
+      },
+      signUp: async function({email,password}){
+        const r = await fetch(url + '/auth/v1/signup', {method:'POST', headers:{'apikey':key,'Content-Type':'application/json'}, body: JSON.stringify({email,password})});
+        const j = await r.json();
+        if(!r.ok) return {data:null, error:{message: j.msg || j.message || 'Erreur : '+r.status}};
+        return {data:{user:{email:email}}, error:null};
+      },
+      getSession: async function(){ return {data:{session:null}}; },
+      signOut: async function(){ try{ localStorage.removeItem('enec_sb_token'); }catch(e){} return {}; }
+    },
+    from: function(table){
+      return {
+        upsert: async function(obj, opts){ const r = await fetch(url + '/rest/v1/'+table+'?on_conflict=key', {method:'POST', headers:{'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'}, body: JSON.stringify(obj)}); if(!r.ok) throw new Error('Supabase '+r.status); return {data:obj, error:null}; },
+        select: function(){ return { eq: function(){ return { maybeSingle: async function(){ return {data:null, error:null}; } }; }, limit: async function(){ return {data:[], error:null}; } }; },
+        insert: async function(obj){ const r = await fetch(url + '/rest/v1/'+table, {method:'POST', headers:{'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json'}, body: JSON.stringify(obj)}); return {data:obj, error: r.ok?null:{message:'Erreur '+r.status}}; },
+        delete: function(){ return { eq: function(){ return Promise.resolve({error:null}); } }; }
+      };
+    },
+    storage: { from: function(bucket){ return { upload: async function(path, blob, opts){ const r = await fetch(url + '/storage/v1/object/'+bucket+'/'+path, {method:'POST', headers:{'apikey':key,'Authorization':'Bearer '+key,'Content-Type': blob.type||'image/webp'}, body: blob}); if(!r.ok) return {error:{message:'Upload '+r.status}}; return {error:null}; }, getPublicUrl: function(path){ return {data:{publicUrl: url + '/storage/v1/object/public/'+bucket+'/'+path}}; }, remove: async function(paths){ return {error:null}; } }; } }
+  };
+}
+
+try{ const U=(window.ENEC_SUPABASE_URL&&!String(window.ENEC_SUPABASE_URL).includes('TON-PROJET'))?window.ENEC_SUPABASE_URL:"https://mlzacyrgnmentvilwvkm.supabase.co"; const K=(window.ENEC_SUPABASE_ANON_KEY&&!String(window.ENEC_SUPABASE_ANON_KEY).includes('TA-CLE')&&!String(window.ENEC_SUPABASE_ANON_KEY).includes('COLLE'))?window.ENEC_SUPABASE_ANON_KEY:null; if(K) sb=makeSb(U,K); window._ENEC_SB_URL=U; window._ENEC_SB_HAS_KEY=!!K; }catch(e){ console.log('SB err',e); }
 // Donnees reelles de l'ancien site
 let domaines=[
 {n:"Éducation, Formation Linguistique, Traduction et Interprétation",d:"Formations en langues et traduction professionnelle. Anglais, français, chinois, espagnol, lingala, kiswahili."},
@@ -258,7 +291,7 @@ async function checkSession(){
     }
   }catch(e){}
 }
-setTimeout(checkSession, 600);
+setTimeout(function(){ try{ checkSession(); }catch(e){ var d=document.getElementById('loginDiag'); if(d){ d.innerHTML='❌ Erreur JS : '+e.message; d.style.background='#F8D7DA'; } } }, 800);
 
 render(); loadOriginal(); loadImagesList();
 try{ const s=JSON.parse(localStorage.getItem('enec_admin_final')||'null'); if(s){ if(s.domaines) domaines=s.domaines; if(s.equipe) equipe=s.equipe; if(s.actus) actus=s.actus; render(); } }catch(e){}
