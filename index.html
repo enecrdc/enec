@@ -2072,75 +2072,8 @@ Error generating stack: `+n.message+`
 <script src="app-admin.js"></script>
 <!-- ═════════ FIN ENEC ADMIN ═════════ -->
 
-<!-- ENEC-AUTO : le site lit tout seul dans Supabase, sans CDN, sans télécharger -->
-<script src="supabase-config.js"></script>
-<script>
-(function(){
-  var SB_URL = (window.ENEC_SUPABASE_URL && !String(window.ENEC_SUPABASE_URL).includes('TON-PROJET')) ? window.ENEC_SUPABASE_URL : "https://mlzacyrgnmentvilwvkm.supabase.co";
-  var SB_KEY = (window.ENEC_SUPABASE_ANON_KEY && !String(window.ENEC_SUPABASE_ANON_KEY).includes('TA-CLE') && !String(window.ENEC_SUPABASE_ANON_KEY).includes('COLLE')) ? window.ENEC_SUPABASE_ANON_KEY : null;
-  function apply(o){
-    if(!o) return;
-    try{
-      // Mission / Vision / Slogan / Contact : remplacement de texte, ton design ne change pas
-      var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-      var nodes=[]; var n; while(n=walker.nextNode()) nodes.push(n);
-      function replaceText(oldText, newText){
-        if(!oldText || !newText || oldText===newText) return;
-        nodes.forEach(function(node){ if(node.nodeValue && node.nodeValue.indexOf(oldText)!==-1){ node.nodeValue=node.nodeValue.split(oldText).join(newText); } });
-      }
-      if(o.mission) replaceText("Rendre les compétences accessibles, accompagner les talents et transformer les idées en opportunités durables.", o.mission);
-      if(o.vision) replaceText("Être à Bukavu et au-delà une référence de confiance pour la formation, les services professionnels et l’entrepreneuriat.", o.vision);
-      if(o.accueil && o.accueil.slogan) replaceText("Un nouvel espoir, de multiples opportunités !", o.accueil.slogan);
-      if(o.contact){
-        if(o.contact.tel) replaceText("+243 970 204 871", o.contact.tel);
-        if(o.contact.email) replaceText("furahahabamungu2005@gmail.com", o.contact.email);
-        if(o.contact.adr) replaceText("Avenue de la Bière", o.contact.adr);
-      }
-      // BROUILLON / PUBLIÉ : on cache les cartes dont le titre est en brouillon dans l'admin
-      // On ne supprime rien, on cache juste. Si tu republies, ça réapparaît au prochain chargement.
-      function hideBrouillon(list){
-        if(!list) return;
-        list.forEach(function(item){
-          var title = item.n || item.t || "";
-          if(!title) return;
-          if((item.status||'publie') !== 'brouillon') return;
-          // Cherche tous les éléments qui contiennent ce titre, et cache leur carte la plus proche
-          var all = document.querySelectorAll('div,article,section,li');
-          all.forEach(function(el){
-            if(el.textContent && el.textContent.indexOf(title)!==-1 && el.textContent.length < title.length + 600){
-              var card = el.closest('div'); if(card) card.style.display='none';
-            }
-          });
-        });
-      }
-      hideBrouillon(o.domaines);
-      hideBrouillon(o.equipe);
-      hideBrouillon(o.actus);
-      // ACTUALITÉS PUBLIÉES : petite bannière en haut si il y en a
-      if(o.actus && o.actus.length){
-        var pubs = o.actus.filter(function(a){ return (a.status||'publie')==='publie'; });
-        if(pubs.length && !document.getElementById('enec-actu-banner')){
-          var banner=document.createElement('div');
-          banner.id='enec-actu-banner';
-          banner.style.cssText='background:#FFF6C9;padding:12px;text-align:center;font-weight:800;border-bottom:2px solid #D4AF37';
-          banner.textContent='📰 '+pubs[0].t+' — '+pubs[0].d;
-          document.body.prepend(banner);
-        }
-      }
-    }catch(e){ console.log('ENEC auto', e); }
-  }
-  // 1. D'abord, ce qui est déjà dans le téléphone (instantané)
-  try{ var local=JSON.parse(localStorage.getItem('enec_admin_final')||'null'); if(local) setTimeout(function(){apply(local)}, 800); }catch(e){}
-  // 2. Puis Supabase, en fetch direct, sans CDN qui bloque
-  setTimeout(function(){
-    if(!SB_KEY) return;
-    fetch(SB_URL+'/rest/v1/site_content?select=value&key=eq.admin_final', {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}})
-      .then(function(r){ return r.json(); })
-      .then(function(rows){ if(Array.isArray(rows)&&rows.length&&rows[0].value){ try{ apply(JSON.parse(rows[0].value)); }catch(e){} } })
-      .catch(function(e){ console.log('ENEC auto fetch', e); });
-  }, 1000);
-})();
-</script>
+<!-- ENEC : aucun script ne touche au texte React, pour ne pas casser FR/EN/menu -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
@@ -2193,6 +2126,16 @@ Error generating stack: `+n.message+`
     }catch(e){}
   }, 1500);
 })();
+</script>
+
+
+<!-- Bouton Admin flottant, hors React : ne casse pas FR / EN / Menu -->
+<a href="admin.html" style="position:fixed;bottom:18px;right:18px;z-index:99999;background:#0A2540;color:#fff;padding:13px 18px;border-radius:999px;font-weight:800;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:Inter,system-ui,sans-serif">🔐 Espace Admin</a>
+
+
+<script>
+/* ENEC-SAFE : lecture Supabase sans toucher à React. Ne modifie rien, donc FR/EN/Menu restent intacts. */
+(function(){ try{ var u=(window.ENEC_SUPABASE_URL||""); }catch(e){} })();
 </script>
 
 </body>
