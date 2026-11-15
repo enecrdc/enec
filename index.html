@@ -2042,8 +2042,8 @@ Error generating stack: `+n.message+`
   <script type="application/json" data-clippy-inline-media-manifest="1">{"version":1,"slots":[]}</script>
 
 <!-- ═════════ ENEC ADMIN + SUPABASE — ajouté sans toucher à la vitrine ═════════ -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
+<!-- supprime pour ne pas bloquer React : https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2 -->
+<!-- supprime pour ne pas bloquer React : supabase-config.js -->
 <style>
 #enec-admin-btn{position:fixed;right:14px;bottom:14px;z-index:9999;background:#0A2A5A;color:#fff;border:0;padding:12px 16px;border-radius:999px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.3)}
 #enec-admin{position:fixed;inset:0;z-index:10000;background:rgba(5,15,35,.92);display:none;overflow:auto;padding:16px}
@@ -2069,74 +2069,11 @@ Error generating stack: `+n.message+`
 <div id="enec-tab-messages" style="display:none"><h3>Messages du formulaire Contact</h3><p style="font-size:13px">Le formulaire public de ce fichier envoie aussi vers Supabase quand il est configuré (voir <b>app-admin.js</b> : la fonction enecSendMessage est branchée si tu l'appelles depuis ton formulaire).</p><button class="enec-btn dark" onclick="enecLoadMessages()">Actualiser les messages</button><div id="enec-admin-messages"></div></div>
 <div id="enec-tab-settings" style="display:none"><h3>Paramètres</h3><input id="enec-p-tel" value="+243 970 204 871"><input id="enec-p-email" value="enecbusiness20@gmail.com"><input id="enec-p-adresse" value="Avenue de la Bière, Ibanda, Bukavu, Sud-Kivu, RDC"><button class="enec-btn" onclick="enecSaveSettings()">Enregistrer (table settings)</button><p id="enec-p-status"></p></div>
 </div></div></div>
-<script src="app-admin.js"></script>
+<!-- supprime pour ne pas bloquer React : app-admin.js -->
 <!-- ═════════ FIN ENEC ADMIN ═════════ -->
 
-<!-- ENEC : aucun script ne touche au texte React, pour ne pas casser FR/EN/menu -->
+<!-- ENEC-OVERRIDES supprimé : il cassait React -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-(function(){
-  function applyOverrides(o){
-    if(!o) return;
-    try{
-      var html = document.body.innerHTML;
-      var changed = false;
-      // Mission / Vision : remplace les anciens textes par les nouveaux
-      if(o.mission && html.includes("Rendre les compétences accessibles")){
-        html = html.split("Rendre les compétences accessibles, accompagner les talents et transformer les idées en opportunités durables.").join(o.mission); changed=true;
-      }
-      if(o.vision && html.includes("Être à Bukavu")){
-        html = html.split("Être à Bukavu et au-delà une référence de confiance pour la formation, les services professionnels et l’entrepreneuriat.").join(o.vision); changed=true;
-      }
-      if(o.accueil && o.accueil.slogan){
-        html = html.split("Un nouvel espoir, de multiples opportunités !").join(o.accueil.slogan); changed=true;
-      }
-      if(o.contact){
-        if(o.contact.tel) html = html.split("+243 970 204 871").join(o.contact.tel);
-        if(o.contact.email) html = html.split("furahahabamungu2005@gmail.com").join(o.contact.email);
-        if(o.contact.adr) html = html.split("Avenue de la Bière").join(o.contact.adr);
-        changed=true;
-      }
-      // Domaines / Equipe : remplace chaque titre ancien par le nouveau si le titre a changé
-      // On utilise les listes de l'admin : si un titre contient un mot-clé, on remplace l'ancien affichage
-      if(changed) document.body.innerHTML = html;
-      // Actualités : affiche en haut si présentes
-      if(o.actus && o.actus.length){
-        var banner = document.createElement('div');
-        banner.style.cssText='background:#FFF6C9;padding:12px;text-align:center;font-weight:800;border-bottom:2px solid #D4AF37';
-        banner.textContent = '📰 ' + o.actus[0].t + ' — ' + o.actus[0].d;
-        if(!document.getElementById('enec-actu-banner')){ banner.id='enec-actu-banner'; document.body.prepend(banner); }
-      }
-      console.log('ENEC overrides appliqués', o);
-    }catch(e){ console.log('ENEC overrides', e); }
-  }
-  // 1. D'abord localStorage (instantané, même sans internet)
-  try{ var local = JSON.parse(localStorage.getItem('enec_admin_final')||'null'); if(local) setTimeout(function(){applyOverrides(local)}, 1200); }catch(e){}
-  // 2. Puis Supabase (la vraie base)
-  setTimeout(function(){
-    try{
-      var U = (window.ENEC_SUPABASE_URL && !String(window.ENEC_SUPABASE_URL).includes('TON-PROJET')) ? window.ENEC_SUPABASE_URL : "https://mlzacyrgnmentvilwvkm.supabase.co";
-      var K = (window.ENEC_SUPABASE_ANON_KEY && !String(window.ENEC_SUPABASE_ANON_KEY).includes('TA-CLE') && !String(window.ENEC_SUPABASE_ANON_KEY).includes('COLLE')) ? window.ENEC_SUPABASE_ANON_KEY : null;
-      if(!K || !window.supabase) return;
-      var sb = supabase.createClient(U, K);
-      sb.from('site_content').select('value').eq('key','admin_final').maybeSingle().then(function(res){
-        if(res.data && res.data.value){ try{ applyOverrides(JSON.parse(res.data.value)); }catch(e){} }
-      });
-    }catch(e){}
-  }, 1500);
-})();
-</script>
-
-
-<!-- Bouton Admin flottant, hors React : ne casse pas FR / EN / Menu -->
 <a href="admin.html" style="position:fixed;bottom:18px;right:18px;z-index:99999;background:#0A2540;color:#fff;padding:13px 18px;border-radius:999px;font-weight:800;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:Inter,system-ui,sans-serif">🔐 Espace Admin</a>
-
-
-<script>
-/* ENEC-SAFE : lecture Supabase sans toucher à React. Ne modifie rien, donc FR/EN/Menu restent intacts. */
-(function(){ try{ var u=(window.ENEC_SUPABASE_URL||""); }catch(e){} })();
-</script>
-
 </body>
 </html>
