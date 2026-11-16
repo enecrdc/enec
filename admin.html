@@ -5,12 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>Admin ENEC</title>
-<link rel="stylesheet" href="css/admin.css?v=2">
+<link rel="stylesheet" href="css/admin.css?v=3">
 </head>
 <body>
 <div class="admin-wrap">
-
-<!-- LOGIN -->
 <div id="login-box" class="card">
 <img src="logo.png" class="admin-logo" onerror="this.style.display='none'">
 <h1>🔐 Admin ENEC</h1>
@@ -22,7 +20,6 @@
 <p class="small">Pas de mot de passe en dur. Authentification Supabase Auth uniquement.</p>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" style="display:none">
 <header class="admin-head">
 <div><h1>ENEC — Administration</h1><p id="user-email"></p></div>
@@ -40,33 +37,30 @@
 <button data-tab="programme" onclick="adminShowTab('programme')">Programme</button>
 <button data-tab="contact" onclick="adminShowTab('contact')">Contact</button>
 <button data-tab="settings" onclick="adminShowTab('settings')">Paramètres</button>
+<button data-tab="textes" onclick="adminShowTab('textes')">Textes du site</button>
+<button data-tab="galerie" onclick="adminShowTab('galerie')">Galerie Photos</button>
+<button data-tab="videos" onclick="adminShowTab('videos')">Vidéos</button>
 </nav>
+
 <section id="tab-accueil" class="tab card"><h2>Accueil</h2><div id="accueil-form"><p>Chargement...</p></div></section>
-
 <section id="tab-equipe" class="tab card" style="display:none"><h2>Équipe</h2><div id="equipe-list"><p>Chargement...</p></div><div id="equipe-form"></div></section>
-
 <section id="tab-domaines" class="tab card" style="display:none"><h2>Domaines — 9 domaines</h2><div id="domaines-list"><p>Chargement...</p></div><div id="domaines-form"></div></section>
-
 <section id="tab-realisations" class="tab card" style="display:none"><h2>Réalisations</h2><div id="realisations-list"><p>Chargement...</p></div><div id="realisations-form"></div></section>
-
 <section id="tab-actualites" class="tab card" style="display:none"><h2>Actualités</h2><div id="actualites-list"><p>Chargement...</p></div><div id="actualites-form"></div></section>
-
 <section id="tab-programme" class="tab card" style="display:none"><h2>Programme</h2><div id="programme-form"><p>Chargement...</p></div></section>
-
 <section id="tab-contact" class="tab card" style="display:none"><h2>Contact + Messages</h2><div id="contact-form"><p>Chargement...</p></div><div id="messages-list"></div></section>
-
 <section id="tab-settings" class="tab card" style="display:none"><h2>Paramètres</h2><div id="settings-form"><p>Chargement...</p></div></section>
-
-<p class="small">Chaque Enregistrer / Supprimer / Publier vérifie la réponse réelle de Supabase avant d'afficher "Enregistré". Si Supabase renvoie une erreur, elle s'affiche, on ne simule pas un succès.</p>
-
+<section id="tab-textes" class="tab card" style="display:none"><h2>Textes du site — tout modifier</h2><div id="textes-list"><p>Chargement...</p></div></section>
+<section id="tab-galerie" class="tab card" style="display:none"><h2>Galerie Photos</h2><div id="galerie-list"><p>Chargement...</p></div><div id="galerie-form"></div></section>
+<section id="tab-videos" class="tab card" style="display:none"><h2>Vidéos</h2><div id="videos-list"><p>Chargement...</p></div><div id="videos-form"></div></section>
+<p class="small">Chaque Enregistrer / Supprimer / Publier vérifie la réponse réelle de Supabase avant d'afficher "Enregistré".</p>
 </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="admin-config.js?v=2"></script>
-<script src="js/supabase.js?v=2"></script>
-<script src="js/admin-auth.js?v=2"></script>
-<script src="js/admin.js?v=2"></script>
-<script src="js/admin-modules.js?v=2"></script>
+<script src="admin-config.js?v=3"></script>
+<script src="js/supabase.js?v=3"></script>
+<script src="js/admin-auth.js?v=3"></script>
+<script src="js/admin.js?v=3"></script>
+<script src="js/admin-modules.js?v=3"></script>
 </body>
 </html>
