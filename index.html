@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ENEC — Entreprise Nouvel Espoir du Congo | Vitrine + Admin</title>
+  <title>React Artifact</title>
   <style>@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 *, ::before, ::after{
@@ -2024,7 +2024,7 @@ img{
   }
 }
 </style>
-<style>#enec-admin{display:none !important;}</style></head>
+</head>
 <body>
   <div id="root"></div>
   
@@ -2041,39 +2041,49 @@ Error generating stack: `+n.message+`
   <script>(function(){function m(a){var h=a.getAttribute("href");if(!h)return;try{var u=new URL(h,document.baseURI);if(((u.protocol==="http:"||u.protocol==="https:")&&u.host!==location.host)||u.protocol==="mailto:"||u.protocol==="tel:"||u.protocol==="sms:"){a.target="_blank";a.rel="noopener noreferrer";}}catch(e){}}function s(){document.querySelectorAll("a[href]").forEach(m);}if(document.readyState!=="loading"){s();}else{document.addEventListener("DOMContentLoaded",s);}document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(a){m(a);}},true);})();</script>
   <script type="application/json" data-clippy-inline-media-manifest="1">{"version":1,"slots":[]}</script>
 
-<!-- ═════════ ENEC ADMIN + SUPABASE — ajouté sans toucher à la vitrine ═════════ -->
-<!-- supprime pour ne pas bloquer React : https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2 -->
-<!-- supprime pour ne pas bloquer React : supabase-config.js -->
-<style>
-#enec-admin-btn{position:fixed;right:14px;bottom:14px;z-index:9999;background:#0A2A5A;color:#fff;border:0;padding:12px 16px;border-radius:999px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.3)}
-#enec-admin{position:fixed;inset:0;z-index:10000;background:rgba(5,15,35,.92);display:none;overflow:auto;padding:16px}
-#enec-admin.open{display:block}
-.enec-box{max-width:920px;margin:20px auto;background:#fff;border-radius:18px;padding:20px;color:#12233f;font-family:system-ui}
-.enec-box h2{margin:0 0 8px}.enec-box input,.enec-box textarea,.enec-box select{width:100%;padding:11px;border:1px solid #dbe4f0;border-radius:10px;margin:6px 0;font:inherit}
-.enec-btn{background:#0F9D6A;color:#fff;border:0;padding:11px 16px;border-radius:999px;font-weight:700;cursor:pointer}
-.enec-btn.dark{background:#0A2A5A}.enec-btn.ghost{background:#fff;color:#0A2A5A;border:1px solid #dbe4f0}
-.enec-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.enec-tabs button{padding:9px 14px;border-radius:999px;border:1px solid #dbe4f0;background:#fff;cursor:pointer;font-weight:700}
-.enec-tabs button.active{background:#0A2A5A;color:#fff}.enec-note{background:#fff3cd;padding:10px 12px;border-radius:10px;font-size:13px}
-.enec-row{border-bottom:1px solid #eee;padding:8px 0;font-size:14px}
-</style>
-<button id="enec-admin-btn" onclick="window.location.href='admin.html'">🔐 Espace Admin</button>
-<div id="enec-admin"><div class="enec-box">
-<div style="display:flex;justify-content:space-between;align-items:center"><h2>ENEC — Espace Admin</h2><button class="enec-btn ghost" onclick="document.window.location.href='admin.html';//.classList.remove('open')">✕ Fermer</button></div>
-<div class="enec-note">🔐 Connexion via <b>Supabase Auth</b>. Crée ton admin dans Supabase → Authentication → Add user.<br>Sans Supabase configuré : mode démo <b>admin@enec.cd / enec2026</b> pour tester l'interface. Les données de la vitrine React restent telles quelles dans ce fichier compilé — l'admin gère les données Supabase (services, lauréats, messages) qui sont la source de vérité pour la V2 dynamique.</div>
-<div id="enec-login" style="margin-top:14px"><input id="enec-email" placeholder="Email admin ex: admin@enec.cd"><input id="enec-pass" type="password" placeholder="Mot de passe"><button class="enec-btn" onclick="enecLogin()">Se connecter</button><p id="enec-login-status"></p></div>
-<div id="enec-dash" style="display:none">
-<p><span id="enec-who"></span> <button class="enec-btn ghost" onclick="enecLogout()">Déconnexion</button></p>
-<div class="enec-tabs"><button class="active" onclick="enecTab('services',this)">Services</button><button onclick="enecTab('laureats',this)">Lauréats</button><button onclick="enecTab('messages',this)">Messages</button><button onclick="enecTab('settings',this)">Paramètres</button></div>
-<div id="enec-tab-services"><h3>Ajouter un service</h3><input id="enec-s-titre" placeholder="Titre"><textarea id="enec-s-desc" rows="3" placeholder="Description"></textarea><input id="enec-s-icon" placeholder="Icône emoji ex: 🎓"><button class="enec-btn" onclick="enecSaveService()">Enregistrer dans Supabase</button><p id="enec-s-status"></p><div id="enec-admin-services"></div></div>
-<div id="enec-tab-laureats" style="display:none"><h3>Ajouter un lauréat</h3><input id="enec-l-nom" placeholder="Nom / Groupe"><input id="enec-l-legende" placeholder="Légende — ex: Lauréats de la formation en anglais – EETC"><input id="enec-l-photo" placeholder="URL photo (bucket Supabase Storage 'laureats')"><button class="enec-btn" onclick="enecSaveLaureat()">Ajouter le lauréat</button><p id="enec-l-status"></p><div id="enec-admin-laureats"></div></div>
-<div id="enec-tab-messages" style="display:none"><h3>Messages du formulaire Contact</h3><p style="font-size:13px">Le formulaire public de ce fichier envoie aussi vers Supabase quand il est configuré (voir <b>app-admin.js</b> : la fonction enecSendMessage est branchée si tu l'appelles depuis ton formulaire).</p><button class="enec-btn dark" onclick="enecLoadMessages()">Actualiser les messages</button><div id="enec-admin-messages"></div></div>
-<div id="enec-tab-settings" style="display:none"><h3>Paramètres</h3><input id="enec-p-tel" value="+243 970 204 871"><input id="enec-p-email" value="enecbusiness20@gmail.com"><input id="enec-p-adresse" value="Avenue de la Bière, Ibanda, Bukavu, Sud-Kivu, RDC"><button class="enec-btn" onclick="enecSaveSettings()">Enregistrer (table settings)</button><p id="enec-p-status"></p></div>
-</div></div></div>
-<!-- supprime pour ne pas bloquer React : app-admin.js -->
-<!-- ═════════ FIN ENEC ADMIN ═════════ -->
 
-<!-- ENEC-OVERRIDES supprimé : il cassait React -->
 
-<a href="admin.html" style="position:fixed;bottom:18px;right:18px;z-index:99999;background:#0A2540;color:#fff;padding:13px 18px;border-radius:999px;font-weight:800;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:Inter,system-ui,sans-serif">🔐 Espace Admin</a>
+
+
+<!-- ENEC - Supabase optionnel, SÛR : ne bloque jamais l'affichage. Si Supabase ne répond pas, le site reste affiché tel quel. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  // On attend que la page soit affichée, puis on essaie Supabase en arrière-plan. Jamais de innerHTML sur tout le body.
+  window.addEventListener('load', function(){
+    setTimeout(async function(){
+      try{
+        var url = (window.ENEC_SUPABASE_URL && !window.ENEC_SUPABASE_URL.includes('TON-PROJET')) ? window.ENEC_SUPABASE_URL : localStorage.getItem('enec_sb_url');
+        var key = (window.ENEC_SUPABASE_ANON_KEY && !window.ENEC_SUPABASE_ANON_KEY.includes('TA-CLE')) ? window.ENEC_SUPABASE_ANON_KEY : localStorage.getItem('enec_sb_key');
+        if(!url || !key) return;
+        if(!window.supabase) return;
+        var sb = window.supabase.createClient(url, key);
+        var n = await sb.from('enec_news').select('*').eq('publie', true).order('date_pub', {ascending:false}).limit(3);
+        if(n.error || !n.data || !n.data.length) return;
+        if(document.getElementById('enec-news-dynamique')) return;
+        var sec = document.createElement('section');
+        sec.id = 'enec-news-dynamique';
+        sec.style.cssText = 'max-width:1000px;margin:24px auto;padding:20px;background:#fff;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.06)';
+        var h = document.createElement('h2'); h.textContent = 'Actualités ENEC'; h.style.color = '#0a2540'; sec.appendChild(h);
+        n.data.forEach(function(a){
+          var art = document.createElement('article');
+          art.style.cssText = 'margin:16px 0;border-bottom:1px solid #eee;padding-bottom:12px';
+          if(a.image_url){ var im=document.createElement('img'); im.src=a.image_url; im.style.cssText='width:100%;max-height:280px;object-fit:cover;border-radius:12px'; art.appendChild(im); }
+          var t=document.createElement('h3'); t.textContent=a.titre_fr||''; art.appendChild(t);
+          var s=document.createElement('small'); s.textContent=(a.date_pub||'')+' • '+(a.categorie||''); art.appendChild(s);
+          var p1=document.createElement('p'); p1.textContent=a.resume_fr||''; art.appendChild(p1);
+          var p2=document.createElement('p'); p2.textContent=a.contenu_fr||''; art.appendChild(p2);
+          sec.appendChild(art);
+        });
+        var foot = document.querySelector('footer');
+        if(foot && foot.parentNode) foot.parentNode.insertBefore(sec, foot);
+      }catch(e){ console.log('Supabase optionnel, site affiché par défaut', e); }
+    }, 500);
+  });
+})();
+</script>
 </body>
+
+
+
 </html>

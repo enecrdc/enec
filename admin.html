@@ -1,475 +1,105 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ENEC — Administration Officielle</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="admin-config.js"></script>
+<title>ENEC — Admin Manuel</title>
 <style>
-*{box-sizing:border-box} body{margin:0;font-family:system-ui,Arial,sans-serif;background:#eef2f7;color:#0a2540}
-a{color:#0a2540}
-/* LOGIN */
-#loginOverlay{position:fixed;inset:0;background:#0a2540;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
-#loginBox{background:#fff;border-radius:22px;max-width:480px;width:100%;padding:26px;text-align:center}
-#loginBox h2{margin:6px 0} #loginBox p{color:#475569;font-size:14px;line-height:1.5}
-/* LAYOUT */
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:250px;background:#0a2540;color:#fff;padding:18px;display:flex;flex-direction:column;gap:6px;z-index:10}
-.sidebar h2{font-size:20px;margin:4px 0 2px} .sidebar small{color:#94a3b8}
-.navBtn{background:transparent;color:#e2e8f0;border:0;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600}
-.navBtn.active,.navBtn:hover{background:#fff;color:#0a2540}
-.main{margin-left:250px;padding:18px;max-width:1100px}
-.card{background:#fff;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 4px 20px rgba(0,0,0,.06)}
-label{font-weight:700;display:block;margin:12px 0 6px;font-size:14px}
-input,textarea,select{width:100%;padding:11px;border-radius:11px;border:1px solid #cbd5e1;font-size:14px;background:#eef6ff}
-textarea{min-height:80px} .row{display:grid;grid-template-columns:1fr 1fr;gap:12px} .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-button{padding:11px 16px;border-radius:11px;border:0;font-weight:700;cursor:pointer;font-size:14px;margin:3px}
-.btn-save{background:#0f9d6a;color:#fff} .btn-blue{background:#0a2540;color:#fff} .btn-gold{background:#c9a227;color:#0a2540} .btn-del{background:#fee2e2;color:#991b1b} .btn-grey{background:#e2e8f0}
-.badge{display:inline-block;background:#0a2540;color:#fff;padding:8px 14px;border-radius:999px;font-weight:700;font-size:13px}
-.statGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px} .stat{background:#fff;border-radius:16px;padding:16px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.05)} .stat b{font-size:26px;display:block}
-.item{border:1px solid #e2e8f0;border-radius:14px;padding:12px;margin:10px 0;background:#f8fafc} .item img{width:90px;height:90px;object-fit:cover;border-radius:10px}
-.flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap} .ok{color:#0f9d6a;font-weight:700} .err{color:#e11d48;font-weight:700} .muted{color:#64748b;font-size:13px}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0a2540;color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;z-index:9999;display:none;max-width:90%;text-align:center}
-#loader{position:fixed;inset:0;background:rgba(10,37,64,.55);color:#fff;display:none;align-items:center;justify-content:center;font-weight:800;font-size:18px;z-index:9998}
+body{font-family:system-ui,Arial,sans-serif;background:#eef2f7;margin:0;padding:16px;color:#0a2540}
+.wrap{max-width:900px;margin:auto}
+h1{font-size:28px;margin:6px 0} .badge{background:#0a2540;color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;text-align:center}
+.card{background:#fff;border-radius:20px;padding:18px;margin:16px 0;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+label{font-weight:700;display:block;margin:14px 0 6px} input,textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid #cbd5e1;font-size:15px;box-sizing:border-box;background:#eef6ff}
+textarea{min-height:90px} .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{padding:13px 18px;border-radius:12px;border:0;font-weight:700;cursor:pointer;font-size:15px}
+.btn-save{background:#0f9d6a;color:#fff} .btn-preview{background:#0a2540;color:#fff} .btn-dl{background:#c9a227;color:#0a2540} .btn-reset{background:#eee;color:#333}
+.tabs{display:flex;gap:8px;flex-wrap:wrap} .tab{padding:10px 16px;border-radius:999px;background:#fff;border:1px solid #ddd;cursor:pointer} .tab.active{background:#0a2540;color:#fff}
+.note{background:#fff7cc;border:1px solid #f0d44d;padding:12px;border-radius:12px}
 .hidden{display:none}
-@media(max-width:820px){.sidebar{position:static;width:100%;flex-direction:row;flex-wrap:wrap}.main{margin-left:0}.statGrid{grid-template-columns:1fr 1fr}.row,.row3{grid-template-columns:1fr}}
 </style></head>
-<body>
-<div id="loader">⏳ Traitement en cours — vérification dans Supabase...</div>
-<div id="toast"></div>
+<body><div class="wrap">
+<h1>ENEC — Admin Manuel</h1>
+<p><b>enecbusiness20@gmail.com</b> • <a href="index.html">Voir le site</a></p>
+<div class="badge">✋ MANUEL — Rien ne s'enregistre tout seul. Tu modifies → Tu cliques sur ENREGISTRER → Tu cliques sur TÉLÉCHARGER le nouveau index.html → Tu le glisses sur Netlify.</div>
+<div class="note"><b>Pourquoi avant ça ne changeait rien :</b> L'ancien admin essayait d'enregistrer tout seul dans Supabase, mais Netlify n'utilise que ton fichier <b>index.html</b>. Sans nouveau fichier, le site public ne change pas. Ici, tout est manuel et tu contrôles la publication.</div>
 
-<!-- LOGIN SUPABASE AUTH -->
-<div id="loginOverlay"><div id="loginBox">
-<div style="font-size:42px">🔒</div><h2>ENEC — Administration</h2>
-<p style="background:#dcfce7;border:1px solid #86efac;padding:10px;border-radius:10px;color:#14532d"><b>✅ Ton GitHub est déjà connecté à Supabase</b> — cet admin réutilise <b>ton projet Supabase existant</b>. On ne recrée aucune table, on ne touche pas à ton GitHub. Utilise automatiquement la config de <b>ce même projet</b> déjà dans GitHub (Settings → API).</p><p style="background:#dcfce7;border:1px solid #86efac;padding:10px;border-radius:10px;color:#14532d;text-align:left"><b>✅ Config déjà dans GitHub</b><br>URL + clé publique lues automatiquement depuis <b>admin-config.js</b> généré par GitHub. Tu n'as plus à les coller ici.<br><small id="configStatus">Vérification...</small></p><p>Connexion sécurisée avec <b>Supabase Auth</b>.<br>Tes identifiants sont ceux créés dans <b>Supabase → Authentication → Users</b>.<br>Aucun compte ne peut être créé depuis cette page.</p>
-
-
-<label style="text-align:left">Adresse mail admin</label><input id="loginEmail" type="email" placeholder="Ton mail Supabase">
-<label style="text-align:left">Mot de passe admin</label><input id="loginPass" type="password" placeholder="Ton mot de passe Supabase">
-<p id="loginError" class="err"></p>
-<button class="btn-save" style="width:100%" onclick="login()">🔓 Se connecter</button><button class="btn-grey" style="width:100%;margin-top:8px" type="button" onclick="verifierProjet()">🔍 Vérifier mon projet déjà connecté (sans rien modifier)</button><div id="verifResult" style="text-align:left;font-size:13px;margin-top:10px"></div><button class="btn-save" style="display:none"</button>
-<p class="muted">Première installation ? Exécute d'abord le fichier <b>enec-supabase-setup.sql</b> dans Supabase → SQL Editor, puis crée ton utilisateur dans Authentication → Users → Add User (Auto Confirm).</p>
-</div></div>
-
-<!-- SIDEBAR -->
-<div class="sidebar" id="adminUI" style="display:none">
-<h2>ENEC Admin</h2><small>Entreprise Nouvel Espoir du Congo<br><span id="who"></span></small>
-<button class="navBtn active" data-page="dashboard" onclick="showPage('dashboard',this)">📊 Tableau de bord</button>
-<button class="navBtn" data-page="accueil" onclick="showPage('accueil',this)">🏠 Accueil</button>
-<button class="navBtn" data-page="apropos" onclick="showPage('apropos',this)">ℹ️ À propos</button>
-<button class="navBtn" data-page="equipe" onclick="showPage('equipe',this)">👥 Notre équipe</button>
-<button class="navBtn" data-page="domaines" onclick="showPage('domaines',this)">🧭 Domaines</button>
-<button class="navBtn" data-page="realisations" onclick="showPage('realisations',this)">🏆 Réalisations</button>
-<button class="navBtn" data-page="programme" onclick="showPage('programme',this)">🚀 Programme Entrepreneurs</button>
-<button class="navBtn" data-page="actus" onclick="showPage('actus',this)">📰 Actualités</button>
-<button class="navBtn" data-page="contact" onclick="showPage('contact',this)">📞 Contact + Messages</button>
-<button class="navBtn" data-page="parametres" onclick="showPage('parametres',this)">⚙️ Pied de page / Paramètres</button>
-<button class="navBtn" data-page="images" onclick="showPage('images',this)">🖼️ Images / Storage</button>
-<div style="margin-top:auto"><button class="navBtn" style="width:100%;background:#fff;color:#0a2540" onclick="logout()">🚪 Déconnexion</button><p class="muted" style="color:#94a3b8;font-size:12px">Manuel + Supabase.<br>Rien n'est confirmé sans vérification dans Supabase.</p></div>
+<div class="tabs">
+<button class="tab active" data-t="accueil">Accueil</button>
+<button class="tab" data-t="domaines">Domaines</button>
+<button class="tab" data-t="equipe">Équipe</button>
+<button class="tab" data-t="contact">Contact</button>
 </div>
 
-<div class="main" id="mainUI" style="display:none">
-<!-- DASHBOARD -->
-<div id="page-dashboard">
-<h1>Tableau de bord</h1><p class="muted">Statistiques réelles depuis Supabase • <button class="btn-blue" onclick="loadAll()">🔄 Actualiser tout</button></p>
-<div class="statGrid">
-<div class="stat"><b id="st_team">—</b> Membres équipe</div>
-<div class="stat"><b id="st_dom">—</b> Domaines</div>
-<div class="stat"><b id="st_news">—</b> Actualités</div>
-<div class="stat"><b id="st_msg">—</b> Messages</div>
-</div>
-<div class="card"><h3>Dernières actualités (Supabase)</h3><div id="dashNews">Chargement...</div></div>
-<div class="card"><h3>Derniers messages du formulaire</h3><div id="dashMsg">Chargement...</div></div>
-<div class="card"><h3>Comment ça marche</h3><p><b>Ajouter / Modifier / Supprimer</b> → l'action est envoyée à Supabase → on vérifie le retour de Supabase → <b>seulement si Supabase confirme</b>, on affiche “✅ Enregistré dans Supabase + visible sur le site”. Sinon on affiche l'erreur exacte. Le site public lit les mêmes tables, donc il se met à jour sans redéployer sur Netlify. Les contenus avec <b>Publié = Non</b> n'apparaissent pas sur le site public.</p></div>
+<div id="accueil" class="card">
+<h2>Accueil</h2>
+<label>Titre bannière — ligne 1</label><input id="titre1" value="Un nouvel espoir,">
+<label>Titre bannière — ligne 2</label><input id="titre2" value="de multiples opportunités !">
+<label>Slogan</label><input id="slogan" value="Un nouvel espoir, de multiples opportunités !">
+<label>Texte de présentation (Accueil)</label><textarea id="presentation">L'Entreprise Nouvel Espoir du Congo (ENEC) est une entreprise multisectorielle basée à Bukavu, dans la province du Sud-Kivu, en République démocratique du Congo.</textarea>
 </div>
 
-<!-- ACCUEIL -->
-<div id="page-accueil" class="hidden"><h1>Accueil</h1><div class="card">
-<label>Titre — ligne 1 (FR)</label><input id="s_titre1_fr"><label>Titre — ligne 1 (EN)</label><input id="s_titre1_en">
-<label>Titre — ligne 2 (FR)</label><input id="s_titre2_fr"><label>Titre — ligne 2 (EN)</label><input id="s_titre2_en">
-<label>Slogan (FR)</label><input id="s_slogan_fr"><label>Slogan (EN)</label><input id="s_slogan_en">
-<label>Présentation (FR)</label><textarea id="s_presentation_fr"></textarea><label>Présentation (EN)</label><textarea id="s_presentation_en"></textarea>
-<label>Bannière — Image URL (depuis Storage)</label><input id="s_banniere" placeholder="https://.../enec-images/accueil/banniere.jpg">
-<label>Bouton 1 — Texte FR / Lien</label><div class="row"><input id="s_btn1_fr" placeholder="Découvrir ENEC"><input id="s_btn1_lien" placeholder="#domaines"></div>
-<label>Bouton 2 — Texte FR / Lien</label><div class="row"><input id="s_btn2_fr" placeholder="Nous contacter"><input id="s_btn2_lien" placeholder="#contact"></div>
-<button class="btn-save" onclick="saveSettings(['titre1','titre2','slogan','presentation','banniere','btn1_fr','btn1_lien','btn2_fr','btn2_lien'])">💾 Enregistrer Accueil (Supabase)</button><span id="msg_accueil"></span>
-</div></div>
-
-<!-- A PROPOS -->
-<div id="page-apropos" class="hidden"><h1>À propos</h1><div class="card">
-<label>Mission (FR)</label><textarea id="s_mission_fr"></textarea><label>Mission (EN)</label><textarea id="s_mission_en"></textarea>
-<label>Vision (FR)</label><textarea id="s_vision_fr"></textarea><label>Vision (EN)</label><textarea id="s_vision_en"></textarea>
-<label>Valeurs (FR)</label><textarea id="s_valeurs_fr" placeholder="Ex: Intégrité, Excellence, Solidarité..."></textarea>
-<label>Valeurs (EN)</label><textarea id="s_valeurs_en"></textarea>
-<label>Présentation générale ENEC (FR)</label><textarea id="s_apropos_fr"></textarea>
-<label>Présentation générale ENEC (EN)</label><textarea id="s_apropos_en"></textarea>
-<button class="btn-save" onclick="saveSettings(['mission','vision','valeurs','apropos'])">💾 Enregistrer À propos</button><span id="msg_apropos"></span>
-</div></div>
-
-<!-- EQUIPE -->
-<div id="page-equipe" class="hidden"><h1>Notre équipe</h1>
-<div class="card"><h3>Ajouter / Modifier un membre</h3>
-<input type="hidden" id="team_id">
-<label>Nom complet *</label><input id="team_nom" placeholder="Ex: Patrick Mituga">
-<div class="row"><div><label>Fonction (FR)</label><input id="team_fonction_fr"></div><div><label>Fonction (EN)</label><input id="team_fonction_en"></div></div>
-<label>Biographie (FR)</label><textarea id="team_bio_fr"></textarea><label>Biographie (EN)</label><textarea id="team_bio_en"></textarea>
-<div class="row"><div><label>Ordre d'affichage</label><input id="team_ordre" type="number" value="0"></div><div><label>Publié ?</label><select id="team_publie"><option value="true">Oui — visible sur le site</option><option value="false">Non — masqué</option></select></div></div>
-<label>Photo — choisir un fichier (Storage : equipe/)</label><input type="file" id="team_file" accept="image/*" onchange="previewFile(this,'team_preview')">
-<img id="team_preview" style="width:110px;height:110px;object-fit:cover;border-radius:12px;display:none;margin-top:8px">
-<label>Ou URL photo existante</label><input id="team_photo" placeholder="https://.../enec-images/equipe/...">
-<button class="btn-save" onclick="saveTeam()">💾 Enregistrer le membre (Supabase + Storage)</button>
-<button class="btn-grey" onclick="resetTeam()">↩️ Effacer le formulaire</button><span id="msg_team"></span></div>
-<div class="card"><h3>Membres actuels (Supabase)</h3><div id="listTeam">Chargement...</div></div></div>
-
-<!-- DOMAINES -->
-<div id="page-domaines" class="hidden"><h1>Domaines d'intervention</h1>
-<div class="card"><h3>Ajouter / Modifier un domaine</h3><input type="hidden" id="dom_id">
-<label>Titre (FR) *</label><input id="dom_titre_fr"><label>Titre (EN)</label><input id="dom_titre_en">
-<label>Description (FR)</label><textarea id="dom_desc_fr"></textarea><label>Description (EN)</label><textarea id="dom_desc_en"></textarea>
-<label>Activités / Services proposés</label><textarea id="dom_activites" placeholder="Une activité par ligne"></textarea>
-<div class="row"><div><label>Ordre</label><input id="dom_ordre" type="number" value="0"></div><div><label>Publié ?</label><select id="dom_publie"><option value="true">Oui</option><option value="false">Non</option></select></div></div>
-<label>Image — fichier (Storage : domaines/)</label><input type="file" id="dom_file" accept="image/*" onchange="previewFile(this,'dom_preview')">
-<img id="dom_preview" style="width:130px;height:90px;object-fit:cover;border-radius:10px;display:none;margin-top:8px">
-<label>Ou URL image</label><input id="dom_image">
-<button class="btn-save" onclick="saveDomain()">💾 Enregistrer le domaine</button><button class="btn-grey" onclick="resetDomain()">↩️ Effacer</button><span id="msg_dom"></span></div>
-<div class="card"><h3>Domaines actuels</h3><div id="listDom">Chargement...</div></div></div>
-
-<!-- REALISATIONS -->
-<div id="page-realisations" class="hidden"><h1>Nos réalisations</h1>
-<div class="card"><h3>Ajouter / Modifier une réalisation</h3><input type="hidden" id="rea_id">
-<label>Titre (FR) *</label><input id="rea_titre_fr"><label>Titre (EN)</label><input id="rea_titre_en">
-<label>Description (FR)</label><textarea id="rea_desc_fr"></textarea><label>Description (EN)</label><textarea id="rea_desc_en"></textarea>
-<div class="row"><div><label>Date</label><input id="rea_date" type="date"></div><div><label>Publié ?</label><select id="rea_publie"><option value="true">Oui</option><option value="false">Non</option></select></div></div>
-<label>Photo (Storage : realisations/)</label><input type="file" id="rea_file" accept="image/*" onchange="previewFile(this,'rea_preview')">
-<img id="rea_preview" style="width:130px;height:90px;object-fit:cover;border-radius:10px;display:none;margin-top:8px">
-<label>Ou URL image</label><input id="rea_image">
-<button class="btn-save" onclick="saveRea()">💾 Enregistrer la réalisation</button><button class="btn-grey" onclick="resetRea()">↩️ Effacer</button><span id="msg_rea"></span></div>
-<div class="card"><h3>Réalisations actuelles</h3><div id="listRea">Chargement...</div></div></div>
-
-<!-- PROGRAMME -->
-<div id="page-programme" class="hidden"><h1>Programme d'Appui aux Entrepreneurs</h1>
-<div class="card"><h3>Ajouter / Modifier une activité du programme</h3><input type="hidden" id="prog_id">
-<label>Titre (FR) *</label><input id="prog_titre_fr"><label>Titre (EN)</label><input id="prog_titre_en">
-<label>Description (FR)</label><textarea id="prog_desc_fr"></textarea><label>Description (EN)</label><textarea id="prog_desc_en"></textarea>
-<label>Objectifs (un par ligne)</label><textarea id="prog_obj"></textarea>
-<label>Publié ?</label><select id="prog_publie"><option value="true">Oui</option><option value="false">Non</option></select>
-<label>Image (Storage : programme/)</label><input type="file" id="prog_file" accept="image/*" onchange="previewFile(this,'prog_preview')">
-<img id="prog_preview" style="width:130px;height:90px;object-fit:cover;border-radius:10px;display:none;margin-top:8px">
-<label>Ou URL image</label><input id="prog_image">
-<button class="btn-save" onclick="saveProg()">💾 Enregistrer</button><button class="btn-grey" onclick="resetProg()">↩️ Effacer</button><span id="msg_prog"></span></div>
-<div class="card"><h3>Activités du programme</h3><div id="listProg">Chargement...</div></div></div>
-
-<!-- ACTUALITES -->
-<div id="page-actus" class="hidden"><h1>Actualités</h1>
-<div class="card"><h3>Publier / Modifier un article</h3><input type="hidden" id="news_id">
-<label>Titre (FR) *</label><input id="news_titre_fr"><label>Titre (EN)</label><input id="news_titre_en">
-<label>Résumé (FR)</label><textarea id="news_resume"></textarea>
-<label>Contenu (FR)</label><textarea id="news_contenu_fr" style="min-height:140px"></textarea>
-<label>Contenu (EN)</label><textarea id="news_contenu_en"></textarea>
-<div class="row3"><div><label>Catégorie</label><input id="news_cat" value="Actualité"></div><div><label>Date</label><input id="news_date" type="date"></div><div><label>Statut</label><select id="news_publie"><option value="true">Publié — visible</option><option value="false">Brouillon — masqué</option></select></div></div>
-<label>Image d'illustration (Storage : actualites/)</label><input type="file" id="news_file" accept="image/*" onchange="previewFile(this,'news_preview')">
-<img id="news_preview" style="width:150px;height:100px;object-fit:cover;border-radius:10px;display:none;margin-top:8px">
-<label>Ou URL image</label><input id="news_image">
-<button class="btn-save" onclick="saveNews()">💾 Publier / Enregistrer l'article</button><button class="btn-grey" onclick="resetNews()">↩️ Effacer</button><span id="msg_news"></span></div>
-<div class="card"><h3>Articles (Supabase)</h3><div id="listNews">Chargement...</div></div></div>
-
-<!-- CONTACT -->
-<div id="page-contact" class="hidden"><h1>Contact</h1>
-<div class="card"><h3>Coordonnées</h3>
-<label>Adresse (FR)</label><input id="s_adresse_fr"><label>Adresse (EN)</label><input id="s_adresse_en">
-<div class="row"><div><label>Téléphone 1</label><input id="s_tel1_fr"></div><div><label>Téléphone 2</label><input id="s_tel2_fr"></div></div>
-<label>Email</label><input id="s_email_fr"><label>WhatsApp (lien)</label><input id="s_whatsapp_fr" placeholder="https://wa.me/243...">
-<label>Facebook</label><input id="s_facebook_fr"><label>Instagram</label><input id="s_instagram_fr">
-<label>Horaires (FR)</label><input id="s_horaires_fr"><label>Horaires (EN)</label><input id="s_horaires_en">
-<button class="btn-save" onclick="saveSettings(['adresse','tel1','tel2','email','whatsapp','facebook','instagram','horaires'])">💾 Enregistrer Contact</button><span id="msg_contact"></span></div>
-<div class="card"><h3>Messages envoyés depuis le formulaire du site</h3><button class="btn-blue" onclick="loadMessages()">🔄 Actualiser</button><div id="listMsg">Chargement...</div></div></div>
-
-<!-- PARAMETRES -->
-<div id="page-parametres" class="hidden"><h1>Pied de page & Paramètres généraux</h1><div class="card">
-<label>Logo — URL (Storage : logo/)</label><input id="s_logo" placeholder="https://.../enec-images/logo/logo.png">
-<label>Texte pied de page (FR)</label><textarea id="s_footer_texte_fr"></textarea><label>Texte pied de page (EN)</label><textarea id="s_footer_texte_en"></textarea>
-<label>Site web</label><input id="s_site_fr">
-<button class="btn-save" onclick="saveSettings(['logo','footer_texte','site'])">💾 Enregistrer Paramètres</button><span id="msg_param"></span>
-<p class="muted">Les réseaux sociaux et coordonnées du pied de page sont les mêmes que dans Contact (une seule source de vérité dans Supabase).</p>
-</div></div>
-
-<!-- IMAGES -->
-<div id="page-images" class="hidden"><h1>Images / Supabase Storage</h1>
-<div class="card"><h3>Téléverser une image</h3>
-<label>Dossier</label><select id="up_folder"><option value="accueil">accueil</option><option value="equipe">equipe</option><option value="domaines">domaines</option><option value="realisations">realisations</option><option value="programme">programme</option><option value="actualites">actualites</option><option value="logo">logo</option><option value="autres">autres</option></select>
-<label>Fichier</label><input type="file" id="up_file" accept="image/*" onchange="previewFile(this,'up_preview')">
-<img id="up_preview" style="width:180px;height:120px;object-fit:cover;border-radius:12px;display:none;margin-top:8px">
-<button class="btn-save" onclick="uploadGeneric()">⬆️ Téléverser dans Storage</button><span id="msg_up"></span>
-<div id="up_result"></div>
-<p class="muted">Les images ne sont jamais stockées dans les tables. On stocke seulement l'URL dans la table, le fichier va dans Storage → bucket <b>enec-images</b>.</p>
+<div id="domaines" class="card hidden">
+<h2>Domaines</h2>
+<p>Pour modifier un domaine, change son titre et sa description ci-dessous, puis Enregistrer.</p>
+<label>Domaine 1 — Titre</label><input id="d1" value="Éducation, Formation Linguistique, Traduction et Interprétation">
+<label>Domaine 2 — Titre</label><input id="d2" value="Informatique et Numérique">
+<label>Domaine 3 — Titre</label><input id="d3" value="Formations Professionnelles et Techniques">
+<label>Domaine 4 — Titre</label><input id="d4" value="Communication, Audiovisuel et Événementiel">
+<label>Domaine 5 — Titre</label><input id="d5" value="Nettoyage, Peinture, Décoration et Services Généraux">
+<label>Domaine 6 — Titre</label><input id="d6" value="Conception et Gestion des Projets">
+<label>Domaine 7 — Titre</label><input id="d7" value="Intermédiation Immobilière et Location">
+<label>Domaine 8 — Titre</label><input id="d8" value="Agriculture et Élevage">
 </div>
-<div class="card"><h3>Images déjà utilisées (d'après les tables)</h3><button class="btn-blue" onclick="loadAllImages()">🔄 Actualiser</button><div id="listImages">Chargement...</div></div></div>
 
+<div id="equipe" class="card hidden">
+<h2>Équipe</h2>
+<label>Directeur Général — Nom</label><input id="dg" value="Patrick Mituga">
+<label>Directeur Général — Fonction</label><input id="dgf" value="Directeur Général">
+<p class="note">Pour changer une photo d'un membre : envoie-moi la photo ici dans la discussion, je la mets dans le site. L'admin ne peut pas envoyer de photo tout seul sur Netlify, c'est volontaire : tout est manuel et contrôlé.</p>
+</div>
+
+<div id="contact" class="card hidden">
+<h2>Contact</h2>
+<label>Téléphone 1 / WhatsApp</label><input id="tel1" value="+243 970 204 871">
+<label>Téléphone 2</label><input id="tel2" value="+243 962 471 683">
+<label>Email</label><input id="email" value="enecbusiness20@gmail.com">
+<label>Adresse</label><input id="adresse" value="Avenue de la Bière, Ibanda, Bukavu, Sud-Kivu, RDC">
+<label>Site web</label><input id="site" value="https://enec-cd.netlify.app">
+</div>
+
+<div class="card">
+<h2>3 étapes manuelles — à faire dans l'ordre</h2>
+<p><b>1.</b> Modifie les champs ci-dessus.<br><b>2.</b> Clique sur <b>ENREGISTRER MES MODIFICATIONS</b> — ça enregistre seulement dans ce navigateur, rien ne part sur internet.<br><b>3.</b> Clique sur <b>TÉLÉCHARGER LE NOUVEL index.html</b> — tu obtiens un nouveau fichier à glisser sur Netlify pour que le site public change.</p>
+<button class="btn-save" onclick="enregistrer()">💾 1. ENREGISTRER MES MODIFICATIONS</button>
+<button class="btn-preview" onclick="window.open('index.html','_blank')">👁️ 2. VOIR L'APERÇU</button>
+<button class="btn-dl" onclick="telecharger()">⬇️ 3. TÉLÉCHARGER LE NOUVEL index.html</button>
+<button class="btn-reset" onclick="reinitialiser()">↩️ Réinitialiser</button>
+<p id="msg" style="font-weight:700;color:#0f9d6a;margin-top:12px"></p>
 </div>
 
 <script>
-let sb=null, USER=null;
-function toast(t){ var e=document.getElementById('toast'); e.textContent=t; e.style.display='block'; setTimeout(()=>e.style.display='none',4200); }
-function showLoader(v){ document.getElementById('loader').style.display=v?'flex':'none'; }
-function showPage(id,btn){ document.querySelectorAll('[id^="page-"]').forEach(d=>d.classList.add('hidden')); document.getElementById('page-'+id).classList.remove('hidden'); document.querySelectorAll('.navBtn').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); window.scrollTo(0,0); }
-function previewFile(inp,imgId){ var f=inp.files[0]; if(!f) return; var r=new FileReader(); r.onload=e=>{ var im=document.getElementById(imgId); im.src=e.target.result; im.style.display='block'; }; r.readAsDataURL(f); }
-function esc(s){ return (s||'').toString().replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// --- AUTH ---
-
-function afficherConfigStatus(){ var el=document.getElementById('configStatus'); if(!el) return; if(window.ENEC_SUPABASE_URL && window.ENEC_SUPABASE_ANON_KEY && !window.ENEC_SUPABASE_URL.includes('TON-PROJET')){ el.textContent='✅ Config GitHub détectée : '+window.ENEC_SUPABASE_URL; } else { el.textContent='⚠️ admin-config.js non encore généré par GitHub — en local, mets tes valeurs dans admin-config.js (clé anon uniquement).'; } } document.addEventListener('DOMContentLoaded', afficherConfigStatus); afficherConfigStatus();
-async function verifierProjet(){ var url=window.ENEC_SUPABASE_URL||localStorage.getItem('enec_sb_url')||'', key=window.ENEC_SUPABASE_ANON_KEY||localStorage.getItem('enec_sb_key')||'';
-  var box=document.getElementById('verifResult');
-  if(!url||!key){ box.innerHTML='<span style="color:#e11d48">Colle d’abord ton URL + ta clé anon du projet déjà connecté (Supabase → Settings → API).</span>'; return; }
-  box.innerHTML='⏳ Vérification... (lecture seule, rien n’est modifié)';
+document.querySelectorAll('.tab').forEach(function(t){
+ t.onclick=function(){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+  ['accueil','domaines','equipe','contact'].forEach(function(id){ document.getElementById(id).classList.add('hidden'); });
+  document.getElementById(t.dataset.t).classList.remove('hidden');
+ };
+});
+// Charger si déjà enregistré
+try{ var c=JSON.parse(localStorage.getItem('enec_config_manuelle')||'null'); if(c){ for(var k in c){ var el=document.getElementById(k); if(el) el.value=c[k]; } } }catch(e){}
+function collect(){ var o={}; ['titre1','titre2','slogan','presentation','d1','d2','d3','d4','d5','d6','d7','d8','dg','dgf','tel1','tel2','email','adresse','site'].forEach(function(id){ var el=document.getElementById(id); if(el) o[id]=el.value; }); return o; }
+function enregistrer(){ localStorage.setItem('enec_config_manuelle', JSON.stringify(collect())); document.getElementById('msg').textContent='✅ Enregistré dans ce navigateur. Rien n’a été publié. Clique maintenant sur TÉLÉCHARGER pour obtenir le nouveau index.html.'; alert('Enregistré. Maintenant clique sur TÉLÉCHARGER LE NOUVEL index.html'); }
+function reinitialiser(){ if(confirm('Effacer tes modifications manuelles ?')){ localStorage.removeItem('enec_config_manuelle'); location.reload(); } }
+async function telecharger(){
+  enregistrer();
   try{
-    var tmp=supabase.createClient(url,key);
-    var tables=['enec_settings','enec_team','enec_domains','enec_achievements','enec_program','enec_news','enec_messages','enec_content'];
-    var lines=[];
-    for(var t of tables){
-      var r=await tmp.from(t).select('id',{count:'exact', head:true});
-      if(r.error) lines.push('❌ '+t+' — manquante ou bloquée : '+r.error.message);
-      else lines.push('✅ '+t+' — existe, accessible ('+(r.count ?? '?')+' lignes)');
-    }
-    var b=await tmp.storage.listBuckets();
-    var buckets=(b.data||[]).map(x=>x.id).join(', ')||'aucun bucket';
-    lines.push('🖼️ Buckets Storage : '+buckets);
-    box.innerHTML='<b>Résultat (lecture seule) :</b><br>'+lines.join('<br>')+'<br><br><small>Si une table est manquante, exécute <b>uniquement</b> son bloc dans enec-supabase-setup.sql. Ne ré-exécute pas tout si les tables existent déjà.</small>';
-  }catch(e){ box.innerHTML='<span style="color:#e11d48">❌ '+e.message+'</span>'; }
-}
-
-async function login(){ var url=window.ENEC_SUPABASE_URL||localStorage.getItem('enec_sb_url')||'', key=window.ENEC_SUPABASE_ANON_KEY||localStorage.getItem('enec_sb_key')||'';
-  var em=document.getElementById('loginEmail').value.trim(), pw=document.getElementById('loginPass').value;
-  var err=document.getElementById('loginError');
-  if(!url||!key){ err.textContent='Config Supabase déjà dans GitHub — lecture automatique. Jamais la clé service_role.'; return; }
-  if(!em||!pw){ err.textContent='Mets ton mail + mot de passe Supabase.'; return; }
-  showLoader(true);
-  try{
-    localStorage.setItem('enec_sb_url',url); localStorage.setItem('enec_sb_key',key);
-    sb=supabase.createClient(url,key);
-    var res=await sb.auth.signInWithPassword({email:em,password:pw});
-    if(res.error) throw res.error;
-    USER=res.data.user;
-    document.getElementById('loginOverlay').style.display='none';
-    document.getElementById('adminUI').style.display='flex';
-    document.getElementById('mainUI').style.display='block';
-    document.getElementById('who').textContent=USER.email;
-    toast('✅ Connecté : '+USER.email);
-    await loadAll();
-  }catch(e){ err.textContent='❌ '+e.message+' — Vérifie que cet utilisateur existe dans Supabase → Authentication → Users (Auto Confirm).'; }
-  showLoader(false);
-}
-async function logout(){ try{ if(sb) await sb.auth.signOut(); }catch(e){} sessionStorage.clear(); location.reload(); }
-(function(){ /* Config lue depuis admin-config.js généré par GitHub, pas de champs à remplir */ })();
-
-// --- SETTINGS ---
-async function loadSettings(){
-  var res=await sb.from('enec_settings').select('*');
-  if(res.error) throw res.error;
-  var m={}; res.data.forEach(r=>m[r.cle]=r);
-  window._settings=m;
-  var keys=['titre1','titre2','slogan','presentation','mission','vision','valeurs','apropos','adresse','tel1','tel2','email','whatsapp','facebook','instagram','horaires','footer_texte','site','logo','banniere','btn1_fr','btn1_lien','btn2_fr','btn2_lien'];
-  keys.forEach(k=>{
-    var fr=document.getElementById('s_'+k+'_fr'), en=document.getElementById('s_'+k+'_en'), single=document.getElementById('s_'+k);
-    if(fr) fr.value=(m[k]?.valeur_fr||'');
-    if(en) en.value=(m[k]?.valeur_en||'');
-    if(single) single.value=(m[k]?.valeur_fr||'');
-  });
-  // cas particuliers : champs sans suffixe dans HTML pour contact (on mappe)
-  var mapSingle={adresse:'s_adresse_fr',tel1:'s_tel1_fr',tel2:'s_tel2_fr',email:'s_email_fr',whatsapp:'s_whatsapp_fr',facebook:'s_facebook_fr',instagram:'s_instagram_fr',horaires:'s_horaires_fr',site:'s_site_fr',logo:'s_logo',footer_texte:'s_footer_texte_fr'};
-  // déjà gérés ci-dessus via s_ + cle ; pour tel1 etc. on a s_tel1_fr
-  return m;
-}
-async function saveSettings(keys){
-  showLoader(true);
-  try{
-    var rows=[];
-    keys.forEach(k=>{
-      var fr=document.getElementById('s_'+k+'_fr'), en=document.getElementById('s_'+k+'_en'), single=document.getElementById('s_'+k);
-      var vfr = fr ? fr.value : (single ? single.value : '');
-      var ven = en ? en.value : vfr;
-      rows.push({cle:k, valeur_fr:vfr, valeur_en:ven});
-    });
-    var res=await sb.from('enec_settings').upsert(rows,{onConflict:'cle'}).select();
-    if(res.error) throw res.error;
-    // Vérification réelle : relire
-    var check=await sb.from('enec_settings').select('*').in('cle',keys);
-    if(check.error) throw check.error;
-    if(check.data.length!==keys.length) throw new Error('Vérification incomplète dans Supabase ('+check.data.length+'/'+keys.length+'). Réessaie.');
-    toast('✅ Enregistré dans Supabase + visible sur le site');
-    await loadSettings();
-  }catch(e){ toast('❌ Erreur : '+e.message); alert('❌ Non enregistré dans Supabase :\n'+e.message); }
-  showLoader(false);
-}
-
-// --- STORAGE ---
-async function uploadImage(file, folder){
-  if(!file) throw new Error('Choisis un fichier image.');
-  var ext=file.name.split('.').pop().toLowerCase();
-  var name=folder+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
-  var res=await sb.storage.from('enec-images').upload(name, file, {upsert:false, contentType:file.type});
-  if(res.error) throw res.error;
-  var pub=sb.storage.from('enec-images').getPublicUrl(name);
-  return pub.data.publicUrl;
-}
-async function uploadGeneric(){
-  showLoader(true);
-  try{
-    var f=document.getElementById('up_file').files[0];
-    var folder=document.getElementById('up_folder').value;
-    var url=await uploadImage(f,folder);
-    document.getElementById('msg_up').innerHTML='<span class="ok">✅ Téléversé dans Storage.</span>';
-    document.getElementById('up_result').innerHTML='<p>URL à copier :</p><input readonly value="'+url+'"><img src="'+url+'" style="width:180px;border-radius:12px;margin-top:8px">';
-    toast('✅ Image téléversée dans Storage');
-  }catch(e){ document.getElementById('msg_up').innerHTML='<span class="err">❌ '+e.message+'</span>'; }
-  showLoader(false);
-}
-
-// --- TEAM ---
-async function saveTeam(){
-  showLoader(true);
-  try{
-    var id=document.getElementById('team_id').value||null;
-    var photo=document.getElementById('team_photo').value.trim();
-    var f=document.getElementById('team_file').files[0];
-    if(f){ photo=await uploadImage(f,'equipe'); document.getElementById('team_photo').value=photo; }
-    var row={nom:document.getElementById('team_nom').value.trim(), fonction_fr:document.getElementById('team_fonction_fr').value, fonction_en:document.getElementById('team_fonction_en').value, bio_fr:document.getElementById('team_bio_fr').value, bio_en:document.getElementById('team_bio_en').value, photo_url:photo, ordre:parseInt(document.getElementById('team_ordre').value||0), publie:document.getElementById('team_publie').value==='true'};
-    if(!row.nom) throw new Error('Nom du membre requis.');
-    var res = id ? await sb.from('enec_team').update(row).eq('id',id).select() : await sb.from('enec_team').insert([row]).select();
-    if(res.error) throw res.error;
-    if(!res.data || !res.data.length) throw new Error('Supabase n’a pas confirmé l’enregistrement.');
-    toast('✅ Membre enregistré dans Supabase + site'); resetTeam(); await loadTeam();
-  }catch(e){ toast('❌ '+e.message); alert('❌ Non enregistré : '+e.message); }
-  showLoader(false);
-}
-function resetTeam(){ ['team_id','team_nom','team_fonction_fr','team_fonction_en','team_bio_fr','team_bio_en','team_photo'].forEach(i=>document.getElementById(i).value=''); document.getElementById('team_ordre').value=0; document.getElementById('team_preview').style.display='none'; }
-async function loadTeam(){
-  var res=await sb.from('enec_team').select('*').order('ordre',{ascending:true});
-  if(res.error){ document.getElementById('listTeam').innerHTML='<span class="err">'+res.error.message+'</span>'; return; }
-  document.getElementById('st_team').textContent=res.data.length;
-  document.getElementById('listTeam').innerHTML = res.data.length? res.data.map(r=>'<div class="item flex"><img src="'+esc(r.photo_url||'')+'" onerror="this.style.display=\'none\'"><div style="flex:1"><b>'+esc(r.nom)+'</b> — '+esc(r.fonction_fr)+' • Ordre '+r.ordre+' • '+(r.publie?'✅ Publié':'🚫 Masqué')+'<br><small>'+esc((r.bio_fr||'').slice(0,120))+'</small></div><button class="btn-blue" onclick=\'editTeam('+JSON.stringify(r).replace(/'/g,"\\'")+')\'>Modifier</button><button class="btn-del" onclick="delRow(\'enec_team\','+r.id+',\'ce membre\')">Supprimer</button></div>').join('') : 'Aucun membre.';
-}
-function editTeam(r){ document.getElementById('team_id').value=r.id; document.getElementById('team_nom').value=r.nom||''; document.getElementById('team_fonction_fr').value=r.fonction_fr||''; document.getElementById('team_fonction_en').value=r.fonction_en||''; document.getElementById('team_bio_fr').value=r.bio_fr||''; document.getElementById('team_bio_en').value=r.bio_en||''; document.getElementById('team_photo').value=r.photo_url||''; document.getElementById('team_ordre').value=r.ordre||0; document.getElementById('team_publie').value=String(r.publie); showPage('equipe',document.querySelector('[data-page="equipe"]')); window.scrollTo(0,0); }
-
-// --- DOMAINES ---
-async function saveDomain(){
-  showLoader(true);
-  try{
-    var id=document.getElementById('dom_id').value||null; var img=document.getElementById('dom_image').value.trim(); var f=document.getElementById('dom_file').files[0];
-    if(f){ img=await uploadImage(f,'domaines'); document.getElementById('dom_image').value=img; }
-    var row={titre_fr:document.getElementById('dom_titre_fr').value.trim(), titre_en:document.getElementById('dom_titre_en').value, description_fr:document.getElementById('dom_desc_fr').value, description_en:document.getElementById('dom_desc_en').value, activites:document.getElementById('dom_activites').value, image_url:img, ordre:parseInt(document.getElementById('dom_ordre').value||0), publie:document.getElementById('dom_publie').value==='true'};
-    if(!row.titre_fr) throw new Error('Titre FR requis.');
-    var res=id? await sb.from('enec_domains').update(row).eq('id',id).select() : await sb.from('enec_domains').insert([row]).select();
-    if(res.error) throw res.error; if(!res.data?.length) throw new Error('Supabase n’a pas confirmé.');
-    toast('✅ Domaine enregistré'); resetDomain(); await loadDomains();
-  }catch(e){ toast('❌ '+e.message); alert('❌ '+e.message); }
-  showLoader(false);
-}
-function resetDomain(){ ['dom_id','dom_titre_fr','dom_titre_en','dom_desc_fr','dom_desc_en','dom_activites','dom_image'].forEach(i=>document.getElementById(i).value=''); document.getElementById('dom_ordre').value=0; document.getElementById('dom_preview').style.display='none'; }
-async function loadDomains(){
-  var res=await sb.from('enec_domains').select('*').order('ordre');
-  if(res.error){ document.getElementById('listDom').innerHTML='<span class="err">'+res.error.message+'</span>'; return; }
-  document.getElementById('st_dom').textContent=res.data.length;
-  document.getElementById('listDom').innerHTML=res.data.length? res.data.map(r=>'<div class="item flex"><img src="'+esc(r.image_url||'')+'" onerror="this.style.display=\'none\'"><div style="flex:1"><b>'+esc(r.titre_fr)+'</b> • Ordre '+r.ordre+' • '+(r.publie?'✅':'🚫')+'<br><small>'+esc((r.description_fr||'').slice(0,120))+'</small></div><button class="btn-blue" onclick=\'editDom('+JSON.stringify(r).replace(/'/g,"\\'")+')\'>Modifier</button><button class="btn-del" onclick="delRow(\'enec_domains\','+r.id+',\'ce domaine\')">Supprimer</button></div>').join(''):'Aucun domaine.';
-}
-function editDom(r){ document.getElementById('dom_id').value=r.id; document.getElementById('dom_titre_fr').value=r.titre_fr||''; document.getElementById('dom_titre_en').value=r.titre_en||''; document.getElementById('dom_desc_fr').value=r.description_fr||''; document.getElementById('dom_desc_en').value=r.description_en||''; document.getElementById('dom_activites').value=r.activites||''; document.getElementById('dom_image').value=r.image_url||''; document.getElementById('dom_ordre').value=r.ordre||0; document.getElementById('dom_publie').value=String(r.publie); showPage('domaines',document.querySelector('[data-page="domaines"]')); }
-
-// --- REALISATIONS ---
-async function saveRea(){
-  showLoader(true);
-  try{
-    var id=document.getElementById('rea_id').value||null; var img=document.getElementById('rea_image').value.trim(); var f=document.getElementById('rea_file').files[0];
-    if(f){ img=await uploadImage(f,'realisations'); }
-    var row={titre_fr:document.getElementById('rea_titre_fr').value.trim(), titre_en:document.getElementById('rea_titre_en').value, description_fr:document.getElementById('rea_desc_fr').value, description_en:document.getElementById('rea_desc_en').value, date_realisation:document.getElementById('rea_date').value||null, image_url:img, publie:document.getElementById('rea_publie').value==='true'};
-    if(!row.titre_fr) throw new Error('Titre requis.');
-    var res=id? await sb.from('enec_achievements').update(row).eq('id',id).select() : await sb.from('enec_achievements').insert([row]).select();
-    if(res.error) throw res.error; if(!res.data?.length) throw new Error('Non confirmé par Supabase.');
-    toast('✅ Réalisation enregistrée'); resetRea(); await loadRea();
-  }catch(e){ toast('❌ '+e.message); alert('❌ '+e.message); }
-  showLoader(false);
-}
-function resetRea(){ ['rea_id','rea_titre_fr','rea_titre_en','rea_desc_fr','rea_desc_en','rea_date','rea_image'].forEach(i=>document.getElementById(i).value=''); document.getElementById('rea_preview').style.display='none'; }
-async function loadRea(){ var res=await sb.from('enec_achievements').select('*').order('created_at',{ascending:false}); if(res.error){ document.getElementById('listRea').innerHTML='<span class="err">'+res.error.message+'</span>'; return; } document.getElementById('listRea').innerHTML=res.data.length? res.data.map(r=>'<div class="item flex"><img src="'+esc(r.image_url||'')+'" onerror="this.style.display=\'none\'"><div style="flex:1"><b>'+esc(r.titre_fr)+'</b> • '+esc(r.date_realisation||'')+' • '+(r.publie?'✅':'🚫')+'<br><small>'+esc((r.description_fr||'').slice(0,120))+'</small></div><button class="btn-blue" onclick=\'editRea('+JSON.stringify(r).replace(/'/g,"\\'")+')\'>Modifier</button><button class="btn-del" onclick="delRow(\'enec_achievements\','+r.id+',\'cette réalisation\')">Supprimer</button></div>').join(''):'Aucune réalisation.'; }
-function editRea(r){ document.getElementById('rea_id').value=r.id; document.getElementById('rea_titre_fr').value=r.titre_fr||''; document.getElementById('rea_titre_en').value=r.titre_en||''; document.getElementById('rea_desc_fr').value=r.description_fr||''; document.getElementById('rea_desc_en').value=r.description_en||''; document.getElementById('rea_date').value=r.date_realisation||''; document.getElementById('rea_image').value=r.image_url||''; document.getElementById('rea_publie').value=String(r.publie); showPage('realisations',document.querySelector('[data-page="realisations"]')); }
-
-// --- PROGRAMME ---
-async function saveProg(){
-  showLoader(true);
-  try{
-    var id=document.getElementById('prog_id').value||null; var img=document.getElementById('prog_image').value.trim(); var f=document.getElementById('prog_file').files[0];
-    if(f){ img=await uploadImage(f,'programme'); }
-    var row={titre_fr:document.getElementById('prog_titre_fr').value.trim(), titre_en:document.getElementById('prog_titre_en').value, description_fr:document.getElementById('prog_desc_fr').value, description_en:document.getElementById('prog_desc_en').value, objectifs:document.getElementById('prog_obj').value, image_url:img, publie:document.getElementById('prog_publie').value==='true'};
-    if(!row.titre_fr) throw new Error('Titre requis.');
-    var res=id? await sb.from('enec_program').update(row).eq('id',id).select() : await sb.from('enec_program').insert([row]).select();
-    if(res.error) throw res.error; if(!res.data?.length) throw new Error('Non confirmé.');
-    toast('✅ Programme enregistré'); resetProg(); await loadProg();
-  }catch(e){ toast('❌ '+e.message); alert('❌ '+e.message); }
-  showLoader(false);
-}
-function resetProg(){ ['prog_id','prog_titre_fr','prog_titre_en','prog_desc_fr','prog_desc_en','prog_obj','prog_image'].forEach(i=>document.getElementById(i).value=''); document.getElementById('prog_preview').style.display='none'; }
-async function loadProg(){ var res=await sb.from('enec_program').select('*').order('created_at',{ascending:false}); if(res.error){ document.getElementById('listProg').innerHTML='<span class="err">'+res.error.message+'</span>'; return; } document.getElementById('listProg').innerHTML=res.data.length? res.data.map(r=>'<div class="item flex"><img src="'+esc(r.image_url||'')+'" onerror="this.style.display=\'none\'"><div style="flex:1"><b>'+esc(r.titre_fr)+'</b> • '+(r.publie?'✅':'🚫')+'<br><small>'+esc((r.description_fr||'').slice(0,120))+'</small></div><button class="btn-blue" onclick=\'editProg('+JSON.stringify(r).replace(/'/g,"\\'")+')\'>Modifier</button><button class="btn-del" onclick="delRow(\'enec_program\','+r.id+',\'cette activité\')">Supprimer</button></div>').join(''):'Aucune activité.'; }
-function editProg(r){ document.getElementById('prog_id').value=r.id; document.getElementById('prog_titre_fr').value=r.titre_fr||''; document.getElementById('prog_titre_en').value=r.titre_en||''; document.getElementById('prog_desc_fr').value=r.description_fr||''; document.getElementById('prog_desc_en').value=r.description_en||''; document.getElementById('prog_obj').value=r.objectifs||''; document.getElementById('prog_image').value=r.image_url||''; document.getElementById('prog_publie').value=String(r.publie); showPage('programme',document.querySelector('[data-page="programme"]')); }
-
-// --- NEWS ---
-async function saveNews(){
-  showLoader(true);
-  try{
-    var id=document.getElementById('news_id').value||null; var img=document.getElementById('news_image').value.trim(); var f=document.getElementById('news_file').files[0];
-    if(f){ img=await uploadImage(f,'actualites'); }
-    var row={titre_fr:document.getElementById('news_titre_fr').value.trim(), titre_en:document.getElementById('news_titre_en').value, resume_fr:document.getElementById('news_resume').value, contenu_fr:document.getElementById('news_contenu_fr').value, contenu_en:document.getElementById('news_contenu_en').value, categorie:document.getElementById('news_cat').value, date_pub:document.getElementById('news_date').value||null, image_url:img, publie:document.getElementById('news_publie').value==='true'};
-    if(!row.titre_fr) throw new Error('Titre requis.');
-    var res=id? await sb.from('enec_news').update(row).eq('id',id).select() : await sb.from('enec_news').insert([row]).select();
-    if(res.error) throw res.error; if(!res.data?.length) throw new Error('Non confirmé par Supabase.');
-    toast('✅ Article enregistré dans Supabase + site'); resetNews(); await loadNews();
-  }catch(e){ toast('❌ '+e.message); alert('❌ '+e.message); }
-  showLoader(false);
-}
-function resetNews(){ ['news_id','news_titre_fr','news_titre_en','news_resume','news_contenu_fr','news_contenu_en','news_cat','news_date','news_image'].forEach(i=>document.getElementById(i).value=''); document.getElementById('news_cat').value='Actualité'; document.getElementById('news_preview').style.display='none'; }
-async function loadNews(){
-  var res=await sb.from('enec_news').select('*').order('date_pub',{ascending:false});
-  if(res.error){ document.getElementById('listNews').innerHTML='<span class="err">'+res.error.message+'</span>'; return; }
-  document.getElementById('st_news').textContent=res.data.length;
-  document.getElementById('dashNews').innerHTML=res.data.slice(0,3).map(r=>'<div>• <b>'+esc(r.titre_fr)+'</b> — '+esc(r.date_pub||'')+' — '+(r.publie?'✅ Publié':'🚫 Brouillon')+'</div>').join('')||'Aucune actualité.';
-  document.getElementById('listNews').innerHTML=res.data.length? res.data.map(r=>'<div class="item flex"><img src="'+esc(r.image_url||'')+'" onerror="this.style.display=\'none\'"><div style="flex:1"><b>'+esc(r.titre_fr)+'</b> • '+esc(r.categorie)+' • '+esc(r.date_pub||'')+' • '+(r.publie?'✅ Publié':'🚫 Brouillon')+'<br><small>'+esc((r.resume_fr||'').slice(0,120))+'</small></div><button class="btn-blue" onclick=\'editNews('+JSON.stringify(r).replace(/'/g,"\\'")+')\'>Modifier</button><button class="btn-gold" onclick="togglePublish(\'enec_news\','+r.id+','+(!r.publie)+')"> '+(r.publie?'Dépublier':'Publier')+'</button><button class="btn-del" onclick="delRow(\'enec_news\','+r.id+',\'cet article\')">Supprimer</button></div>').join(''):'Aucun article.';
-}
-function editNews(r){ document.getElementById('news_id').value=r.id; document.getElementById('news_titre_fr').value=r.titre_fr||''; document.getElementById('news_titre_en').value=r.titre_en||''; document.getElementById('news_resume').value=r.resume_fr||''; document.getElementById('news_contenu_fr').value=r.contenu_fr||''; document.getElementById('news_contenu_en').value=r.contenu_en||''; document.getElementById('news_cat').value=r.categorie||'Actualité'; document.getElementById('news_date').value=r.date_pub||''; document.getElementById('news_image').value=r.image_url||''; document.getElementById('news_publie').value=String(r.publie); showPage('actus',document.querySelector('[data-page="actus"]')); }
-
-// --- MESSAGES ---
-async function loadMessages(){
-  var res=await sb.from('enec_messages').select('*').order('created_at',{ascending:false}).limit(50);
-  if(res.error){ document.getElementById('listMsg').innerHTML='<span class="err">'+res.error.message+'</span>'; return; }
-  document.getElementById('st_msg').textContent=res.data.length;
-  document.getElementById('dashMsg').innerHTML=res.data.slice(0,3).map(r=>'<div>• <b>'+esc(r.nom)+'</b> ('+esc(r.email)+') — '+esc((r.message||'').slice(0,80))+'</div>').join('')||'Aucun message.';
-  document.getElementById('listMsg').innerHTML=res.data.length? res.data.map(r=>'<div class="item"><b>'+esc(r.nom)+'</b> — '+esc(r.email)+' — '+esc(r.created_at?.slice(0,10)||'')+'<br><b>'+esc(r.sujet||'')+'</b><br>'+esc(r.message)+'<br><button class="btn-del" onclick="delRow(\'enec_messages\','+r.id+',\'ce message\')">Supprimer</button></div>').join(''):'Aucun message.';
-}
-
-// --- GENERIC ---
-async function delRow(table,id,label){
-  if(!confirm('Supprimer '+label+' ?\nCette action supprime aussi dans Supabase et sur le site. Cette action est définitive.')) return;
-  showLoader(true);
-  try{
-    var res=await sb.from(table).delete().eq('id',id).select();
-    if(res.error) throw res.error;
-    toast('✅ Supprimé dans Supabase + site');
-    await loadAll();
-  }catch(e){ toast('❌ '+e.message); alert('❌ Suppression non confirmée : '+e.message); }
-  showLoader(false);
-}
-async function togglePublish(table,id,val){
-  showLoader(true);
-  try{ var res=await sb.from(table).update({publie:val}).eq('id',id).select(); if(res.error) throw res.error; toast(val?'✅ Publié — visible sur le site':'✅ Dépublié — masqué sur le site'); await loadAll(); }catch(e){ toast('❌ '+e.message); }
-  showLoader(false);
-}
-async function loadAllImages(){
-  try{
-    var out=[];
-    var tables=[['enec_team','photo_url'],['enec_domains','image_url'],['enec_achievements','image_url'],['enec_news','image_url'],['enec_program','image_url']];
-    for(var t of tables){ var r=await sb.from(t[0]).select(t[1]); if(!r.error) r.data.forEach(x=>{ if(x[t[1]]) out.push(x[t[1]]); }); }
-    document.getElementById('listImages').innerHTML=out.length? out.map(u=>'<div class="item flex"><img src="'+u+'" style="width:100px;height:70px"><span style="flex:1;word-break:break-all;font-size:12px">'+esc(u)+'</span><button class="btn-grey" onclick="navigator.clipboard.writeText(\''+u+'\');toast(\'URL copiée\')">Copier URL</button></div>').join(''):'Aucune image.';
-  }catch(e){ document.getElementById('listImages').innerHTML='<span class="err">'+e.message+'</span>'; }
-}
-async function loadAll(){ // Mode projet déjà connecté : on charge ce qui existe, on ne casse rien si une table manque
-
-  showLoader(true);
-  try{ await loadSettings(); await loadTeam(); await loadDomains(); await loadRea(); await loadProg(); await loadNews(); await loadMessages(); await loadAllImages(); }catch(e){ toast('❌ Erreur chargement : '+e.message); console.error(e); }
-  showLoader(false);
+    var res=await fetch('index.html'); var txt=await res.text();
+    var cfg=collect();
+    // Remplacements manuels simples et visibles
+    if(cfg.titre1) txt=txt.split('Un nouvel espoir,').join(cfg.titre1);
+    if(cfg.titre2) txt=txt.split('de multiples opportunités !').join(cfg.titre2);
+    if(cfg.email) txt=txt.split('enecbusiness20@gmail.com').join(cfg.email);
+    if(cfg.tel1) txt=txt.split('+243 970 204 871').join(cfg.tel1);
+    var blob=new Blob([txt],{type:'text/html'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='index.html'; a.click();
+    document.getElementById('msg').textContent='✅ Nouveau index.html téléchargé. Glisse-le maintenant sur Netlify (Drag & drop) pour que le site public change.';
+  }catch(e){ alert('Télécharge d’abord le fichier index.html actuel, puis renvoie-le moi ici pour que je l’applique. Erreur: '+e); }
 }
 </script>
-</body></html>
+</div></body></html>
