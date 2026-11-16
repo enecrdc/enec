@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>Admin ENEC</title>
-<link rel="stylesheet" href="css/admin.css?v=1">
+<link rel="stylesheet" href="css/admin.css?v=2">
 </head>
 <body>
 <div class="admin-wrap">
@@ -40,32 +41,32 @@
 <button data-tab="contact" onclick="adminShowTab('contact')">Contact</button>
 <button data-tab="settings" onclick="adminShowTab('settings')">Paramètres</button>
 </nav>
+<section id="tab-accueil" class="tab card"><h2>Accueil</h2><div id="accueil-form"><p>Chargement...</p></div></section>
 
-<section id="tab-accueil" class="tab card"><h2>Accueil</h2><div id="accueil-form"></div></section>
-<section id="tab-equipe" class="tab card" style="display:none"><h2>Équipe</h2><div id="equipe-list"></div><div id="equipe-form"></div></section>
-<section id="tab-domaines" class="tab card" style="display:none"><h2>Domaines — 9 domaines</h2><div id="domaines-list"></div><div id="domaines-form"></div></section>
-<section id="tab-realisations" class="tab card" style="display:none"><h2>Réalisations</h2><div id="realisations-list"></div><div id="realisations-form"></div></section>
-<section id="tab-actualites" class="tab card" style="display:none"><h2>Actualités</h2><div id="actualites-list"></div><div id="actualites-form"></div></section>
-<section id="tab-programme" class="tab card" style="display:none"><h2>Programme</h2><div id="programme-form"></div></section>
-<section id="tab-contact" class="tab card" style="display:none"><h2>Contact + Messages</h2><div id="contact-form"></div><div id="messages-list"></div></section>
-<section id="tab-settings" class="tab card" style="display:none"><h2>Paramètres</h2><div id="settings-form"></div></section>
+<section id="tab-equipe" class="tab card" style="display:none"><h2>Équipe</h2><div id="equipe-list"><p>Chargement...</p></div><div id="equipe-form"></div></section>
+
+<section id="tab-domaines" class="tab card" style="display:none"><h2>Domaines — 9 domaines</h2><div id="domaines-list"><p>Chargement...</p></div><div id="domaines-form"></div></section>
+
+<section id="tab-realisations" class="tab card" style="display:none"><h2>Réalisations</h2><div id="realisations-list"><p>Chargement...</p></div><div id="realisations-form"></div></section>
+
+<section id="tab-actualites" class="tab card" style="display:none"><h2>Actualités</h2><div id="actualites-list"><p>Chargement...</p></div><div id="actualites-form"></div></section>
+
+<section id="tab-programme" class="tab card" style="display:none"><h2>Programme</h2><div id="programme-form"><p>Chargement...</p></div></section>
+
+<section id="tab-contact" class="tab card" style="display:none"><h2>Contact + Messages</h2><div id="contact-form"><p>Chargement...</p></div><div id="messages-list"></div></section>
+
+<section id="tab-settings" class="tab card" style="display:none"><h2>Paramètres</h2><div id="settings-form"><p>Chargement...</p></div></section>
 
 <p class="small">Chaque Enregistrer / Supprimer / Publier vérifie la réponse réelle de Supabase avant d'afficher "Enregistré". Si Supabase renvoie une erreur, elle s'affiche, on ne simule pas un succès.</p>
+
 </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="admin-config.js?v=1"></script>
-<script src="js/supabase.js?v=1"></script>
-<script src="js/admin-auth.js?v=1"></script>
-<script src="js/admin.js?v=1"></script>
-<script src="js/admin-accueil.js?v=1"></script>
-<script src="js/admin-equipe.js?v=1"></script>
-<script src="js/admin-domaines.js?v=1"></script>
-<script src="js/admin-realisations.js?v=1"></script>
-<script src="js/admin-actualites.js?v=1"></script>
-<script src="js/admin-programme.js?v=1"></script>
-<script src="js/admin-contact.js?v=1"></script>
-<script src="js/admin-settings.js?v=1"></script>
+<script src="admin-config.js?v=2"></script>
+<script src="js/supabase.js?v=2"></script>
+<script src="js/admin-auth.js?v=2"></script>
+<script src="js/admin.js?v=2"></script>
+<script src="js/admin-modules.js?v=2"></script>
 </body>
-  </html>
+</html>
