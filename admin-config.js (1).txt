@@ -1,0 +1,11 @@
+// ENEC - Config Supabase injectée par GitHub / Netlify au déploiement
+// NE PAS mettre la clé service_role ici, jamais.
+// Ce fichier est généré automatiquement par GitHub Actions à partir des Secrets GitHub :
+//   SUPABASE_URL et SUPABASE_ANON_KEY (ou NEXT_PUBLIC_SUPABASE_URL / ANON_KEY)
+// Exemple de workflow GitHub Actions qui le génère :
+//   - run: |
+//       echo "window.ENEC_SUPABASE_URL='${{ secrets.SUPABASE_URL }}';" > admin-config.js
+//       echo "window.ENEC_SUPABASE_ANON_KEY='${{ secrets.SUPABASE_ANON_KEY }}';" >> admin-config.js
+// En local, remplace les valeurs ci-dessous par celles de ton projet déjà connecté (clé anon publique uniquement).
+window.ENEC_SUPABASE_URL = "https://TON-PROJET.supabase.co";
+window.ENEC_SUPABASE_ANON_KEY = "TA-CLE-ANON-PUBLIQUE";
