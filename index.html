@@ -6,38 +6,46 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>ENEC - Entreprise Nouvel Espoir du Congo | Bukavu</title>
 <meta name="description" content="ENEC - Un nouvel espoir, de multiples opportunités ! Formations, services professionnels et solutions commerciales à Bukavu, Sud-Kivu.">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
 
 <header><div class="wrap">
 <div class="head">
-<div class="logo">ENEC</div>
+<img src="logo.png" alt="ENEC - Nouvel Espoir du Congo" class="logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+<div class="logo" style="display:none">ENEC</div>
 <div><h1>ENEC</h1><div class="slogan">Nouvel Espoir du Congo</div></div>
-<div class="lang"><button class="active" onclick="document.documentElement.lang='fr';location.reload()">FR</button><button onclick="document.documentElement.lang='en';location.reload()">EN</button></div>
+<div class="lang"><button data-lang="fr" onclick="enecSetLang('fr')">FR</button><button data-lang="en" onclick="enecSetLang('en')">EN</button></div>
 </div>
 <nav class="nav">
-<a href="#accueil">Accueil</a><a href="#apropos">À propos</a><a href="#equipe">Notre équipe</a><a href="#domaines">Domaines</a><a href="#realisations">Réalisations</a><a href="#programme">Programme</a><a href="#actualites">Actualités</a><a href="#contact">Contact</a>
+<a href="#accueil" data-i18n="nav_accueil">Accueil</a>
+<a href="#apropos" data-i18n="nav_apropos">À propos</a>
+<a href="#equipe" data-i18n="nav_equipe">Notre équipe</a>
+<a href="#domaines" data-i18n="nav_domaines">Domaines</a>
+<a href="#realisations" data-i18n="nav_realisations">Réalisations</a>
+<a href="#programme" data-i18n="nav_programme">Programme</a>
+<a href="#actualites" data-i18n="nav_actualites">Actualités</a>
+<a href="#contact" data-i18n="nav_contact">Contact</a>
 </nav>
 </div></header>
 
 <section id="accueil" class="hero"><div class="wrap">
-<h2>Un nouvel espoir, de multiples opportunités !</h2>
-<p>Bienvenue chez ENEC - Entreprise Nouvel Espoir du Congo. Formations professionnelles, services et solutions commerciales à Bukavu, Sud-Kivu.</p>
-<a class="btn" href="https://wa.me/243970204871?text=Bonjour%20ENEC">💬 WhatsApp</a>
-<a class="btn outline" href="#contact">Nous contacter</a>
+<h2 data-i18n="hero_titre">Un nouvel espoir, de multiples opportunités !</h2>
+<p data-i18n="hero_texte">Bienvenue chez ENEC - Entreprise Nouvel Espoir du Congo. Formations professionnelles, services et solutions commerciales à Bukavu, Sud-Kivu.</p>
+<a class="btn" href="https://wa.me/243970204871?text=Bonjour%20ENEC" data-i18n="btn_whatsapp">💬 WhatsApp</a>
+<a class="btn outline" href="#contact" data-i18n="btn_contact">Nous contacter</a>
 </div></section>
 
 <section id="apropos"><div class="wrap">
-<h2>À propos de <span>ENEC</span></h2>
-<p>ENEC est une entreprise congolaise basée à Bukavu. Notre mission est d'offrir des formations pratiques, des services professionnels et des solutions adaptées au contexte local.</p>
-<h3 style="margin-top:18px">Notre Mission</h3><p>Former, accompagner et connecter les talents et les entreprises du Congo.</p>
-<h3>Notre Vision</h3><p>Un Congo où chaque jeune et chaque entrepreneur a les outils pour réussir.</p>
-<h3>Nos Valeurs</h3><ul><li>✅ Innovation</li><li>✅ Polyvalence</li><li>✅ Engagement</li><li>✅ Satisfaction clients</li></ul>
+<h2 data-i18n="apropos_titre">À propos de ENEC</h2>
+<p data-i18n="apropos_texte">ENEC est une entreprise congolaise basée à Bukavu. Notre mission est d'offrir des formations pratiques, des services professionnels et des solutions adaptées au contexte local.</p>
+<h3 style="margin-top:18px" data-i18n="mission_titre">Notre Mission</h3><p data-i18n="mission_texte">Former, accompagner et connecter les talents et les entreprises du Congo.</p>
+<h3 data-i18n="vision_titre">Notre Vision</h3><p data-i18n="vision_texte">Un Congo où chaque jeune et chaque entrepreneur a les outils pour réussir.</p>
+<h3 data-i18n="valeurs_titre">Nos Valeurs</h3><ul><li>✅ Innovation</li><li>✅ Polyvalence</li><li>✅ Engagement</li><li>✅ Satisfaction clients</li></ul>
 </div></section>
 
 <section id="equipe"><div class="wrap">
-<h2>Notre <span>équipe</span></h2><p>Une équipe locale, engagée et polyvalente.</p>
+<h2 data-i18n="equipe_titre">Notre équipe</h2><p data-i18n="equipe_texte">Une équipe locale, engagée et polyvalente.</p>
 <div class="grid">
 <div class="card"><h3>Patrick Mituga</h3><p class="role">Directeur Général</p><p>Fondateur d'ENEC. Il pilote la vision, les formations et les partenariats.</p></div>
 <div class="card"><h3>Iragi Mugosa Boss</h3><p class="role">Responsable Informatique et numérique</p><p>Informatique, numérique et systèmes.</p></div>
@@ -52,7 +60,7 @@
 </div></section>
 
 <section id="domaines"><div class="wrap">
-<h2>Nos domaines <span>d'intervention</span></h2><p>8 domaines, une seule coordination.</p>
+<h2 data-i18n="domaines_titre">Nos domaines d'intervention</h2><p data-i18n="domaines_texte">8 domaines, une seule coordination.</p>
 <div class="grid">
 <div class="card"><h3>Éducation, Formation Linguistique, Traduction et Interprétation</h3><p>Anglais, français, traduction et interprétation.</p></div>
 <div class="card"><h3>Agriculture et Élevage</h3><p>Production agricole et élevage à Kabare et Walungu.</p></div>
@@ -66,7 +74,7 @@
 </div></section>
 
 <section id="realisations"><div class="wrap">
-<h2>Nos <span>réalisations</span></h2>
+<h2 data-i18n="realisations_titre">Nos réalisations</h2>
 <div class="grid">
 <div class="card"><h3>Formation en anglais - Afriland First Bank</h3><p>2023-2024 à Bukavu. Formation en anglais pour le personnel de la banque.</p></div>
 <div class="card"><h3>Production agricole - Kabare et Walungu</h3><p>Production agricole et accompagnement des producteurs.</p></div>
@@ -75,46 +83,47 @@
 </div></section>
 
 <section id="programme"><div class="wrap">
-<h2>Programme d'Appui <span>aux Entrepreneurs</span></h2>
-<p>Nous accompagnons les entrepreneurs : idée, business plan, formation, mise en relation et suivi.</p>
+<h2 data-i18n="programme_titre">Programme d'Appui aux Entrepreneurs</h2>
+<p data-i18n="programme_texte">Nous accompagnons les entrepreneurs : idée, business plan, formation, mise en relation et suivi.</p>
 <div class="grid">
 <div class="card"><h3>Appui aux Entrepreneurs</h3><p>Objectifs : former, mettre en relation, suivre. Activités : ateliers, coaching, réseautage.</p></div>
 </div>
 </div></section>
 
 <section id="actualites"><div class="wrap">
-<h2>Nos <span>actualités</span></h2>
+<h2 data-i18n="actualites_titre">Nos actualités</h2>
 <div class="grid">
 <div class="card"><h3>Lauréats de la formation en anglais - EETC</h3><p>Félicitations à nos lauréats de la formation en anglais.</p></div>
 </div>
 </div></section>
 
 <section id="contact"><div class="wrap">
-<h2>Nous <span>contacter</span></h2>
-<p><b>Adresse :</b> Avenue de la Bière, Ibanda, Bukavu, Sud-Kivu, RDC</p>
-<p><b>Téléphones :</b> +243 970 204 871 / +243 962 471 683</p>
-<p><b>Email :</b> enecbusiness20@gmail.com</p>
-<p><b>Horaires :</b> Lun - Ven : 08h00 - 17h00, Sam : 09h00 - 13h00</p>
-<a class="btn green" href="https://wa.me/243970204871?text=Bonjour%20ENEC">💬 Écrire sur WhatsApp</a>
+<h2 data-i18n="contact_titre">Nous contacter</h2>
+<p><b><span data-i18n="contact_adresse">Adresse :</span></b> Avenue de la Bière, Ibanda, Bukavu, Sud-Kivu, RDC</p>
+<p><b><span data-i18n="contact_tel">Téléphones :</span></b> +243 970 204 871 / +243 962 471 683</p>
+<p><b><span data-i18n="contact_email">Email :</span></b> enecbusiness20@gmail.com</p>
+<p><b><span data-i18n="contact_horaires">Horaires :</span></b> <span data-i18n="contact_horaires_val">Lun - Ven : 08h00 - 17h00, Sam : 09h00 - 13h00</span></p>
+<a class="btn green" href="https://wa.me/243970204871?text=Bonjour%20ENEC" data-i18n="contact_btn">💬 Écrire sur WhatsApp</a>
 </div></section>
 
 <footer><div class="wrap">
-<p><b>ENEC - Entreprise Nouvel Espoir du Congo</b></p>
-<p>Un nouvel espoir, de multiples opportunités !</p>
-<p>© 2026 ENEC - Tous droits réservés. Bukavu, Sud-Kivu, RDC</p>
+<p><b data-i18n="footer_nom">ENEC - Entreprise Nouvel Espoir du Congo</b></p>
+<p data-i18n="footer_slogan">Un nouvel espoir, de multiples opportunités !</p>
+<p data-i18n="footer_droits">© 2026 ENEC - Tous droits réservés. Bukavu, Sud-Kivu, RDC</p>
 </div></footer>
 
 <a class="admin" href="admin.html">🔐 Espace Admin</a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="admin-config.js"></script>
-<script src="js/supabase.js"></script>
-<script src="js/accueil.js"></script>
-<script src="js/equipe.js"></script>
-<script src="js/domaines.js"></script>
-<script src="js/realisations.js"></script>
-<script src="js/actualites.js"></script>
-<script src="js/contact.js"></script>
-<script src="js/main.js"></script>
+<script src="admin-config.js?v=6"></script>
+<script src="js/supabase.js?v=6"></script>
+<script src="js/lang.js?v=6"></script>
+<script src="js/accueil.js?v=6"></script>
+<script src="js/equipe.js?v=6"></script>
+<script src="js/domaines.js?v=6"></script>
+<script src="js/realisations.js?v=6"></script>
+<script src="js/actualites.js?v=6"></script>
+<script src="js/contact.js?v=6"></script>
+<script src="js/main.js?v=6"></script>
 </body>
-</html>
+                                                     </html>
