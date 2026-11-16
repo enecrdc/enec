@@ -7,8 +7,8 @@
   function getCfg(){
     var U=window.ENEC_SUPABASE_URL||"https://mlzacyrgnmentvilwvkm.supabase.co";
     var K=window.ENEC_SUPABASE_ANON_KEY||"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1semFjeXJnbm1lbnR2aWx3dmttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MDA2NzMsImV4cCI6MjExMDE3NjY3M30.RO1EmPo3hpm9ceb5U0-ZeeG1Uv1XePnOzZ7tmPix26w";
-    if(!U||U.indexOf('TON-PROJET')!==-1) U="https://mlzacyrgnmentvilwvkm.supabase.co";
-    if(!K||K.indexOf('TA-CLE')!==-1) K=null;
+    if(!U||U.indexOf('https://mlzacyrgnmentvilwvkm.supabase.co')!==-1) U="https://mlzacyrgnmentvilwvkm.supabase.co";
+    if(!K||K.indexOf('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1semFjeXJnbm1lbnR2aWx3dmttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MDA2NzMsImV4cCI6MjExMDE3NjY3M30.RO1EmPo3hpm9ceb5U0-ZeeG1Uv1XePnOzZ7tmPix26w')!==-1) K=null;
     return {U:U,K:K};
   }
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
