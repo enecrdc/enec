@@ -1,315 +1,71 @@
 <!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ENEC — Administration Professionnelle</title>
-<meta name="description" content="Espace d'administration ENEC - Entreprise Nouvel Espoir du Congo">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="admin-config.js"></script>
-<style>
-:root{--navy:#0a2540;--navy2:#123a63;--green:#0f9d6a;--green2:#0b7a52;--gold:#c9a227;--bg:#eef2f7;--card:#fff;--line:#e2e8f0;--muted:#64748b;--red:#e11d48}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--navy)}
-/* LOGIN */
-#login{position:fixed;inset:0;background:linear-gradient(135deg,#0a2540,#0f9d6a);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100}
-.loginBox{background:#fff;border-radius:24px;max-width:460px;width:100%;padding:28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.loginBox .logo{font-size:48px}.loginBox h1{margin:6px 0;font-size:24px}.loginBox p{color:var(--muted);font-size:14px}
-/* LAYOUT */
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:272px;background:var(--navy);color:#fff;padding:18px 14px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;z-index:10}
-.sidebar .brand{display:flex;gap:10px;align-items:center;padding:6px 8px 14px;border-bottom:1px solid rgba(255,255,255,.15);margin-bottom:10px}
-.sidebar .brand .ico{width:44px;height:44px;border-radius:12px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:24px}
-.sidebar button{width:100%;background:transparent;color:#dbeafe;border:0;text-align:left;padding:11px 10px;border-radius:11px;cursor:pointer;font-weight:600;font-size:14px;display:flex;gap:9px;align-items:center}
-.sidebar button:hover,.sidebar button.active{background:#fff;color:var(--navy)}
-.sidebar button .badge{margin-left:auto;background:var(--gold);color:#0a2540;font-size:11px;padding:2px 7px;border-radius:999px;font-weight:800}
-.sidebar .logout{margin-top:auto;background:#fee2e2!important;color:#991b1b!important}
-.main{margin-left:272px;padding:18px;max-width:1080px}
-.topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.topbar h1{font-size:24px;margin:0}
-.card{background:var(--card);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 4px 20px rgba(0,0,0,.05);border:1px solid var(--line)}
-label{font-weight:700;display:block;margin:12px 0 6px;font-size:13px;color:#334155}
-input,textarea,select{width:100%;padding:11px 12px;border-radius:11px;border:1px solid #cbd5e1;font-size:14px;background:#fff;font-family:inherit}
-textarea{min-height:90px;resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn{padding:11px 16px;border:0;border-radius:11px;font-weight:800;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:6px}
-.btn-green{background:var(--green);color:#fff}.btn-blue{background:var(--navy);color:#fff}.btn-gold{background:var(--gold);color:#0a2540}.btn-red{background:#fee2e2;color:#991b1b}.btn-grey{background:#e2e8f0;color:#334155}.btn-outline{background:#fff;color:var(--navy);border:1px solid #cbd5e1}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.item{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;background:#f8fafc;display:flex;gap:12px;align-items:flex-start}
-.item img{width:84px;height:84px;object-fit:cover;border-radius:10px;flex-shrink:0;background:#e2e8f0}
-.item .txt{flex:1;min-width:0}.item .acts{display:flex;gap:6px;flex-wrap:wrap}
-.flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.ok{color:var(--green);font-weight:700}.err{color:var(--red);font-weight:700}.muted{color:var(--muted);font-size:13px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kpi{background:#fff;border-radius:16px;padding:16px;text-align:center;border:1px solid var(--line)}
-.kpi b{font-size:28px;display:block}.kpi span{color:var(--muted);font-size:13px}
-.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:800}.pill-ok{background:#dcfce7;color:#166534}.pill-no{background:#fee2e2;color:#991b1b}.pill-cat{background:#fef3c7;color:#92400e}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;z-index:999;display:none;max-width:92%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-#loader{position:fixed;inset:0;background:rgba(10,37,64,.65);color:#fff;display:none;align-items:center;justify-content:center;font-weight:800;z-index:998;flex-direction:column;gap:10px}
-.spinner{width:36px;height:36px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.hidden{display:none!important}.preview{width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
-.search{max-width:320px}
-@media(max-width:860px){.sidebar{position:static;width:100%;flex-direction:row;flex-wrap:wrap}.sidebar .brand{width:100%}.sidebar button{width:auto;flex:1;min-width:140px}.sidebar .logout{width:100%}.main{margin-left:0}.row,.kpis{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:1fr 1fr}}
-</style></head>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin ENEC</title>
+<link rel="stylesheet" href="css/admin.css?v=1">
+</head>
 <body>
-<div id="loader"><div class="spinner"></div><div id="loaderTxt">Connexion à Supabase...</div></div><div id="toast"></div>
+<div class="admin-wrap">
 
 <!-- LOGIN -->
-<div id="login"><div class="loginBox">
-<div class="logo">🌱</div><h1>ENEC — Administration</h1><p>Entreprise Nouvel Espoir du Congo — Bukavu<br>Connexion sécurisée Supabase Auth.<br>Config lue depuis <b>admin-config.js</b> (clé publique ANON uniquement, jamais service_role).</p>
-<p id="cfgStatus" class="muted">Vérification de la configuration...</p>
-<label style="text-align:left">Adresse mail admin</label><input id="loginEmail" type="email" placeholder="Ton mail Supabase" autocomplete="email">
-<label style="text-align:left">Mot de passe admin</label><input id="loginPass" type="password" placeholder="Ton mot de passe Supabase" autocomplete="current-password">
-<p id="loginError" class="err"></p>
-<button class="btn btn-green" style="width:100%;justify-content:center" onclick="login()">🔓 Se connecter</button>
-<p class="muted" style="margin-top:12px">🌐 Site public : https://enecrdc.github.io/enec/<br>Seul l'administrateur autorisé peut entrer.</p>
-</div></div>
-
-<!-- SIDEBAR -->
-<div class="sidebar" id="adminUI" style="display:none">
-<div class="brand"><div class="ico">🌱</div><div><b style="font-size:18px">ENEC Admin</b><br><small id="who" style="color:#94a3b8"></small><br><small style="color:#c9a227">🌐 enecrdc.github.io/enec</small></div></div>
-<button class="active" onclick="showPage('dashboard',this)">📊 Tableau de bord</button>
-<button onclick="showPage('accueil',this)">🏠 1. Accueil</button>
-<button onclick="showPage('apropos',this)">ℹ️ 2. À propos</button>
-<button onclick="showPage('equipe',this)">👥 3. Notre Équipe <span class="badge" id="b_team">0</span></button>
-<button onclick="showPage('domaines',this)">🧭 4. Domaines <span class="badge" id="b_dom">0</span></button>
-<button onclick="showPage('realisations',this)">🏆 5. Réalisations <span class="badge" id="b_real">0</span></button>
-<button onclick="showPage('programme',this)">🚀 6. Programme Entrepreneurs</button>
-<button onclick="showPage('actus',this)">📰 7. Actualités <span class="badge" id="b_news">0</span></button>
-<button onclick="showPage('contact',this)">📞 8. Contact</button>
-<button onclick="showPage('footer',this)">🦶 9. Pied de page</button>
-<button onclick="showPage('messages',this)">✉️ 10. Messages <span class="badge" id="b_msg">0</span></button>
-<button class="logout" onclick="logout()">🚪 Déconnexion</button>
+<div id="login-box" class="card">
+<img src="logo.png" class="admin-logo" onerror="this.style.display='none'">
+<h1>🔐 Admin ENEC</h1>
+<p>Connecte-toi avec ton compte Supabase.</p>
+<input id="email" type="email" placeholder="Email Supabase" autocomplete="email">
+<input id="password" type="password" placeholder="Mot de passe" autocomplete="current-password">
+<button onclick="adminLogin()">Se connecter</button>
+<p id="login-msg" class="msg"></p>
+<p class="small">Pas de mot de passe en dur. Authentification Supabase Auth uniquement.</p>
 </div>
-
-<div class="main" id="mainUI" style="display:none">
-<div class="topbar"><h1 id="pageTitle">📊 Tableau de bord</h1><span class="muted" id="syncStatus">—</span></div>
 
 <!-- DASHBOARD -->
-<div id="page-dashboard" class="page">
-<div class="card"><h2 style="margin:0">👋 Bienvenue dans l'administration ENEC</h2><p class="muted">Gère ton site sans toucher au code. Chaque <b>Enregistrer</b> attend la confirmation de Supabase. Si Supabase ne confirme pas, rien n'est validé. Les images partent en <b>WebP</b> vers Supabase Storage (bucket <b>enec-images</b>) pour économiser l'espace.</p>
-<div class="flex"><a class="btn btn-green" href="https://enecrdc.github.io/enec/" target="_blank">🌐 Voir le site public</a><button class="btn btn-blue" onclick="loadAll()">🔄 Actualiser les données</button><button class="btn btn-gold" onclick="showPage('messages',document.querySelector('.sidebar button:last-child'))">✉️ Voir les messages</button></div></div>
-<div class="kpis"><div class="kpi"><b id="k_team">—</b><span>👥 Membres équipe</span></div><div class="kpi"><b id="k_dom">—</b><span>🧭 Domaines</span></div><div class="kpi"><b id="k_news">—</b><span>📰 Actualités</span></div><div class="kpi"><b id="k_msg">—</b><span>✉️ Messages</span></div></div>
-<div class="kpis"><div class="kpi"><b id="k_real">—</b><span>🏆 Réalisations</span></div><div class="kpi"><b id="k_prog">—</b><span>🚀 Programme</span></div><div class="kpi"><b id="k_pub">—</b><span>✅ Actus publiées</span></div><div class="kpi"><b id="k_draft">—</b><span>🚫 Actus brouillons</span></div></div>
-<div class="card"><h3>⚡ Actions rapides</h3><div class="flex">
-<button class="btn btn-green" onclick="showPage('actus',document.querySelectorAll('.sidebar button')[7])">＋ Publier une actualité</button>
-<button class="btn btn-blue" onclick="showPage('equipe',document.querySelectorAll('.sidebar button')[3])">＋ Ajouter un membre</button>
-<button class="btn btn-gold" onclick="showPage('domaines',document.querySelectorAll('.sidebar button')[4])">＋ Ajouter un domaine</button>
-<button class="btn btn-outline" onclick="showPage('realisations',document.querySelectorAll('.sidebar button')[5])">＋ Ajouter une réalisation</button>
-</div></div>
-<div class="card"><h3>🖼️ Convertisseur WebP — Test rapide</h3><p class="muted">Choisis une photo JPG / PNG, elle est convertie en WebP avant envoi. Ex : 2 Mo → 400 Ko.</p><input type="file" id="webpQuick" accept="image/jpeg,image/png,image/webp" onchange="convertQuick(this)"><p id="webpQuickInfo" class="muted"></p><div id="webpQuickOut"></div></div>
-<div class="card"><h3>📩 Derniers messages</h3><div id="dashMsg"></div></div>
+<div id="dashboard" style="display:none">
+<header class="admin-head">
+<div><h1>ENEC — Administration</h1><p id="user-email"></p></div>
+<div><a href="index.html" class="btn ghost">Voir le site →</a> <button onclick="adminLogout()" class="btn danger">Déconnexion</button></div>
+</header>
+
+<div id="sync-status" class="sync">⏳ Connexion à Supabase...</div>
+
+<nav class="tabs">
+<button data-tab="accueil" onclick="adminShowTab('accueil')">Accueil</button>
+<button data-tab="equipe" onclick="adminShowTab('equipe')">Équipe</button>
+<button data-tab="domaines" onclick="adminShowTab('domaines')">Domaines</button>
+<button data-tab="realisations" onclick="adminShowTab('realisations')">Réalisations</button>
+<button data-tab="actualites" onclick="adminShowTab('actualites')">Actualités</button>
+<button data-tab="programme" onclick="adminShowTab('programme')">Programme</button>
+<button data-tab="contact" onclick="adminShowTab('contact')">Contact</button>
+<button data-tab="settings" onclick="adminShowTab('settings')">Paramètres</button>
+</nav>
+
+<section id="tab-accueil" class="tab card"><h2>Accueil</h2><div id="accueil-form"></div></section>
+<section id="tab-equipe" class="tab card" style="display:none"><h2>Équipe</h2><div id="equipe-list"></div><div id="equipe-form"></div></section>
+<section id="tab-domaines" class="tab card" style="display:none"><h2>Domaines — 9 domaines</h2><div id="domaines-list"></div><div id="domaines-form"></div></section>
+<section id="tab-realisations" class="tab card" style="display:none"><h2>Réalisations</h2><div id="realisations-list"></div><div id="realisations-form"></div></section>
+<section id="tab-actualites" class="tab card" style="display:none"><h2>Actualités</h2><div id="actualites-list"></div><div id="actualites-form"></div></section>
+<section id="tab-programme" class="tab card" style="display:none"><h2>Programme</h2><div id="programme-form"></div></section>
+<section id="tab-contact" class="tab card" style="display:none"><h2>Contact + Messages</h2><div id="contact-form"></div><div id="messages-list"></div></section>
+<section id="tab-settings" class="tab card" style="display:none"><h2>Paramètres</h2><div id="settings-form"></div></section>
+
+<p class="small">Chaque Enregistrer / Supprimer / Publier vérifie la réponse réelle de Supabase avant d'afficher "Enregistré". Si Supabase renvoie une erreur, elle s'affiche, on ne simule pas un succès.</p>
+</div>
 </div>
 
-<!-- 1 ACCUEIL -->
-<div id="page-accueil" class="page hidden"><div class="card"><h2>🏠 1. Accueil — Bannière et titres</h2>
-<input type="hidden" id="set_id">
-<div class="row"><div><label>Titre Accueil FR *</label><input id="set_accueil_titre_fr" placeholder="Un nouvel espoir, de multiples opportunités !"></div><div><label>Titre Accueil EN</label><input id="set_accueil_titre_en" placeholder="A new hope, of multiple opportunities!"></div></div>
-<label>Texte Accueil FR</label><textarea id="set_accueil_texte_fr"></textarea><label>Texte Accueil EN</label><textarea id="set_accueil_texte_en"></textarea>
-<div class="row"><div><label>Slogan FR</label><input id="set_slogan_fr"></div><div><label>Slogan EN</label><input id="set_slogan_en"></div></div>
-<label>Image / Bannière Accueil — JPG / PNG → WebP</label><input type="file" id="set_banniere_file" accept="image/jpeg,image/png,image/webp"><p class="muted" id="set_banniere_info"></p><input type="hidden" id="set_banniere_url"><div id="set_banniere_preview"></div>
-<div class="flex" style="margin-top:14px"><button class="btn btn-green" onclick="saveSettings()">💾 Enregistrer Accueil</button><button class="btn btn-grey" onclick="loadSettings()">↺ Annuler</button><span id="setMsgAccueil" class="ok"></span></div></div></div>
-
-<!-- 2 A PROPOS -->
-<div id="page-apropos" class="page hidden"><div class="card"><h2>ℹ️ 2. À propos — Présentation, Mission, Vision, Valeurs</h2>
-<label>Présentation ENEC — À propos FR</label><textarea id="set_apropos_fr" style="min-height:130px"></textarea>
-<label>Présentation ENEC — À propos EN</label><textarea id="set_apropos_en" style="min-height:130px"></textarea>
-<label>Photo À propos — JPG / PNG → WebP</label><input type="file" id="set_apropos_file" accept="image/jpeg,image/png,image/webp"><p class="muted" id="set_apropos_info"></p><input type="hidden" id="set_apropos_image"><div id="set_apropos_preview"></div>
-<label>🎯 Notre Mission FR</label><textarea id="set_mission_fr" style="min-height:110px"></textarea><label>Notre Mission EN</label><textarea id="set_mission_en" style="min-height:110px"></textarea>
-<label>👁️ Notre Vision FR</label><textarea id="set_vision_fr" style="min-height:110px"></textarea><label>Notre Vision EN</label><textarea id="set_vision_en" style="min-height:110px"></textarea>
-<label>💎 Nos Valeurs FR — une valeur par ligne</label><textarea id="set_valeurs_fr" style="min-height:110px" placeholder="Intégrité&#10;Excellence&#10;Solidarité&#10;Professionnalisme"></textarea><label>Nos Valeurs EN — une valeur par ligne</label><textarea id="set_valeurs_en" style="min-height:110px"></textarea>
-<div class="flex" style="margin-top:14px"><button class="btn btn-green" onclick="saveSettings()">💾 Enregistrer À propos</button><button class="btn btn-grey" onclick="loadSettings()">↺ Annuler</button></div></div></div>
-
-<!-- 3 EQUIPE -->
-<div id="page-equipe" class="page hidden">
-<div class="card"><h2>👥 3. Notre Équipe — Ajouter / Modifier</h2><input type="hidden" id="team_id">
-<div class="row"><div><label>Nom complet *</label><input id="team_nom" placeholder="Ex : Patrick Mituga"></div><div><label>Fonction FR *</label><input id="team_fonction_fr" placeholder="Ex : Directeur Général"></div></div>
-<div class="row"><div><label>Fonction EN</label><input id="team_fonction_en" placeholder="Ex : General Director"></div><div><label>Ordre (1 = premier)</label><input id="team_ordre" type="number" value="99"></div></div>
-<label>Biographie FR</label><textarea id="team_bio_fr"></textarea><label>Biographie EN</label><textarea id="team_bio_en"></textarea>
-<label>Photo — JPG / PNG → WebP</label><input type="file" id="team_file" accept="image/jpeg,image/png,image/webp"><p class="muted" id="team_webp_info"></p><input type="hidden" id="team_photo"><div id="team_preview"></div>
-<label><input type="checkbox" id="team_actif" checked style="width:auto"> ✅ Afficher sur le site public</label>
-<div class="flex" style="margin-top:12px"><button class="btn btn-green" onclick="saveTeam()">💾 Enregistrer membre</button><button class="btn btn-grey" onclick="resetTeam()">↺ Annuler / Effacer</button></div></div>
-<div class="card"><div class="flex"><h3 style="margin:0">Membres actuels</h3><input class="search" id="search_team" placeholder="🔍 Rechercher un membre..." oninput="loadTeam()"></div><div id="listTeam"></div></div></div>
-
-<!-- 4 DOMAINES -->
-<div id="page-domaines" class="page hidden">
-<div class="card"><h2>🧭 4. Domaines d'intervention — Ajouter / Modifier</h2><input type="hidden" id="dom_id">
-<div class="row"><div><label>Titre FR *</label><input id="dom_titre_fr"></div><div><label>Titre EN</label><input id="dom_titre_en"></div></div>
-<label>Description FR</label><textarea id="dom_desc_fr"></textarea><label>Description EN</label><textarea id="dom_desc_en"></textarea>
-<label>Services FR — un service par ligne</label><textarea id="dom_services_fr" placeholder="Formation en anglais&#10;Traduction&#10;Interprétation"></textarea><label>Services EN — un service par ligne</label><textarea id="dom_services_en"></textarea>
-<div class="row"><div><label>Responsable</label><input id="dom_resp" placeholder="Ex : Imani Citunga Darius"></div><div><label>Ordre</label><input id="dom_ordre" type="number" value="99"></div></div>
-<label>Image — JPG / PNG → WebP</label><input type="file" id="dom_file" accept="image/jpeg,image/png,image/webp"><p class="muted" id="dom_webp_info"></p><input type="hidden" id="dom_photo"><div id="dom_preview"></div>
-<label><input type="checkbox" id="dom_actif" checked style="width:auto"> ✅ Afficher sur le site public</label>
-<div class="flex" style="margin-top:12px"><button class="btn btn-green" onclick="saveDomain()">💾 Enregistrer domaine</button><button class="btn btn-grey" onclick="resetDomain()">↺ Annuler / Effacer</button></div></div>
-<div class="card"><h3>Domaines actuels</h3><div id="listDomains"></div></div></div>
-
-<!-- 5 REALISATIONS -->
-<div id="page-realisations" class="page hidden">
-<div class="card"><h2>🏆 5. Nos Réalisations — Ajouter / Modifier</h2><input type="hidden" id="real_id">
-<div class="row"><div><label>Titre FR *</label><input id="real_titre_fr" placeholder="Ex : Formation en anglais — Afriland First Bank"></div><div><label>Titre EN</label><input id="real_titre_en"></div></div>
-<label>Description FR</label><textarea id="real_desc_fr"></textarea><label>Description EN</label><textarea id="real_desc_en"></textarea>
-<div class="row"><div><label>Année / Période</label><input id="real_annee" placeholder="Ex : 2023-2024"></div><div><label>Ordre</label><input id="real_ordre" type="number" value="99"></div></div>
-<label>Photo — JPG / PNG → WebP</label><input type="file" id="real_file" accept="image/jpeg,image/png,image/webp"><p class="muted" id="real_webp_info"></p><input type="hidden" id="real_photo"><div id="real_preview"></div>
-<label><input type="checkbox" id="real_actif" checked style="width:auto"> ✅ Afficher sur le site public</label>
-<div class="flex" style="margin-top:12px"><button class="btn btn-green" onclick="saveReal()">💾 Enregistrer réalisation</button><button class="btn btn-grey" onclick="resetReal()">↺ Annuler / Effacer</button></div></div>
-<div class="card"><h3>Réalisations actuelles</h3><div id="listReal"></div></div></div>
-
-<!-- 6 PROGRAMME -->
-<div id="page-programme" class="page hidden">
-<div class="card"><h2>🚀 6. Programme d'Appui aux Entrepreneurs — Ajouter / Modifier</h2><input type="hidden" id="prog_id">
-<div class="row"><div><label>Titre FR *</label><input id="prog_titre_fr" placeholder="Ex : Programme d'Appui aux Entrepreneurs"></div><div><label>Titre EN</label><input id="prog_titre_en"></div></div>
-<label>Introduction FR</label><textarea id="prog_intro_fr"></textarea><label>Introduction EN</label><textarea id="prog_intro_en"></textarea>
-<label>Objectifs FR — un objectif par ligne</label><textarea id="prog_obj_fr" placeholder="Former les entrepreneurs&#10;Accompagner la création d'entreprise&#10;Faciliter l'accès au financement"></textarea><label>Objectifs EN — un objectif par ligne</label><textarea id="prog_obj_en"></textarea>
-<label>Activités FR — une activité par ligne</label><textarea id="prog_act_fr" placeholder="Ateliers de formation&#10;Mentorat&#10;Suivi personnalisé"></textarea><label>Activités EN — une activité par ligne</label><textarea id="prog_act_en"></textarea>
-<label>Image — JPG / PNG → WebP</label><input type="file" id="prog_file" accept="image/jpeg,image/png,image/webp"><p class="muted" id="prog_webp_info"></p><input type="hidden" id="prog_photo"><div id="prog_preview"></div>
-<label><input type="checkbox" id="prog_actif" checked style="width:auto"> ✅ Afficher sur le site public</label>
-<div class="flex" style="margin-top:12px"><button class="btn btn-green" onclick="saveProg()">💾 Enregistrer programme</button><button class="btn btn-grey" onclick="resetProg()">↺ Annuler / Effacer</button></div></div>
-<div class="card"><h3>Programmes actuels</h3><div id="listProg"></div></div></div>
-
-<!-- 7 ACTUS -->
-<div id="page-actus" class="page hidden">
-<div class="card"><h2>📰 7. Actualités — Ajouter / Modifier</h2><input type="hidden" id="news_id">
-<div class="row"><div><label>Titre FR *</label><input id="news_titre_fr"></div><div><label>Titre EN</label><input id="news_titre_en"></div></div>
-<label>Résumé FR</label><textarea id="news_resume"></textarea><label>Contenu FR</label><textarea id="news_contenu_fr" style="min-height:120px"></textarea><label>Contenu EN</label><textarea id="news_contenu_en" style="min-height:120px"></textarea>
-<div class="row"><div><label>Catégorie</label><select id="news_cat"><option>Actualité</option><option>Formation</option><option>Événement</option><option>Annonce</option><option>Programme</option><option>Réussite</option></select></div><div><label>Date</label><input id="news_date" type="date"></div></div>
-<label>Image — JPG / PNG → WebP</label><input type="file" id="news_file" accept="image/jpeg,image/png,image/webp"><p class="muted" id="news_webp_info"></p><input type="hidden" id="news_photo"><div id="news_preview"></div>
-<label>Statut</label><select id="news_publie"><option value="true">✅ Publié — visible sur le site</option><option value="false">🚫 Brouillon — masqué</option></select>
-<div class="flex" style="margin-top:12px"><button class="btn btn-green" onclick="saveNews()">💾 Enregistrer article</button><button class="btn btn-grey" onclick="resetNews()">↺ Annuler / Effacer</button></div></div>
-<div class="card"><h3>Articles actuels</h3><div id="listNews"></div></div></div>
-
-<!-- 8 CONTACT -->
-<div id="page-contact" class="page hidden">
-<div class="card"><h2>📞 8. Contact</h2>
-<div class="row"><div><label>Téléphone 1</label><input id="set_tel1" placeholder="+243 970 204 871"></div><div><label>Téléphone 2</label><input id="set_tel2" placeholder="+243 962 471 683"></div></div>
-<div class="row"><div><label>Email</label><input id="set_email" placeholder="enecbusiness20@gmail.com"></div><div><label>WhatsApp</label><input id="set_whatsapp" placeholder="+243 970 204 871"></div></div>
-<label>Adresse</label><input id="set_adresse" placeholder="Avenue de la Bière, Ibanda, Bukavu, Sud-Kivu, RDC">
-<div class="row"><div><label>Facebook</label><input id="set_facebook" placeholder="Lien Facebook"></div><div><label>Instagram</label><input id="set_instagram" placeholder="Lien Instagram"></div></div>
-<label>LinkedIn</label><input id="set_linkedin" placeholder="Lien LinkedIn">
-<div class="row"><div><label>Horaires FR</label><input id="set_horaires_fr" placeholder="Lun - Ven : 08h00 - 17h00 | Sam : 09h00 - 13h00"></div><div><label>Horaires EN</label><input id="set_horaires_en" placeholder="Mon - Fri : 08:00 - 17:00 | Sat : 09:00 - 13:00"></div></div>
-<div class="flex" style="margin-top:14px"><button class="btn btn-green" onclick="saveSettings()">💾 Enregistrer Contact</button><button class="btn btn-grey" onclick="loadSettings()">↺ Annuler</button></div></div>
-<div class="card"><h3>📩 Messages reçus (voir section 10)</h3><button class="btn btn-blue" onclick="showPage('messages',document.querySelectorAll('.sidebar button')[10])">Aller aux Messages →</button></div></div>
-
-<!-- 9 FOOTER -->
-<div id="page-footer" class="page hidden"><div class="card"><h2>🦶 9. Pied de page</h2>
-<label>Texte pied de page FR</label><textarea id="set_footer_fr" placeholder="ENEC — Un nouvel espoir, de multiples opportunités !"></textarea>
-<label>Texte pied de page EN</label><textarea id="set_footer_en"></textarea>
-<label>Copyright</label><input id="set_footer_copy" placeholder="© 2026 ENEC. Tous droits réservés.">
-<label>Liens pied de page — un lien par ligne (format : Texte | URL)</label><textarea id="set_footer_liens" placeholder="Accueil | #accueil&#10;À propos | #apropos&#10;Contact | #contact"></textarea>
-<div class="flex" style="margin-top:14px"><button class="btn btn-green" onclick="saveSettings()">💾 Enregistrer Pied de page</button><button class="btn btn-grey" onclick="loadSettings()">↺ Annuler</button></div></div></div>
-
-<!-- 10 MESSAGES -->
-<div id="page-messages" class="page hidden">
-<div class="card"><h2>✉️ 10. Messages des visiteurs</h2><p class="muted">Messages envoyés depuis le formulaire du site public. Tu peux les lire, les supprimer, ou répondre par email / WhatsApp.</p>
-<div class="flex"><input class="search" id="search_msg" placeholder="🔍 Rechercher (nom, email, sujet)..." oninput="loadMessages()"><button class="btn btn-blue" onclick="loadMessages()">🔄 Actualiser</button></div>
-<div id="listMsg"></div></div></div>
-
-</div>
-
-<script>
-let sb=null;
-function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',3400);}
-function loader(v,txt){document.getElementById('loader').style.display=v?'flex':'none';if(txt)document.getElementById('loaderTxt').textContent=txt;}
-function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function fmtKo(n){return (n/1024).toFixed(0)+' Ko';}
-function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById('page-'+id).classList.remove('hidden');document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');var titles={dashboard:'📊 Tableau de bord',accueil:'🏠 1. Accueil',apropos:'ℹ️ 2. À propos',equipe:'👥 3. Notre Équipe',domaines:'🧭 4. Domaines',realisations:'🏆 5. Réalisations',programme:'🚀 6. Programme Entrepreneurs',actus:'📰 7. Actualités',contact:'📞 8. Contact',footer:'🦶 9. Pied de page',messages:'✉️ 10. Messages'};document.getElementById('pageTitle').textContent=titles[id]||'';window.scrollTo({top:0,behavior:'smooth'});}
-function getConfig(){if(window.ENEC_SUPABASE_URL && window.ENEC_SUPABASE_ANON_KEY) return {url:window.ENEC_SUPABASE_URL,key:window.ENEC_SUPABASE_ANON_KEY};return null;}
-window.addEventListener('DOMContentLoaded',()=>{
-  var c=getConfig();var el=document.getElementById('cfgStatus');
-  if(!c||c.url.indexOf('TON-PROJET')!==-1){el.innerHTML='<span class="err">❌ admin-config.js manquant ou incomplet dans GitHub. Vérifie le fichier admin-config.js à côté de admin.html.</span>';return;}
-  el.innerHTML='<span class="ok">✅ Configuration trouvée — prête.</span>';
-  sb=window.supabase.createClient(c.url,c.key);
-  sb.auth.getSession().then(({data})=>{if(data.session){enterAdmin(data.session.user.email);loadAll();}});
-});
-async function login(){
-  var email=document.getElementById('loginEmail').value.trim();var pass=document.getElementById('loginPass').value;var err=document.getElementById('loginError');err.textContent='';
-  if(!email||!pass){err.textContent='Entre ton email et ton mot de passe Supabase.';return;}
-  if(!sb){err.textContent='Configuration manquante.';return;}
-  loader(true,'Vérification de tes identifiants...');
-  try{var res=await sb.auth.signInWithPassword({email:email,password:pass});if(res.error) throw res.error;if(!res.data.session) throw new Error('Connexion non confirmée par Supabase.');enterAdmin(email);await loadAll();toast('✅ Connecté — bienvenue');}
-  catch(e){err.textContent='❌ '+e.message;}
-  loader(false);
-}
-function enterAdmin(email){document.getElementById('login').style.display='none';document.getElementById('adminUI').style.display='flex';document.getElementById('mainUI').style.display='block';document.getElementById('who').textContent=email;}
-async function logout(){if(sb) await sb.auth.signOut();location.reload();}
-// --- WebP ---
-async function toWebP(file,maxW){maxW=maxW||1600;return new Promise((resolve)=>{var img=new Image();var url=URL.createObjectURL(file);img.onload=()=>{try{var scale=Math.min(1,maxW/img.width);var w=Math.round(img.width*scale),h=Math.round(img.height*scale);var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;var ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);canvas.toBlob((blob)=>{URL.revokeObjectURL(url);if(!blob){resolve({blob:file,name:file.name,isWebP:false,origSize:file.size,newSize:file.size});return;}var base=file.name.replace(/\.(jpg|jpeg|png|webp)$/i,'').replace(/[^a-z0-9-_]+/gi,'-').toLowerCase()||'photo';resolve({blob:blob,name:base+'.webp',isWebP:true,origSize:file.size,newSize:blob.size});},'image/webp',0.82);}catch(e){URL.revokeObjectURL(url);resolve({blob:file,name:file.name,isWebP:false,origSize:file.size,newSize:file.size});}};img.onerror=()=>{URL.revokeObjectURL(url);resolve({blob:file,name:file.name,isWebP:false,origSize:file.size,newSize:file.size});};img.src=url;});}
-async function convertQuick(input){var f=input.files[0];if(!f)return;var info=document.getElementById('webpQuickInfo');info.textContent='⏳ Conversion...';var conv=await toWebP(f);var gain=Math.round((1-conv.newSize/conv.origSize)*100);info.innerHTML='✅ '+fmtKo(conv.origSize)+' → '+fmtKo(conv.newSize)+' (-'+gain+'%) — '+conv.name;var url=URL.createObjectURL(conv.blob);document.getElementById('webpQuickOut').innerHTML='<img src="'+url+'" class="preview"><br><a class="btn btn-blue" href="'+url+'" download="'+conv.name+'">⬇️ Télécharger '+conv.name+'</a>';}
-function bindFile(inputId,infoId,previewId){var inp=document.getElementById(inputId);if(!inp)return;inp.addEventListener('change',async()=>{var f=inp.files[0];if(!f)return;document.getElementById(infoId).textContent='⏳ Conversion JPG/PNG → WebP...';var conv=await toWebP(f);var gain=Math.round((1-conv.newSize/conv.origSize)*100);inp._webpBlob=conv.blob;inp._webpName=conv.name;document.getElementById(infoId).textContent='✅ Prêt en WebP : '+fmtKo(conv.origSize)+' → '+fmtKo(conv.newSize)+' (-'+gain+'%) — '+conv.name;var pv=document.getElementById(previewId);if(pv)pv.innerHTML='<img src="'+URL.createObjectURL(conv.blob)+'" class="preview">';});}
-window.addEventListener('DOMContentLoaded',()=>{['team_file|team_webp_info|team_preview','dom_file|dom_webp_info|dom_preview','real_file|real_webp_info|real_preview','prog_file|prog_webp_info|prog_preview','news_file|news_webp_info|news_preview','set_banniere_file|set_banniere_info|set_banniere_preview','set_apropos_file|set_apropos_info|set_apropos_preview'].forEach(function(s){var p=s.split('|');bindFile(p[0],p[1],p[2]);});});
-async function uploadFromInput(inputId,folder,infoId){var inp=document.getElementById(inputId);var f=inp.files[0];if(!f)return '';var blob=inp._webpBlob||f;var name=inp._webpName||f.name;var isWebP=name.endsWith('.webp');var path=folder+'/'+Date.now()+'-'+name;var up=await sb.storage.from('enec-images').upload(path,blob,{contentType:isWebP?'image/webp':f.type,upsert:false});if(up.error) throw new Error('Storage : '+up.error.message+' — Vérifie que le bucket "enec-images" existe et est public.');var pub=sb.storage.from('enec-images').getPublicUrl(path);var el=document.getElementById(infoId);if(el)el.textContent='✅ Envoyé en '+(isWebP?'WebP':'original')+' : '+fmtKo(f.size)+' → '+fmtKo(blob.size);return pub.data.publicUrl;}
-// --- SETTINGS (Accueil, À propos, Contact, Footer) ---
-async function loadSettings(){
-  var r=await sb.from('enec_settings').select('*').limit(1).maybeSingle();
-  if(r.error){document.getElementById('syncStatus').textContent='⚠️ Settings : '+r.error.message;return;}
-  if(!r.data) return; var s=r.data; var set=(id,val)=>{var el=document.getElementById(id);if(el)el.value=val||'';};
-  set('set_id',s.id);
-  set('set_accueil_titre_fr',s.accueil_titre_fr||s.titre_accueil_fr); set('set_accueil_titre_en',s.accueil_titre_en||s.titre_accueil_en);
-  set('set_accueil_texte_fr',s.accueil_texte_fr); set('set_accueil_texte_en',s.accueil_texte_en);
-  set('set_slogan_fr',s.slogan_fr); set('set_slogan_en',s.slogan_en);
-  set('set_banniere_url',s.accueil_banniere_url||''); if(s.accueil_banniere_url) document.getElementById('set_banniere_preview').innerHTML='<img src="'+esc(s.accueil_banniere_url)+'" class="preview">';
-  set('set_apropos_fr',s.apropos_fr); set('set_apropos_en',s.apropos_en);
-  set('set_apropos_image',s.apropos_image_url||''); if(s.apropos_image_url) document.getElementById('set_apropos_preview').innerHTML='<img src="'+esc(s.apropos_image_url)+'" class="preview">';
-  set('set_mission_fr',s.mission_fr); set('set_mission_en',s.mission_en);
-  set('set_vision_fr',s.vision_fr); set('set_vision_en',s.vision_en);
-  set('set_valeurs_fr',s.valeurs_fr); set('set_valeurs_en',s.valeurs_en);
-  set('set_tel1',s.contact_tel1||s.telephone1); set('set_tel2',s.contact_tel2||s.telephone2);
-  set('set_email',s.contact_email||s.email); set('set_adresse',s.contact_adresse||s.adresse);
-  set('set_whatsapp',s.contact_whatsapp||s.whatsapp); set('set_facebook',s.contact_facebook||s.facebook);
-  set('set_instagram',s.contact_instagram); set('set_linkedin',s.contact_linkedin);
-  set('set_horaires_fr',s.contact_horaires_fr); set('set_horaires_en',s.contact_horaires_en);
-  set('set_footer_fr',s.footer_texte_fr); set('set_footer_en',s.footer_texte_en);
-  set('set_footer_copy',s.footer_copyright); set('set_footer_liens',s.footer_liens);
-  document.getElementById('syncStatus').textContent='✅ Synchronisé avec Supabase';
-}
-async function saveSettings(){
-  loader(true,'Enregistrement dans Supabase...');
-  try{
-    var id=document.getElementById('set_id').value||null;
-    var banniere=document.getElementById('set_banniere_url').value.trim(); var bf=document.getElementById('set_banniere_file').files[0]; if(bf) banniere=await uploadFromInput('set_banniere_file','accueil','set_banniere_info');
-    var aproposImg=document.getElementById('set_apropos_image').value.trim(); var af=document.getElementById('set_apropos_file').files[0]; if(af) aproposImg=await uploadFromInput('set_apropos_file','apropos','set_apropos_info');
-    var row={accueil_titre_fr:document.getElementById('set_accueil_titre_fr').value,accueil_titre_en:document.getElementById('set_accueil_titre_en').value,accueil_texte_fr:document.getElementById('set_accueil_texte_fr').value,accueil_texte_en:document.getElementById('set_accueil_texte_en').value,slogan_fr:document.getElementById('set_slogan_fr').value,slogan_en:document.getElementById('set_slogan_en').value,accueil_banniere_url:banniere,apropos_fr:document.getElementById('set_apropos_fr').value,apropos_en:document.getElementById('set_apropos_en').value,apropos_image_url:aproposImg,mission_fr:document.getElementById('set_mission_fr').value,mission_en:document.getElementById('set_mission_en').value,vision_fr:document.getElementById('set_vision_fr').value,vision_en:document.getElementById('set_vision_en').value,valeurs_fr:document.getElementById('set_valeurs_fr').value,valeurs_en:document.getElementById('set_valeurs_en').value,contact_tel1:document.getElementById('set_tel1').value,contact_tel2:document.getElementById('set_tel2').value,contact_email:document.getElementById('set_email').value,contact_adresse:document.getElementById('set_adresse').value,contact_whatsapp:document.getElementById('set_whatsapp').value,contact_facebook:document.getElementById('set_facebook').value,contact_instagram:document.getElementById('set_instagram').value,contact_linkedin:document.getElementById('set_linkedin').value,contact_horaires_fr:document.getElementById('set_horaires_fr').value,contact_horaires_en:document.getElementById('set_horaires_en').value,footer_texte_fr:document.getElementById('set_footer_fr').value,footer_texte_en:document.getElementById('set_footer_en').value,footer_copyright:document.getElementById('set_footer_copy').value,footer_liens:document.getElementById('set_footer_liens').value,titre_accueil_fr:document.getElementById('set_accueil_titre_fr').value,titre_accueil_en:document.getElementById('set_accueil_titre_en').value,telephone1:document.getElementById('set_tel1').value,telephone2:document.getElementById('set_tel2').value,email:document.getElementById('set_email').value,adresse:document.getElementById('set_adresse').value,whatsapp:document.getElementById('set_whatsapp').value,facebook:document.getElementById('set_facebook').value};
-    var res=id? await sb.from('enec_settings').update(row).eq('id',id).select() : await sb.from('enec_settings').insert([row]).select();
-    if(res.error) throw res.error; if(!res.data||!res.data.length) throw new Error('Supabase n\'a pas confirmé l\'enregistrement.');
-    document.getElementById('set_id').value=res.data[0].id; toast('✅ Enregistré dans Supabase — visible sur le site public');
-  }catch(e){toast('❌ '+e.message);alert('❌ '+e.message);}
-  loader(false);
-}
-// --- GENERIC LIST HELPERS ---
-function itemHTML(img,title,sub,body,actions){return '<div class="item"><img src="'+esc(img||'')+'" onerror="this.style.display=\'none\'"><div class="txt"><b>'+esc(title)+'</b> <span class="muted">'+esc(sub||'')+'</span><br><small>'+esc((body||'').slice(0,180))+'</small></div><div class="acts">'+actions+'</div></div>';}
-async function delRow(table,id,label){if(!confirm('Supprimer '+label+' ?\n\nDéfinitif dans Supabase et sur le site public.'))return;loader(true,'Suppression...');try{var res=await sb.from(table).delete().eq('id',id).select();if(res.error)throw res.error;toast('✅ Supprimé de Supabase');await loadAll();}catch(e){toast('❌ '+e.message);alert('❌ '+e.message);}loader(false);}
-async function toggleActif(table,id,val,label){loader(true);try{var res=await sb.from(table).update({actif:val}).eq('id',id).select();if(res.error)throw res.error;toast(val?'✅ Affiché sur le site':'✅ Masqué');await loadAll();}catch(e){toast('❌ '+e.message);}loader(false);}
-// --- TEAM ---
-function resetTeam(){['team_id','team_nom','team_fonction_fr','team_fonction_en','team_bio_fr','team_bio_en','team_photo'].forEach(i=>document.getElementById(i).value='');document.getElementById('team_ordre').value=99;document.getElementById('team_actif').checked=true;document.getElementById('team_file').value='';document.getElementById('team_preview').innerHTML='';document.getElementById('team_webp_info').textContent='';}
-async function loadTeam(){var r=await sb.from('enec_team').select('*').order('ordre',{ascending:true});if(r.error){document.getElementById('listTeam').innerHTML='<span class="err">'+esc(r.error.message)+'</span>';return;}var q=(document.getElementById('search_team').value||'').toLowerCase();var list=r.data.filter(m=>!q||(m.nom+' '+(m.fonction_fr||'')).toLowerCase().includes(q));document.getElementById('listTeam').innerHTML=list.length?list.map(m=>itemHTML(m.photo_url,m.nom,m.fonction_fr+' • Ordre '+m.ordre,m.bio_fr,'<span class="pill '+(m.actif?'pill-ok':'pill-no')+'">'+(m.actif?'✅ Visible':'🚫 Masqué')+'</span><br><button class="btn btn-blue" onclick=\'editTeam('+JSON.stringify(m).replace(/'/g,"\\'")+')\'>✏️ Modifier</button><button class="btn '+(m.actif?'btn-grey':'btn-gold')+'" onclick="toggleActif(\'enec_team\','+m.id+','+(!m.actif)+',\'ce membre\')">'+(m.actif?'Masquer':'Afficher')+'</button><button class="btn btn-red" onclick="delRow(\'enec_team\','+m.id+',\'ce membre\')">🗑️ Supprimer</button>')).join(''):'Aucun membre. Ajoute ton premier membre ci-dessus.';}
-function editTeam(m){document.getElementById('team_id').value=m.id;document.getElementById('team_nom').value=m.nom||'';document.getElementById('team_fonction_fr').value=m.fonction_fr||'';document.getElementById('team_fonction_en').value=m.fonction_en||'';document.getElementById('team_bio_fr').value=m.bio_fr||'';document.getElementById('team_bio_en').value=m.bio_en||'';document.getElementById('team_ordre').value=m.ordre??99;document.getElementById('team_actif').checked=!!m.actif;document.getElementById('team_photo').value=m.photo_url||'';document.getElementById('team_preview').innerHTML=m.photo_url?'<img src="'+esc(m.photo_url)+'" class="preview">':'';showPage('equipe',document.querySelectorAll('.sidebar button')[3]);window.scrollTo({top:0,behavior:'smooth'});}
-async function saveTeam(){loader(true,'Enregistrement du membre...');try{var id=document.getElementById('team_id').value||null;var photo=document.getElementById('team_photo').value.trim();var f=document.getElementById('team_file').files[0];if(f)photo=await uploadFromInput('team_file','equipe','team_webp_info');var row={nom:document.getElementById('team_nom').value.trim(),fonction_fr:document.getElementById('team_fonction_fr').value,fonction_en:document.getElementById('team_fonction_en').value,bio_fr:document.getElementById('team_bio_fr').value,bio_en:document.getElementById('team_bio_en').value,ordre:parseInt(document.getElementById('team_ordre').value)||99,actif:document.getElementById('team_actif').checked,photo_url:photo};if(!row.nom)throw new Error('Nom requis.');if(!row.fonction_fr)throw new Error('Fonction FR requise.');var res=id?await sb.from('enec_team').update(row).eq('id',id).select():await sb.from('enec_team').insert([row]).select();if(res.error)throw res.error;if(!res.data||!res.data.length)throw new Error('Non confirmé par Supabase.');toast('✅ Membre enregistré dans Supabase');resetTeam();await loadTeam();}catch(e){toast('❌ '+e.message);alert('❌ '+e.message);}loader(false);}
-// --- DOMAINES ---
-function resetDomain(){['dom_id','dom_titre_fr','dom_titre_en','dom_desc_fr','dom_desc_en','dom_services_fr','dom_services_en','dom_resp','dom_photo'].forEach(i=>document.getElementById(i).value='');document.getElementById('dom_ordre').value=99;document.getElementById('dom_actif').checked=true;document.getElementById('dom_file').value='';document.getElementById('dom_preview').innerHTML='';}
-async function loadDomains(){var r=await sb.from('enec_domains').select('*').order('ordre',{ascending:true});if(r.error){document.getElementById('listDomains').innerHTML='<span class="err">'+esc(r.error.message)+'</span>';return;}document.getElementById('listDomains').innerHTML=r.data.length?r.data.map(d=>itemHTML(d.image_url||'',d.titre_fr,d.responsable+' • Ordre '+d.ordre,d.description_fr,'<span class="pill '+(d.actif!==false?'pill-ok':'pill-no')+'">'+(d.actif!==false?'✅ Visible':'🚫 Masqué')+'</span><br><button class="btn btn-blue" onclick=\'editDomain('+JSON.stringify(d).replace(/'/g,"\\'")+')\'>✏️ Modifier</button><button class="btn btn-red" onclick="delRow(\'enec_domains\','+d.id+',\'ce domaine\')">🗑️ Supprimer</button>')).join(''):'Aucun domaine.';}
-function editDomain(d){document.getElementById('dom_id').value=d.id;document.getElementById('dom_titre_fr').value=d.titre_fr||'';document.getElementById('dom_titre_en').value=d.titre_en||'';document.getElementById('dom_desc_fr').value=d.description_fr||'';document.getElementById('dom_desc_en').value=d.description_en||'';document.getElementById('dom_services_fr').value=d.services_fr||'';document.getElementById('dom_services_en').value=d.services_en||'';document.getElementById('dom_resp').value=d.responsable||'';document.getElementById('dom_ordre').value=d.ordre??99;document.getElementById('dom_actif').checked=d.actif!==false;document.getElementById('dom_photo').value=d.image_url||'';document.getElementById('dom_preview').innerHTML=d.image_url?'<img src="'+esc(d.image_url)+'" class="preview">':'';showPage('domaines',document.querySelectorAll('.sidebar button')[4]);window.scrollTo({top:0,behavior:'smooth'});}
-async function saveDomain(){loader(true,'Enregistrement du domaine...');try{var id=document.getElementById('dom_id').value||null;var photo=document.getElementById('dom_photo').value.trim();var f=document.getElementById('dom_file').files[0];if(f)photo=await uploadFromInput('dom_file','domaines','dom_webp_info');var row={titre_fr:document.getElementById('dom_titre_fr').value.trim(),titre_en:document.getElementById('dom_titre_en').value,description_fr:document.getElementById('dom_desc_fr').value,description_en:document.getElementById('dom_desc_en').value,services_fr:document.getElementById('dom_services_fr').value,services_en:document.getElementById('dom_services_en').value,responsable:document.getElementById('dom_resp').value,ordre:parseInt(document.getElementById('dom_ordre').value)||99,actif:document.getElementById('dom_actif').checked,image_url:photo};if(!row.titre_fr)throw new Error('Titre FR requis.');var res=id?await sb.from('enec_domains').update(row).eq('id',id).select():await sb.from('enec_domains').insert([row]).select();if(res.error)throw res.error;if(!res.data||!res.data.length)throw new Error('Non confirmé.');toast('✅ Domaine enregistré');resetDomain();await loadDomains();}catch(e){toast('❌ '+e.message);alert('❌ '+e.message);}loader(false);}
-// --- REALISATIONS ---
-function resetReal(){['real_id','real_titre_fr','real_titre_en','real_desc_fr','real_desc_en','real_annee','real_photo'].forEach(i=>document.getElementById(i).value='');document.getElementById('real_ordre').value=99;document.getElementById('real_actif').checked=true;document.getElementById('real_file').value='';document.getElementById('real_preview').innerHTML='';}
-async function loadReal(){var r=await sb.from('enec_achievements').select('*').order('ordre',{ascending:true});if(r.error){document.getElementById('listReal').innerHTML='<span class="err">'+esc(r.error.message)+'</span>';return;}document.getElementById('listReal').innerHTML=r.data.length?r.data.map(x=>itemHTML(x.image_url||'',x.titre_fr,x.annee||'',x.description_fr,'<span class="pill '+(x.actif!==false?'pill-ok':'pill-no')+'">'+(x.actif!==false?'✅ Visible':'🚫 Masqué')+'</span><br><button class="btn btn-blue" onclick=\'editReal('+JSON.stringify(x).replace(/'/g,"\\'")+')\'>✏️ Modifier</button><button class="btn btn-red" onclick="delRow(\'enec_achievements\','+x.id+',\'cette réalisation\')">🗑️ Supprimer</button>')).join(''):'Aucune réalisation.';}
-function editReal(x){document.getElementById('real_id').value=x.id;document.getElementById('real_titre_fr').value=x.titre_fr||'';document.getElementById('real_titre_en').value=x.titre_en||'';document.getElementById('real_desc_fr').value=x.description_fr||'';document.getElementById('real_desc_en').value=x.description_en||'';document.getElementById('real_annee').value=x.annee||'';document.getElementById('real_ordre').value=x.ordre??99;document.getElementById('real_actif').checked=x.actif!==false;document.getElementById('real_photo').value=x.image_url||'';document.getElementById('real_preview').innerHTML=x.image_url?'<img src="'+esc(x.image_url)+'" class="preview">':'';showPage('realisations',document.querySelectorAll('.sidebar button')[5]);window.scrollTo({top:0,behavior:'smooth'});}
-async function saveReal(){loader(true,'Enregistrement...');try{var id=document.getElementById('real_id').value||null;var photo=document.getElementById('real_photo').value.trim();var f=document.getElementById('real_file').files[0];if(f)photo=await uploadFromInput('real_file','realisations','real_webp_info');var row={titre_fr:document.getElementById('real_titre_fr').value.trim(),titre_en:document.getElementById('real_titre_en').value,description_fr:document.getElementById('real_desc_fr').value,description_en:document.getElementById('real_desc_en').value,annee:document.getElementById('real_annee').value,ordre:parseInt(document.getElementById('real_ordre').value)||99,actif:document.getElementById('real_actif').checked,image_url:photo};if(!row.titre_fr)throw new Error('Titre requis.');var res=id?await sb.from('enec_achievements').update(row).eq('id',id).select():await sb.from('enec_achievements').insert([row]).select();if(res.error)throw res.error;if(!res.data||!res.data.length)throw new Error('Non confirmé.');toast('✅ Réalisation enregistrée');resetReal();await loadReal();}catch(e){toast('❌ '+e.message);alert('❌ '+e.message);}loader(false);}
-// --- PROGRAMME ---
-function resetProg(){['prog_id','prog_titre_fr','prog_titre_en','prog_intro_fr','prog_intro_en','prog_obj_fr','prog_obj_en','prog_act_fr','prog_act_en','prog_photo'].forEach(i=>document.getElementById(i).value='');document.getElementById('prog_actif').checked=true;document.getElementById('prog_file').value='';document.getElementById('prog_preview').innerHTML='';}
-async function loadProg(){var r=await sb.from('enec_programme').select('*').order('ordre',{ascending:true});if(r.error){document.getElementById('listProg').innerHTML='<span class="err">'+esc(r.error.message)+'</span>';return;}document.getElementById('listProg').innerHTML=r.data.length?r.data.map(x=>itemHTML(x.image_url||'',x.titre_fr,'',x.intro_fr,'<span class="pill '+(x.actif!==false?'pill-ok':'pill-no')+'">'+(x.actif!==false?'✅ Visible':'🚫 Masqué')+'</span><br><button class="btn btn-blue" onclick=\'editProg('+JSON.stringify(x).replace(/'/g,"\\'")+')\'>✏️ Modifier</button><button class="btn btn-red" onclick="delRow(\'enec_programme\','+x.id+',\'ce programme\')">🗑️ Supprimer</button>')).join(''):'Aucun programme. Ajoute le Programme d\'Appui aux Entrepreneurs ci-dessus.';}
-function editProg(x){document.getElementById('prog_id').value=x.id;document.getElementById('prog_titre_fr').value=x.titre_fr||'';document.getElementById('prog_titre_en').value=x.titre_en||'';document.getElementById('prog_intro_fr').value=x.intro_fr||'';document.getElementById('prog_intro_en').value=x.intro_en||'';document.getElementById('prog_obj_fr').value=x.objectifs_fr||'';document.getElementById('prog_obj_en').value=x.objectifs_en||'';document.getElementById('prog_act_fr').value=x.activites_fr||'';document.getElementById('prog_act_en').value=x.activites_en||'';document.getElementById('prog_actif').checked=x.actif!==false;document.getElementById('prog_photo').value=x.image_url||'';document.getElementById('prog_preview').innerHTML=x.image_url?'<img src="'+esc(x.image_url)+'" class="preview">':'';showPage('programme',document.querySelectorAll('.sidebar button')[6]);window.scrollTo({top:0,behavior:'smooth'});}
-async function saveProg(){loader(true,'Enregistrement du programme...');try{var id=document.getElementById('prog_id').value||null;var photo=document.getElementById('prog_photo').value.trim();var f=document.getElementById('prog_file').files[0];if(f)photo=await uploadFromInput('prog_file','programme','prog_webp_info');var row={titre_fr:document.getElementById('prog_titre_fr').value.trim(),titre_en:document.getElementById('prog_titre_en').value,intro_fr:document.getElementById('prog_intro_fr').value,intro_en:document.getElementById('prog_intro_en').value,objectifs_fr:document.getElementById('prog_obj_fr').value,objectifs_en:document.getElementById('prog_obj_en').value,activites_fr:document.getElementById('prog_act_fr').value,activites_en:document.getElementById('prog_act_en').value,actif:document.getElementById('prog_actif').checked,image_url:photo};if(!row.titre_fr)throw new Error('Titre requis.');var res=id?await sb.from('enec_programme').update(row).eq('id',id).select():await sb.from('enec_programme').insert([row]).select();if(res.error)throw res.error;if(!res.data||!res.data.length)throw new Error('Non confirmé.');toast('✅ Programme enregistré');resetProg();await loadProg();}catch(e){toast('❌ '+e.message);alert('❌ '+e.message);}loader(false);}
-// --- NEWS ---
-function resetNews(){['news_id','news_titre_fr','news_titre_en','news_resume','news_contenu_fr','news_contenu_en','news_date','news_photo'].forEach(i=>document.getElementById(i).value='');document.getElementById('news_cat').value='Actualité';document.getElementById('news_file').value='';document.getElementById('news_preview').innerHTML='';document.getElementById('news_publie').value='true';}
-async function loadNews(){var r=await sb.from('enec_news').select('*').order('date_pub',{ascending:false});if(r.error){document.getElementById('listNews').innerHTML='<span class="err">'+esc(r.error.message)+'</span>';return;}document.getElementById('listNews').innerHTML=r.data.length?r.data.map(n=>itemHTML(n.image_url||'',n.titre_fr,n.categorie+' • '+(n.date_pub||''),n.resume_fr||n.contenu_fr,'<span class="pill-cat pill">'+esc(n.categorie||'')+'</span> <span class="pill '+(n.publie?'pill-ok':'pill-no')+'">'+(n.publie?'✅ Publié':'🚫 Brouillon')+'</span><br><button class="btn btn-blue" onclick=\'editNews('+JSON.stringify(n).replace(/'/g,"\\'")+')\'>✏️ Modifier</button><button class="btn btn-gold" onclick="togglePublish('+n.id+','+(!n.publie)+')">'+(n.publie?'Dépublier':'Publier')+'</button><button class="btn btn-red" onclick="delRow(\'enec_news\','+n.id+',\'cet article\')">🗑️ Supprimer</button>')).join(''):'Aucun article.';}
-function editNews(n){document.getElementById('news_id').value=n.id;document.getElementById('news_titre_fr').value=n.titre_fr||'';document.getElementById('news_titre_en').value=n.titre_en||'';document.getElementById('news_resume').value=n.resume_fr||'';document.getElementById('news_contenu_fr').value=n.contenu_fr||'';document.getElementById('news_contenu_en').value=n.contenu_en||'';document.getElementById('news_cat').value=n.categorie||'Actualité';document.getElementById('news_date').value=n.date_pub||'';document.getElementById('news_photo').value=n.image_url||'';document.getElementById('news_publie').value=String(n.publie);document.getElementById('news_preview').innerHTML=n.image_url?'<img src="'+esc(n.image_url)+'" class="preview">':'';showPage('actus',document.querySelectorAll('.sidebar button')[7]);window.scrollTo({top:0,behavior:'smooth'});}
-async function saveNews(){loader(true,'Enregistrement de l\'article...');try{var id=document.getElementById('news_id').value||null;var photo=document.getElementById('news_photo').value.trim();var f=document.getElementById('news_file').files[0];if(f)photo=await uploadFromInput('news_file','actualites','news_webp_info');var row={titre_fr:document.getElementById('news_titre_fr').value.trim(),titre_en:document.getElementById('news_titre_en').value,resume_fr:document.getElementById('news_resume').value,contenu_fr:document.getElementById('news_contenu_fr').value,contenu_en:document.getElementById('news_contenu_en').value,categorie:document.getElementById('news_cat').value,date_pub:document.getElementById('news_date').value||null,image_url:photo,publie:document.getElementById('news_publie').value==='true'};if(!row.titre_fr)throw new Error('Titre requis.');var res=id?await sb.from('enec_news').update(row).eq('id',id).select():await sb.from('enec_news').insert([row]).select();if(res.error)throw res.error;if(!res.data||!res.data.length)throw new Error('Non confirmé.');toast('✅ Article enregistré');resetNews();await loadNews();}catch(e){toast('❌ '+e.message);alert('❌ '+e.message);}loader(false);}
-async function togglePublish(id,val){loader(true);try{var res=await sb.from('enec_news').update({publie:val}).eq('id',id).select();if(res.error)throw res.error;toast(val?'✅ Publié':'✅ Dépublié');await loadAll();}catch(e){toast('❌ '+e.message);}loader(false);}
-// --- MESSAGES ---
-async function loadMessages(){var r=await sb.from('enec_messages').select('*').order('created_at',{ascending:false}).limit(100);if(r.error){document.getElementById('listMsg').innerHTML='<span class="err">'+esc(r.error.message)+'</span>';document.getElementById('dashMsg').innerHTML='';return;}var q=(document.getElementById('search_msg').value||'').toLowerCase();var list=r.data.filter(m=>!q||(m.nom+' '+(m.email||'')+' '+(m.sujet||'')).toLowerCase().includes(q));document.getElementById('listMsg').innerHTML=list.length?list.map(m=>'<div class="item"><div class="txt"><b>'+esc(m.nom)+'</b> — '+esc(m.email)+' — '+(m.created_at||'').slice(0,10)+'<br><b>'+esc(m.sujet||'(sans sujet)')+'</b><br>'+esc(m.message)+'</div><div class="acts"><a class="btn btn-blue" href="mailto:'+esc(m.email)+'?subject=Re: '+esc(m.sujet||'ENEC')+'">📧 Répondre par email</a><button class="btn btn-red" onclick="delRow(\'enec_messages\','+m.id+',\'ce message\')">🗑️ Supprimer</button></div></div>').join(''):'Aucun message.';document.getElementById('dashMsg').innerHTML=r.data.slice(0,3).map(m=>'<div class="item"><div class="txt"><b>'+esc(m.nom)+'</b> — '+esc(m.email)+'<br>'+esc((m.message||'').slice(0,120))+'</div></div>').join('')||'Aucun message.';}
-// --- LOAD ALL + STATS RÉELLES ---
-async function loadAll(){
-  loader(true,'Chargement depuis Supabase...');
-  try{
-    await loadSettings();await loadTeam();await loadDomains();await loadReal();await loadProg();await loadNews();await loadMessages();
-    var c1=await sb.from('enec_team').select('id',{count:'exact'});var c2=await sb.from('enec_domains').select('id',{count:'exact'});var c3=await sb.from('enec_news').select('id',{count:'exact'});var c4=await sb.from('enec_messages').select('id',{count:'exact'});var c5=await sb.from('enec_achievements').select('id',{count:'exact'});var c6=await sb.from('enec_programme').select('id',{count:'exact'});var c7=await sb.from('enec_news').select('id',{count:'exact'}).eq('publie',true);
-    var setTxt=(id,v)=>{var el=document.getElementById(id);if(el)el.textContent=v;};
-    setTxt('k_team',c1.count??0);setTxt('k_dom',c2.count??0);setTxt('k_news',c3.count??0);setTxt('k_msg',c4.count??0);setTxt('k_real',c5.count??0);setTxt('k_prog',c6.count??0);setTxt('k_pub',c7.count??0);setTxt('k_draft',(c3.count??0)-(c7.count??0));
-    setTxt('b_team',c1.count??0);setTxt('b_dom',c2.count??0);setTxt('b_real',c5.count??0);setTxt('b_news',c3.count??0);setTxt('b_msg',c4.count??0);
-  }catch(e){toast('❌ '+e.message);}
-  loader(false);
-}
-</script>
-</body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="admin-config.js?v=1"></script>
+<script src="js/supabase.js?v=1"></script>
+<script src="js/admin-auth.js?v=1"></script>
+<script src="js/admin.js?v=1"></script>
+<script src="js/admin-accueil.js?v=1"></script>
+<script src="js/admin-equipe.js?v=1"></script>
+<script src="js/admin-domaines.js?v=1"></script>
+<script src="js/admin-realisations.js?v=1"></script>
+<script src="js/admin-actualites.js?v=1"></script>
+<script src="js/admin-programme.js?v=1"></script>
+<script src="js/admin-contact.js?v=1"></script>
+<script src="js/admin-settings.js?v=1"></script>
+</body>
+  </html>
