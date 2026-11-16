@@ -1,14 +1,11 @@
-// ENEC Admin - Général : onglets, status, helpers vérifiés
 function adminShowTab(name){
   document.querySelectorAll('.tab').forEach(function(t){ t.style.display='none'; });
   var el = document.getElementById('tab-'+name);
   if(el) el.style.display = 'block';
-  document.querySelectorAll('.tabs button').forEach(function(b){
-    b.classList.toggle('active', b.getAttribute('data-tab')===name);
-  });
-  // Recharger l'onglet à chaque ouverture pour voir la vraie donnée Supabase
+  document.querySelectorAll('.tabs button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')===name); });
   var fn = { accueil: adminLoadAccueil, equipe: adminLoadEquipe, domaines: adminLoadDomaines, realisations: adminLoadRealisations, actualites: adminLoadActualites, programme: adminLoadProgramme, contact: adminLoadContact, settings: adminLoadSettings }[name];
-  if(fn) fn();
+  if(typeof fn === 'function'){ fn(); }
+  else { var box = el ? el.querySelector('div') : null; if(box) box.innerHTML = '<p class="msg">❌ Fichier js/admin-modules.js non chargé. Vérifie que le fichier existe dans GitHub et recharge avec ?v=2</p>'; }
 }
 async function adminLoadAll(){
   var st = document.getElementById('sync-status');
@@ -17,20 +14,15 @@ async function adminLoadAll(){
     if(r.error) throw r.error;
     st.textContent = '✅ Connecté à Supabase — lecture / écriture vérifiée';
     st.className = 'sync ok';
-  }catch(e){
-    st.textContent = '⚠️ Supabase : ' + e.message + ' — Vérifie le SQL ci-dessous (tables / RLS).';
-    st.className = 'sync err';
-  }
+  }catch(e){ st.textContent = '⚠️ Supabase : ' + e.message; st.className = 'sync err'; }
   adminShowTab('accueil');
 }
-// Helper : affiche le vrai résultat Supabase, jamais de faux succès
 function adminResult(elId, res, okMsg){
   var el = document.getElementById(elId);
-  if(res.error){ if(el){ el.textContent = '❌ Erreur Supabase : ' + res.error.message; el.className='msg'; } alert('Erreur Supabase : ' + res.error.message); return false; }
+  if(res.error){ if(el){ el.textContent = '❌ Erreur Supabase : ' + res.error.message; } alert('Erreur Supabase : ' + res.error.message); return false; }
   if(el){ el.textContent = '✅ ' + okMsg; el.className='msg ok'; }
   return true;
 }
-// Helper upload image -> Storage bucket "enec-images", retourne URL publique réelle
 async function adminUploadImage(inputId){
   var input = document.getElementById(inputId);
   if(!input || !input.files || !input.files[0]) return null;
@@ -42,4 +34,3 @@ async function adminUploadImage(inputId){
   var pub = window.enecSupabase.storage.from('enec-images').getPublicUrl(name);
   return pub.data.publicUrl;
 }
-function adminEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
