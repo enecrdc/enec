@@ -1,9 +1,9 @@
 // ENEC - Connexion Supabase (1 seul endroit pour tout le site)
 function enecGetConfig(){
-  var U = window.ENEC_SUPABASE_URL || "";
-  var K = window.ENEC_SUPABASE_ANON_KEY || "";
-  if(!U || U.indexOf('TON-PROJET')!==-1) U = "https://mlzacyrgnmentvilwvkm.supabase.co";
-  if(!K || K.indexOf('TA-CLE')!==-1) K = null;
+  var U = window.ENEC_SUPABASE_URL || "https://mlzacyrgnmentvilwvkm.supabase.co";
+  var K = window.ENEC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1semFjeXJnbm1lbnR2aWx3dmttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MDA2NzMsImV4cCI6MjExMDE3NjY3M30.RO1EmPo3hpm9ceb5U0-ZeeG1Uv1XePnOzZ7tmPix26w";
+  if(!U || U.indexOf('https://mlzacyrgnmentvilwvkm.supabase.co')!==-1) U = "https://mlzacyrgnmentvilwvkm.supabase.co";
+  if(!K || K.indexOf('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1semFjeXJnbm1lbnR2aWx3dmttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MDA2NzMsImV4cCI6MjExMDE3NjY3M30.RO1EmPo3hpm9ceb5U0-ZeeG1Uv1XePnOzZ7tmPix26w')!==-1) K = null;
   return { url: U, key: K };
 }
 function enecGetClient(){
