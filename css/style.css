@@ -15,10 +15,11 @@ p{color:#334155}
 section{padding:56px 0}
 .bg-light{background:#EAF2FB}
 
-/* Barre du haut - comme RDI */
+/* BARRE DU HAUT - CORRIGÉE : une seule petite ligne, qui défile sur téléphone */
 .topbar{background:#0F2A44;color:#fff;font-size:13px}
-.topbar-in{display:flex;gap:22px;flex-wrap:wrap;padding:9px 18px}
-.topbar-in span{opacity:.95}
+.topbar-in{display:flex;gap:22px;flex-wrap:nowrap;align-items:center;padding:9px 18px;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+.topbar-in::-webkit-scrollbar{display:none}
+.topbar-in span{flex-shrink:0}
 
 /* Header */
 header{position:sticky;top:0;background:#fff;border-bottom:1px solid #DCE6F2;z-index:50}
@@ -72,7 +73,7 @@ header{position:sticky;top:0;background:#fff;border-bottom:1px solid #DCE6F2;z-i
 .card .role{color:#1E6CB8;font-weight:700;margin:4px 0}
 .card:hover{border-color:#1E6CB8}
 
-/* Bande - comme RDI */
+/* Bande */
 .cta-band{background:#0F2A44;color:#fff;text-align:center}
 .cta-band p{color:#fff;opacity:.92}
 .cta-band h2{color:#fff}
@@ -81,16 +82,18 @@ header{position:sticky;top:0;background:#fff;border-bottom:1px solid #DCE6F2;z-i
 .contact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:18px 0}
 .contact-grid div{border:1px solid #DCE6F2;border-radius:14px;padding:16px;background:#fff}
 
-/* Footer - comme RDI */
+/* Footer */
 footer{background:#0F2A44;color:#fff;padding:36px 0 18px;margin-top:0}
 footer p{color:#fff;opacity:.9}
 .footer-in{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:24px}
 .copy{border-top:1px solid rgba(255,255,255,.2);padding-top:14px;font-size:13px}
 .admin{position:fixed;bottom:18px;right:18px;background:#0F2A44;color:#fff;padding:13px 18px;border-radius:999px;font-weight:800;z-index:99}
+
 @media(max-width:820px){
   h2{font-size:30px}.hero-rdi .wrap{grid-template-columns:1fr}.hero-rdi h2{font-size:34px}
   .grid3,.grid4,.contact-grid{grid-template-columns:1fr 1fr}
   .split-in{grid-template-columns:1fr}.footer-in{grid-template-columns:1fr}
-  .topbar-in{font-size:12px}
+  .topbar-in{font-size:11px;padding:7px 12px;gap:14px}
+  .topbar .hide-mobile{display:none}
 }
 @media(max-width:520px){.grid3,.grid4,.contact-grid{grid-template-columns:1fr}}
