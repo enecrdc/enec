@@ -1,67 +1,30 @@
-// ENEC - Connexion Supabase (1 seul endroit pour tout le site)
-function enecGetConfig(){
-  var U = window.ENEC_SUPABASE_URL || "https://mlzacyrgnmentvilwvkm.supabase.co";
-  var K = window.ENEC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1semFjeXJnbm1lbnR2aWx3dmttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MDA2NzMsImV4cCI6MjExMDE3NjY3M30.RO1EmPo3hpm9ceb5U0-ZeeG1Uv1XePnOzZ7tmPix26w";
-  if(!U || U.indexOf('https://mlzacyrgnmentvilwvkm.supabase.co')!==-1) U = "https://mlzacyrgnmentvilwvkm.supabase.co";
-  if(!K || K.indexOf('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1semFjeXJnbm1lbnR2aWx3dmttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2MDA2NzMsImV4cCI6MjExMDE3NjY3M30.RO1EmPo3hpm9ceb5U0-ZeeG1Uv1XePnOzZ7tmPix26w')!==-1) K = null;
-  return { url: U, key: K };
-}
-function enecGetClient(){
-  var c = enecGetConfig();
-  if(!c.key || !window.supabase) return null;
-  return window.supabase.createClient(c.url, c.key);
-}
-function enecEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function enecLang(){ return (document.documentElement.lang||'fr').toLowerCase().indexOf('en')===0?'en':'fr'; }
-function enecReplaceText(a,b){
-  if(!a||!b||a===b) return;
-  var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null,false),ns=[],n;
-  while(n=w.nextNode()){ if(n.nodeValue&&n.nodeValue.indexOf(a)!==-1) ns.push(n); }
-  ns.forEach(function(t){ t.nodeValue=t.nodeValue.split(a).join(b); });
-}
-function enecReplaceAfterHeading(keys,txt){
-  if(!txt) return;
-  var hs=[].slice.call(document.querySelectorAll('h1,h2,h3,h4'));
-  for(var i=0;i<hs.length;i++){
-    var t=hs[i].textContent.toLowerCase();
-    if(!keys.some(function(k){return t.indexOf(k)!==-1;})) continue;
-    var p=hs[i].nextElementSibling,c=0;
-    while(p&&c<6){
-      if(p.tagName==='P'&&p.textContent.trim().length>15){p.textContent=txt;return;}
-      var q=p.querySelector?p.querySelector('p'):null;
-      if(q&&q.textContent.trim().length>15){q.textContent=txt;return;}
-      p=p.nextElementSibling;c++;
-    }
+// ENEC - Connexion Supabase UNIQUE pour site public + admin
+// Ce fichier crée window.enecSupabase. Sans lui, l'admin dit "Cannot read properties of undefined (reading 'auth')"
+
+(function(){
+  // 1. Récupère la config depuis admin-config.js, peu importe son nom
+  var cfg = window.ENEC_CONFIG || window.SUPABASE_CONFIG || window.CONFIG || {};
+  var url = cfg.SUPABASE_URL || cfg.supabaseUrl || cfg.url || window.SUPABASE_URL || '';
+  var key = cfg.SUPABASE_ANON_KEY || cfg.supabaseAnonKey || cfg.anonKey || cfg.key || window.SUPABASE_ANON_KEY || '';
+
+  // 2. Si pas de config, on s'arrête proprement avec un message clair
+  if(!url || !key){
+    console.error('ENEC: admin-config.js vide ou introuvable. Mets SUPABASE_URL et SUPABASE_ANON_KEY dedans.');
+    window.enecSupabase = null;
+    window.enecSupabaseError = 'admin-config.js vide ou introuvable';
+    return;
   }
-}
-function enecRenderList(keywords,items,build){
-  if(!items||!items.length) return;
-  var hs=[].slice.call(document.querySelectorAll('h1,h2,h3'));
-  for(var i=0;i<hs.length;i++){
-    var txt=hs[i].textContent.toLowerCase();
-    if(!keywords.some(function(k){return txt.indexOf(k)!==-1;})) continue;
-    var sib=hs[i].nextElementSibling,tries=0,cont=null;
-    while(sib&&tries<5){
-      if(sib.querySelectorAll&&sib.querySelectorAll('img').length>=1){cont=sib;break;}
-      if(sib.children&&sib.children.length>=2){cont=sib;break;}
-      sib=sib.nextElementSibling;tries++;
-    }
-    if(!cont) cont=hs[i].parentElement;
-    if(!cont) return;
-    var grid='<div data-enec-grid="1" class="grid">'+items.map(build).join('')+'</div>';
-    var ex=cont.querySelector&&cont.querySelector('[data-enec-grid="1"]');
-    if(ex){ ex.outerHTML=grid; return; }
-    var old=null;
-    [].forEach.call(cont.children,function(ch){ if(!old&&ch.querySelector&&ch.querySelector('img')) old=ch; });
-    if(old){ old.outerHTML=grid; return; }
-    cont.innerHTML=grid; return;
+
+  // 3. Crée le client Supabase
+  try{
+    var client = window.supabase.createClient(url, key);
+    window.enecSupabase = client;
+    // Alias pour compatibilité avec les anciens fichiers
+    window.supabaseClient = client;
+    console.log('ENEC: Supabase connecté', url);
+  }catch(e){
+    console.error('ENEC: Erreur création client Supabase', e);
+    window.enecSupabase = null;
+    window.enecSupabaseError = e.message;
   }
-}
-function enecCard(img,title,sub,body){
-  return '<article class="card">'
-    +(img?'<img src="'+enecEsc(img)+'" style="width:100%;height:180px;object-fit:cover;border-radius:12px;margin-bottom:10px" loading="lazy" onerror="this.style.display=\'none\'">':'')
-    +'<h3>'+enecEsc(title)+'</h3>'
-    +(sub?'<p class="role">'+enecEsc(sub)+'</p>':'')
-    +(body?'<p style="white-space:pre-line">'+enecEsc(body)+'</p>':'')
-    +'</article>';
-      }
+})();
