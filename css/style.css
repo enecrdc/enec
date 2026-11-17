@@ -28,3 +28,19 @@ a{color:inherit}
 .hero-welcome{font-size:16.5px;line-height:1.6;color:#D9EAF5;margin:0 0 26px;max-width:880px;font-style:italic}
 .hero-buttons{display:flex;gap:14px;flex-wrap:wrap}.hero-buttons .btn{display:inline-block;padding:15px 24px;border-radius:999px;font-weight:700;font-size:16px;text-decoration:none}.hero-buttons .btn-primary{background:#0E7A4B;color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.25)}.hero-buttons .btn-primary:hover{background:#0B6540}.hero-buttons .btn-outline{background:transparent;color:#fff;border:2px solid #fff}.hero-buttons .btn-outline:hover{background:#fff;color:#0A2342}
 @media(max-width:640px){.topbar{font-size:12px;gap:8px}.header{justify-content:center}.hero{padding:44px 16px 38px}.hero-title{font-size:30px;line-height:1.25}.hero-lead{font-size:18px}.hero-text{font-size:16px;line-height:1.7}.hero-engagement{padding:18px 16px 18px 46px}.hero-engagement p{font-size:16.5px}.hero-buttons{flex-direction:column}.hero-buttons .btn{width:100%;text-align:center}.wrap h2{font-size:26px}}
+/* EQUIPE - CARTES */
+.team-card{background:#fff;border:1px solid #E3EAF0;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(10,35,66,.06)}
+.team-photo{height:260px;background:#EEF3F7;overflow:hidden}.team-photo img{width:100%;height:100%;object-fit:cover}.team-no-photo{height:100%;display:flex;align-items:center;justify-content:center;font-size:80px}
+.team-body{padding:16px}.team-body h3{margin:0;color:#0A2342}.team-role{color:#0E7A4B;font-weight:700;margin:4px 0}.team-bio{color:#5a6b7d;font-size:14.5px;line-height:1.6;min-height:68px}
+.btn-small{background:#0A2342;color:#fff;border:0;padding:10px 16px;border-radius:999px;font-weight:700;cursor:pointer}
+/* DOMAINES - CARTES */
+.domain-card{background:#fff;border:1px solid #E3EAF0;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(10,35,66,.06)}
+.domain-img{height:180px;background:#EEF3F7;overflow:hidden}.domain-img img{width:100%;height:100%;object-fit:cover}.domain-no-img{height:100%;display:flex;align-items:center;justify-content:center;font-size:60px}
+.domain-body{padding:16px}.domain-body h3{margin:0;color:#0A2342}.domain-services{font-size:14px;color:#5a6b7d}
+/* GALERIE */
+.gallery-card{background:#fff;border:1px solid #E3EAF0;border-radius:16px;overflow:hidden;cursor:pointer;box-shadow:0 4px 16px rgba(10,35,66,.06)}
+.gallery-img{height:200px;position:relative;overflow:hidden}.gallery-img img{width:100%;height:100%;object-fit:cover}.gallery-count{position:absolute;right:10px;bottom:10px;background:#0A2342;color:#fff;padding:5px 10px;border-radius:999px;font-size:12px}.gallery-no-img{height:100%;display:flex;align-items:center;justify-content:center;font-size:60px}
+.gallery-body{padding:14px}.gallery-cat{display:inline-block;background:#EAF6EF;color:#0E7A4B;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}.gallery-body h3{margin:8px 0 6px;color:#0A2342}
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}.modal-box{background:#fff;border-radius:16px;padding:22px;max-width:640px;width:100%;max-height:90vh;overflow:auto;position:relative}.modal-close{position:absolute;right:12px;top:12px;border:0;background:#0A2342;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer}
+@media(max-width:640px){.team-photo{height:220px}.gallery-img{height:180px}}
