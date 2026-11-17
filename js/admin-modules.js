@@ -1,6 +1,7 @@
 function adminEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc2(v){ return String(v||''); }
 
-// ACCUEIL
+// ===== ACCUEIL =====
 async function adminLoadAccueil(){
   var box=document.getElementById('accueil-form'); if(!box) return; box.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('accueil').select('*').limit(1).maybeSingle();
@@ -9,56 +10,82 @@ async function adminLoadAccueil(){
 }
 async function adminSaveAccueil(){ var p={titre:document.getElementById('acc_titre').value,texte:document.getElementById('acc_texte').value}; var cur=await window.enecSupabase.from('accueil').select('id').limit(1).maybeSingle(); var res=cur.data?await window.enecSupabase.from('accueil').update(p).eq('id',cur.data.id).select():await window.enecSupabase.from('accueil').insert([p]).select(); adminResult('acc_msg',res,'Accueil enregistré.'); }
 
-// EQUIPE
+// ===== EQUIPE =====
 async function adminLoadEquipe(){
   var list=document.getElementById('equipe-list'); if(!list) return; list.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('equipe').select('*').order('ordre',{ascending:true});
   if(r.error){ list.innerHTML='<p class="msg">Table equipe : '+adminEsc(r.error.message)+'</p>'; return; }
   var data=r.data||[];
-  list.innerHTML=data.length===0?'<p>Aucun membre. Ajoute-en un ci-dessous.</p>':data.map(function(m){ return '<div class="item" style="border:1px solid #ddd;padding:12px;margin-bottom:12px;border-radius:10px"><div style="display:flex;gap:12px;align-items:center">'+(m.photo?'<img src="'+adminEsc(m.photo)+'" style="width:70px;height:70px;object-fit:cover;border-radius:50%">':'<div style="width:70px;height:70px;background:#eee;border-radius:50%;display:flex;align-items:center;justify-content:center">👤</div>')+'<div><b>'+adminEsc(m.nom)+'</b><br><span>'+adminEsc(m.role||'')+'</span></div></div><p>'+adminEsc(m.bio||'')+'</p><button class="small" onclick="adminEditMembre(\''+m.id+'\')">✏️ Modifier</button> <button class="small" onclick="adminEditMembre(\''+m.id+'\')">🖼️ Changer photo</button> <button class="small danger" onclick="adminDeleteMembre(\''+m.id+'\')">🗑️ Supprimer</button></div>'; }).join('');
-  document.getElementById('equipe-form').innerHTML='<h3>Ajouter / Modifier un membre</h3><input id="eq_id" type="hidden"><input id="eq_nom" placeholder="Nom complet"><input id="eq_role" placeholder="Rôle"><textarea id="eq_bio" placeholder="Bio"></textarea><label>Photo</label><input id="eq_photo" type="file" accept="image/*"><input id="eq_ordre" type="number" placeholder="Ordre"><button onclick="adminSaveMembre()">✅ Enregistrer ce membre</button><p id="eq_msg" class="msg"></p>';
+  list.innerHTML=data.length===0?'<p>Aucun membre. Ajoute-en un ci-dessous.</p>':data.map(function(m){
+    return '<div class="item" style="border:1px solid #ddd;padding:12px;margin-bottom:12px;border-radius:10px"><div style="display:flex;gap:12px">'+(m.photo?'<img src="'+adminEsc(m.photo)+'" style="width:70px;height:70px;object-fit:cover;border-radius:50%">':'<div style="width:70px;height:70px;background:#eee;border-radius:50%;display:flex;align-items:center;justify-content:center">👤</div>')+'<div><b>'+adminEsc(m.nom)+'</b><br>'+adminEsc(m.role||'')+'<br><small>Ordre: '+(m.ordre||'')+' • '+(m.actif===false?'DÉPUBLIÉ':'Publié')+'</small></div></div><p>'+adminEsc((m.bio||'').slice(0,150))+'</p><button class="small" onclick="adminEditMembre(\''+m.id+'\')">✏️ Modifier / Changer photo</button> <button class="small" onclick="adminToggleMembre(\''+m.id+'\','+(m.actif===false?'true':'false')+')">'+(m.actif===false?'✅ Publier':'⏸️ Dépublier')+'</button> <button class="small danger" onclick="adminDeleteMembre(\''+m.id+'\')">🗑️ Supprimer</button></div>';
+  }).join('');
+  document.getElementById('equipe-form').innerHTML='<h3>Ajouter / Modifier un membre</h3><input id="eq_id" type="hidden"><input id="eq_nom" placeholder="Nom complet"><input id="eq_role" placeholder="Fonction — ex : Directeur Général"><textarea id="eq_bio" placeholder="Biographie : parcours, compétences, responsabilités"></textarea><label>Photo de profil</label><input id="eq_photo" type="file" accept="image/*"><input id="eq_ordre" type="number" placeholder="Ordre d\'affichage — 1,2,3..."><button onclick="adminSaveMembre()">✅ Enregistrer ce membre</button><p id="eq_msg" class="msg"></p>';
 }
-async function adminSaveMembre(){ try{ var photo=await adminUploadImage('eq_photo'); var p={nom:document.getElementById('eq_nom').value,role:document.getElementById('eq_role').value,bio:document.getElementById('eq_bio').value,ordre:parseInt(document.getElementById('eq_ordre').value||'99'),actif:true}; if(photo) p.photo=photo; if(!p.nom){ alert('Nom obligatoire'); return; } var id=document.getElementById('eq_id').value; var res=id?await window.enecSupabase.from('equipe').update(p).eq('id',id).select():await window.enecSupabase.from('equipe').insert([p]).select(); if(adminResult('eq_msg',res,'Membre enregistré.')) adminLoadEquipe(); }catch(e){ document.getElementById('eq_msg').textContent='❌ '+e.message; } }
+async function adminSaveMembre(){
+  try{
+    var photo=await adminUploadImageOptimized('eq_photo');
+    var p={nom:document.getElementById('eq_nom').value,role:document.getElementById('eq_role').value,bio:document.getElementById('eq_bio').value,ordre:parseInt(document.getElementById('eq_ordre').value||'99'),actif:true};
+    if(photo) p.photo=photo;
+    if(!p.nom){ alert('Nom obligatoire'); return; }
+    var id=document.getElementById('eq_id').value;
+    var res=id?await window.enecSupabase.from('equipe').update(p).eq('id',id).select():await window.enecSupabase.from('equipe').insert([p]).select();
+    if(adminResult('eq_msg',res,'Membre enregistré. Visible sur le site public.')) adminLoadEquipe();
+  }catch(e){ document.getElementById('eq_msg').textContent='❌ '+e.message; }
+}
 async function adminEditMembre(id){ var r=await window.enecSupabase.from('equipe').select('*').eq('id',id).single(); if(!r.error){ document.getElementById('eq_id').value=r.data.id; document.getElementById('eq_nom').value=r.data.nom||''; document.getElementById('eq_role').value=r.data.role||''; document.getElementById('eq_bio').value=r.data.bio||''; document.getElementById('eq_ordre').value=r.data.ordre||''; window.scrollTo({top:document.getElementById('equipe-form').offsetTop,behavior:'smooth'}); } }
-async function adminDeleteMembre(id){ if(!confirm('Supprimer ce membre ?')) return; var res=await window.enecSupabase.from('equipe').delete().eq('id',id); if(!res.error) adminLoadEquipe(); else alert(res.error.message); }
+async function adminDeleteMembre(id){ if(!confirm('Supprimer ce membre ? Il disparaîtra aussi du site public.')) return; var res=await window.enecSupabase.from('equipe').delete().eq('id',id); if(!res.error) adminLoadEquipe(); else alert(res.error.message); }
+async function adminToggleMembre(id,v){ var res=await window.enecSupabase.from('equipe').update({actif:v}).eq('id',id).select(); if(!res.error) adminLoadEquipe(); else alert(res.error.message); }
 
-// DOMAINES
+// ===== DOMAINES =====
 async function adminLoadDomaines(){
   var list=document.getElementById('domaines-list'); if(!list) return; list.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('domaines').select('*').order('ordre',{ascending:true});
   if(r.error){ list.innerHTML='<p class="msg">Table domaines : '+adminEsc(r.error.message)+'</p>'; return; }
-  var data=r.data||[]; list.innerHTML=data.length===0?'<p>Aucun domaine.</p>':data.map(function(d){ return '<div class="item" style="border:1px solid #ddd;padding:12px;margin-bottom:12px;border-radius:10px"><b>'+adminEsc(d.icone||'')+' '+adminEsc(d.titre)+'</b> '+(d.actif===false?'<span>— DÉPUBLIÉ</span>':'<span>— Publié</span>')+'<p>'+adminEsc(d.description||'')+'</p><button class="small" onclick="adminEditDomaine(\''+d.id+'\')">✏️ Modifier</button> <button class="small" onclick="adminToggleDomaine(\''+d.id+'\','+(d.actif===false?'true':'false')+')">'+(d.actif===false?'✅ Publier':'⏸️ Dépublier')+'</button> <button class="small danger" onclick="adminDeleteDomaine(\''+d.id+'\')">🗑️ Supprimer</button></div>'; }).join('');
-  document.getElementById('domaines-form').innerHTML='<h3>Ajouter / Modifier un domaine</h3><input id="dom_id" type="hidden"><input id="dom_titre" placeholder="Titre — ex : 🐟 Pisciculture"><textarea id="dom_desc" placeholder="Description"></textarea><input id="dom_icone" placeholder="Icône — ex : 🐟"><input id="dom_ordre" type="number" placeholder="Ordre"><button onclick="adminSaveDomaine()">✅ Enregistrer ce domaine</button><p id="dom_msg" class="msg"></p>';
+  var data=r.data||[];
+  list.innerHTML=data.length===0?'<p>Aucun domaine.</p>':data.map(function(d){
+    return '<div class="item" style="border:1px solid #ddd;padding:12px;margin-bottom:12px;border-radius:10px">'+(d.image?'<img src="'+adminEsc(d.image)+'" style="width:100%;height:140px;object-fit:cover;border-radius:8px">':'')+'<b>'+adminEsc(d.icone||'')+' '+adminEsc(d.titre)+'</b> '+(d.actif===false?'<span>— DÉPUBLIÉ</span>':'<span>— Publié</span>')+'<p>'+adminEsc(d.description||'')+'</p>'+(d.services?'<p><b>Services :</b> '+adminEsc(d.services)+'</p>':'')+'<button class="small" onclick="adminEditDomaine(\''+d.id+'\')">✏️ Modifier / Changer image</button> <button class="small" onclick="adminToggleDomaine(\''+d.id+'\','+(d.actif===false?'true':'false')+')">'+(d.actif===false?'✅ Publier':'⏸️ Dépublier')+'</button> <button class="small danger" onclick="adminDeleteDomaine(\''+d.id+'\')">🗑️ Supprimer</button></div>';
+  }).join('');
+  document.getElementById('domaines-form').innerHTML='<h3>Ajouter / Modifier un domaine</h3><input id="dom_id" type="hidden"><input id="dom_titre" placeholder="Titre — ex : 🐟 Pisciculture"><textarea id="dom_desc" placeholder="Description"></textarea><textarea id="dom_services" placeholder="Services proposés — ex : Formation, accompagnement, production"></textarea><label>Image illustrative du domaine</label><input id="dom_image" type="file" accept="image/*"><input id="dom_icone" placeholder="Icône — ex : 🐟"><input id="dom_ordre" type="number" placeholder="Ordre"><button onclick="adminSaveDomaine()">✅ Enregistrer ce domaine</button><p id="dom_msg" class="msg"></p>';
 }
-async function adminSaveDomaine(){ var id=document.getElementById('dom_id').value; var p={titre:document.getElementById('dom_titre').value,description:document.getElementById('dom_desc').value,icone:document.getElementById('dom_icone').value,ordre:parseInt(document.getElementById('dom_ordre').value||'99'),actif:true}; if(!p.titre){ alert('Titre obligatoire'); return; } var res=id?await window.enecSupabase.from('domaines').update(p).eq('id',id).select():await window.enecSupabase.from('domaines').insert([p]).select(); if(adminResult('dom_msg',res,'Domaine enregistré.')) adminLoadDomaines(); }
-async function adminEditDomaine(id){ var r=await window.enecSupabase.from('domaines').select('*').eq('id',id).single(); if(!r.error){ document.getElementById('dom_id').value=r.data.id; document.getElementById('dom_titre').value=r.data.titre||''; document.getElementById('dom_desc').value=r.data.description||''; document.getElementById('dom_icone').value=r.data.icone||''; document.getElementById('dom_ordre').value=r.data.ordre||''; } }
+async function adminSaveDomaine(){
+  try{
+    var img=await adminUploadImageOptimized('dom_image');
+    var id=document.getElementById('dom_id').value;
+    var p={titre:document.getElementById('dom_titre').value,description:document.getElementById('dom_desc').value,services:document.getElementById('dom_services').value,icone:document.getElementById('dom_icone').value,ordre:parseInt(document.getElementById('dom_ordre').value||'99'),actif:true};
+    if(img) p.image=img;
+    if(!p.titre){ alert('Titre obligatoire'); return; }
+    var res=id?await window.enecSupabase.from('domaines').update(p).eq('id',id).select():await window.enecSupabase.from('domaines').insert([p]).select();
+    if(adminResult('dom_msg',res,'Domaine enregistré.')) adminLoadDomaines();
+  }catch(e){ document.getElementById('dom_msg').textContent='❌ '+e.message; }
+}
+async function adminEditDomaine(id){ var r=await window.enecSupabase.from('domaines').select('*').eq('id',id).single(); if(!r.error){ document.getElementById('dom_id').value=r.data.id; document.getElementById('dom_titre').value=r.data.titre||''; document.getElementById('dom_desc').value=r.data.description||''; document.getElementById('dom_services').value=r.data.services||''; document.getElementById('dom_icone').value=r.data.icone||''; document.getElementById('dom_ordre').value=r.data.ordre||''; window.scrollTo({top:document.getElementById('domaines-form').offsetTop,behavior:'smooth'}); } }
 async function adminToggleDomaine(id,v){ var res=await window.enecSupabase.from('domaines').update({actif:v}).eq('id',id).select(); if(!res.error) adminLoadDomaines(); else alert(res.error.message); }
 async function adminDeleteDomaine(id){ if(!confirm('Supprimer ce domaine ?')) return; var res=await window.enecSupabase.from('domaines').delete().eq('id',id); if(!res.error) adminLoadDomaines(); else alert(res.error.message); }
 
-// REALISATIONS
+// ===== REALISATIONS =====
 async function adminLoadRealisations(){
   var list=document.getElementById('realisations-list'); if(!list) return; list.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('realisations').select('*').order('ordre',{ascending:true});
   if(r.error){ list.innerHTML='<p class="msg">'+adminEsc(r.error.message)+'</p>'; return; }
   list.innerHTML=(r.data||[]).map(function(x){ return '<div class="item" style="border:1px solid #ddd;padding:12px;margin-bottom:12px;border-radius:10px"><b>'+adminEsc(x.titre)+'</b><p>'+adminEsc(x.description||'')+'</p>'+(x.image?'<img src="'+adminEsc(x.image)+'" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px">':'')+'<br><button class="small" onclick="adminEditReal(\''+x.id+'\')">✏️ Modifier</button> <button class="small danger" onclick="adminDeleteReal(\''+x.id+'\')">🗑️ Supprimer</button></div>'; }).join('')||'<p>Aucune réalisation.</p>';
-  document.getElementById('realisations-form').innerHTML='<h3>Ajouter / Modifier</h3><input id="re_id" type="hidden"><input id="re_titre" placeholder="Titre"><textarea id="re_desc" placeholder="Description"></textarea><input id="re_image" type="file" accept="image/*"><button onclick="adminSaveReal()">✅ Enregistrer</button><p id="re_msg" class="msg"></p>';
+  document.getElementById('realisations-form').innerHTML='<h3>Ajouter / Modifier</h3><input id="re_id" type="hidden"><input id="re_titre" placeholder="Titre"><textarea id="re_desc" placeholder="Description"></textarea><label>Photo</label><input id="re_image" type="file" accept="image/*"><button onclick="adminSaveReal()">✅ Enregistrer</button><p id="re_msg" class="msg"></p>';
 }
-async function adminSaveReal(){ try{ var img=await adminUploadImage('re_image'); var p={titre:document.getElementById('re_titre').value,description:document.getElementById('re_desc').value,actif:true}; if(img) p.image=img; var id=document.getElementById('re_id').value; var res=id?await window.enecSupabase.from('realisations').update(p).eq('id',id).select():await window.enecSupabase.from('realisations').insert([p]).select(); if(adminResult('re_msg',res,'Réalisation enregistrée.')) adminLoadRealisations(); }catch(e){ document.getElementById('re_msg').textContent='❌ '+e.message; } }
+async function adminSaveReal(){ try{ var img=await adminUploadImageOptimized('re_image'); var p={titre:document.getElementById('re_titre').value,description:document.getElementById('re_desc').value,actif:true}; if(img) p.image=img; var id=document.getElementById('re_id').value; var res=id?await window.enecSupabase.from('realisations').update(p).eq('id',id).select():await window.enecSupabase.from('realisations').insert([p]).select(); if(adminResult('re_msg',res,'Réalisation enregistrée.')) adminLoadRealisations(); }catch(e){ document.getElementById('re_msg').textContent='❌ '+e.message; } }
 async function adminEditReal(id){ var r=await window.enecSupabase.from('realisations').select('*').eq('id',id).single(); if(!r.error){ document.getElementById('re_id').value=r.data.id; document.getElementById('re_titre').value=r.data.titre||''; document.getElementById('re_desc').value=r.data.description||''; } }
 async function adminDeleteReal(id){ if(!confirm('Supprimer ?')) return; var res=await window.enecSupabase.from('realisations').delete().eq('id',id); if(!res.error) adminLoadRealisations(); else alert(res.error.message); }
 
-// ACTUALITES
+// ===== ACTUALITES =====
 async function adminLoadActualites(){
   var list=document.getElementById('actualites-list'); if(!list) return; list.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('actualites').select('*').order('created_at',{ascending:false});
   if(r.error){ list.innerHTML='<p class="msg">'+adminEsc(r.error.message)+'</p>'; return; }
   list.innerHTML=(r.data||[]).map(function(x){ return '<div class="item" style="border:1px solid #ddd;padding:12px;margin-bottom:12px;border-radius:10px"><b>'+adminEsc(x.titre)+'</b> '+(x.publie?'— Publié':'— Brouillon')+'<p>'+adminEsc(x.contenu||'')+'</p>'+(x.image?'<img src="'+adminEsc(x.image)+'" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px">':'')+'<br><button class="small" onclick="adminToggleActu(\''+x.id+'\','+(x.publie?'false':'true')+')">'+(x.publie?'⏸️ Dépublier':'✅ Publier')+'</button> <button class="small danger" onclick="adminDeleteActu(\''+x.id+'\')">🗑️ Supprimer</button></div>'; }).join('')||'<p>Aucune actualité.</p>';
-  document.getElementById('actualites-form').innerHTML='<h3>Publier un article</h3><input id="ac_titre" placeholder="Titre"><textarea id="ac_contenu" placeholder="Contenu"></textarea><input id="ac_image" type="file" accept="image/*"><button onclick="adminSaveActu()">✅ Publier</button><p id="ac_msg" class="msg"></p>';
+  document.getElementById('actualites-form').innerHTML='<h3>Publier un article</h3><input id="ac_titre" placeholder="Titre"><textarea id="ac_contenu" placeholder="Contenu"></textarea><label>Photo</label><input id="ac_image" type="file" accept="image/*"><button onclick="adminSaveActu()">✅ Publier</button><p id="ac_msg" class="msg"></p>';
 }
-async function adminSaveActu(){ try{ var img=await adminUploadImage('ac_image'); var p={titre:document.getElementById('ac_titre').value,contenu:document.getElementById('ac_contenu').value,publie:true}; if(img) p.image=img; var res=await window.enecSupabase.from('actualites').insert([p]).select(); if(adminResult('ac_msg',res,'Article publié.')) adminLoadActualites(); }catch(e){ document.getElementById('ac_msg').textContent='❌ '+e.message; } }
+async function adminSaveActu(){ try{ var img=await adminUploadImageOptimized('ac_image'); var p={titre:document.getElementById('ac_titre').value,contenu:document.getElementById('ac_contenu').value,publie:true}; if(img) p.image=img; var res=await window.enecSupabase.from('actualites').insert([p]).select(); if(adminResult('ac_msg',res,'Article publié.')) adminLoadActualites(); }catch(e){ document.getElementById('ac_msg').textContent='❌ '+e.message; } }
 async function adminToggleActu(id,v){ var res=await window.enecSupabase.from('actualites').update({publie:v}).eq('id',id).select(); if(!res.error) adminLoadActualites(); else alert(res.error.message); }
 async function adminDeleteActu(id){ if(!confirm('Supprimer ?')) return; var res=await window.enecSupabase.from('actualites').delete().eq('id',id); if(!res.error) adminLoadActualites(); else alert(res.error.message); }
-// PROGRAMME
+// ===== PROGRAMME =====
 async function adminLoadProgramme(){
   var box=document.getElementById('programme-form'); if(!box) return; box.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('programme').select('*').limit(1).maybeSingle();
@@ -67,7 +94,7 @@ async function adminLoadProgramme(){
 }
 async function adminSaveProgramme(){ var p={titre:document.getElementById('pr_titre').value,description:document.getElementById('pr_desc').value,actif:true}; var cur=await window.enecSupabase.from('programme').select('id').limit(1).maybeSingle(); var res=cur.data?await window.enecSupabase.from('programme').update(p).eq('id',cur.data.id).select():await window.enecSupabase.from('programme').insert([p]).select(); adminResult('pr_msg',res,'Programme enregistré.'); }
 
-// CONTACT
+// ===== CONTACT =====
 async function adminLoadContact(){
   var box=document.getElementById('contact-form'); if(!box) return; box.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('contact').select('*').limit(1).maybeSingle();
@@ -78,7 +105,7 @@ async function adminLoadContact(){
 }
 async function adminSaveContact(){ var p={adresse:document.getElementById('ct_adresse').value,telephone:document.getElementById('ct_tel').value,email:document.getElementById('ct_email').value,horaires:document.getElementById('ct_horaires').value}; var cur=await window.enecSupabase.from('contact').select('id').limit(1).maybeSingle(); var res=cur.data?await window.enecSupabase.from('contact').update(p).eq('id',cur.data.id).select():await window.enecSupabase.from('contact').insert([p]).select(); adminResult('ct_msg',res,'Contact enregistré.'); }
 
-// SETTINGS
+// ===== SETTINGS =====
 async function adminLoadSettings(){
   var box=document.getElementById('settings-form'); if(!box) return; box.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('settings').select('*').limit(1).maybeSingle();
@@ -87,7 +114,7 @@ async function adminLoadSettings(){
 }
 async function adminSaveSettings(){ var p={nom_site:document.getElementById('st_nom').value,slogan:document.getElementById('st_slogan').value,whatsapp:document.getElementById('st_whatsapp').value}; var cur=await window.enecSupabase.from('settings').select('id').limit(1).maybeSingle(); var res=cur.data?await window.enecSupabase.from('settings').update(p).eq('id',cur.data.id).select():await window.enecSupabase.from('settings').insert([p]).select(); adminResult('st_msg',res,'Paramètres enregistrés.'); }
 
-// TEXTES DU SITE
+// ===== TEXTES DU SITE =====
 async function adminLoadTextes(){
   var box=document.getElementById('textes-list'); if(!box) return; box.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('textes_site').select('*').order('cle',{ascending:true});
@@ -98,20 +125,37 @@ async function adminSaveTexte(id){ var p={titre:document.getElementById('tx_titr
 async function adminDeleteTexte(id){ if(!confirm('Supprimer ce texte ?')) return; var res=await window.enecSupabase.from('textes_site').delete().eq('id',id); if(!res.error) adminLoadTextes(); else alert(res.error.message); }
 async function adminAddTexte(){ var p={cle:document.getElementById('tx_new_cle').value,titre:document.getElementById('tx_new_titre').value,contenu:document.getElementById('tx_new_contenu').value}; if(!p.cle){ alert('Clé obligatoire'); return; } var res=await window.enecSupabase.from('textes_site').insert([p]).select(); if(adminResult('tx_new_msg',res,'Texte ajouté.')) adminLoadTextes(); }
 
-// GALERIE PHOTOS
+// ===== GALERIE - PLUSIEURS PHOTOS + CATEGORIE + DATE + LIEU =====
 async function adminLoadGalerie(){
   var list=document.getElementById('galerie-list'); if(!list) return; list.innerHTML='<p>Chargement...</p>';
-  var r=await window.enecSupabase.from('galerie').select('*').order('ordre',{ascending:true});
+  var r=await window.enecSupabase.from('galerie').select('*').order('date_activite',{ascending:false});
   if(r.error){ list.innerHTML='<p class="msg">'+adminEsc(r.error.message)+'</p>'; return; }
-  list.innerHTML=(r.data||[]).map(function(g){ return '<div class="item" style="border:1px solid #ddd;padding:12px;margin-bottom:12px;border-radius:10px">'+(g.image?'<img src="'+adminEsc(g.image)+'" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px">':'<p>Pas de photo</p>')+'<b>'+adminEsc(g.titre||'')+'</b><p>'+adminEsc(g.description||'')+'</p><button class="small" onclick="adminEditGalerie(\''+g.id+'\')">✏️ Modifier</button> <button class="small" onclick="adminToggleGalerie(\''+g.id+'\','+(g.actif===false?'true':'false')+')">'+(g.actif===false?'✅ Publier':'⏸️ Dépublier')+'</button> <button class="small danger" onclick="adminDeleteGalerie(\''+g.id+'\')">🗑️ Supprimer</button></div>'; }).join('')||'<p>Aucune photo. Ajoute-en une ci-dessous.</p>';
-  document.getElementById('galerie-form').innerHTML='<h3>Ajouter / Modifier une photo</h3><input id="ga_id" type="hidden"><input id="ga_titre" placeholder="Titre de la photo"><textarea id="ga_desc" placeholder="Description"></textarea><label>Photo</label><input id="ga_image" type="file" accept="image/*"><input id="ga_ordre" type="number" placeholder="Ordre"><button onclick="adminSaveGalerie()">✅ Enregistrer cette photo</button><p id="ga_msg" class="msg"></p>';
+  list.innerHTML=(r.data||[]).map(function(g){
+    var imgs=[]; try{ imgs=JSON.parse(g.images||'[]'); }catch(e){} if(!imgs.length && g.image) imgs=[g.image];
+    return '<div class="item" style="border:1px solid #ddd;padding:12px;margin-bottom:12px;border-radius:10px">'+(imgs[0]?'<img src="'+adminEsc(imgs[0])+'" style="width:100%;height:160px;object-fit:cover;border-radius:8px">':'')+'<b>'+adminEsc(g.titre||'')+'</b> — '+adminEsc(g.categorie||'')+' • '+esc2(g.date_activite)+' • '+adminEsc(g.lieu||'')+'<p>'+adminEsc(g.description||'')+'</p><small>'+imgs.length+' photo(s) • '+(g.actif===false?'DÉPUBLIÉ':'Publié')+'</small><br><button class="small" onclick="adminEditGalerie(\''+g.id+'\')">✏️ Modifier</button> <button class="small" onclick="adminToggleGalerie(\''+g.id+'\','+(g.actif===false?'true':'false')+')">'+(g.actif===false?'✅ Publier':'⏸️ Dépublier')+'</button> <button class="small danger" onclick="adminDeleteGalerie(\''+g.id+'\')">🗑️ Supprimer la publication</button></div>';
+  }).join('')||'<p>Aucune publication.</p>';
+  document.getElementById('galerie-form').innerHTML='<h3>Ajouter / Modifier une publication</h3><input id="ga_id" type="hidden"><input id="ga_titre" placeholder="Titre — ex : Formation en pisciculture"><select id="ga_cat"><option value="Formation">Formation</option><option value="Conférence">Conférence</option><option value="Atelier">Atelier</option><option value="Agriculture">Agriculture</option><option value="Projet communautaire">Projet communautaire</option><option value="Prestation professionnelle">Prestation professionnelle</option><option value="Événement">Événement</option><option value="Autre">Autre</option></select><input id="ga_date" type="date"><input id="ga_lieu" placeholder="Lieu — ex : Bukavu, Ibanda"><textarea id="ga_desc" placeholder="Description"></textarea><label>Photos — tu peux choisir plusieurs photos à la fois</label><input id="ga_images" type="file" accept="image/*" multiple><input id="ga_ordre" type="number" placeholder="Ordre"><button onclick="adminSaveGalerie()">✅ Publier cette activité</button><p id="ga_msg" class="msg"></p>';
 }
-async function adminSaveGalerie(){ try{ var img=await adminUploadImage('ga_image'); var p={titre:document.getElementById('ga_titre').value,description:document.getElementById('ga_desc').value,ordre:parseInt(document.getElementById('ga_ordre').value||'99'),actif:true}; if(img) p.image=img; var id=document.getElementById('ga_id').value; var res=id?await window.enecSupabase.from('galerie').update(p).eq('id',id).select():await window.enecSupabase.from('galerie').insert([p]).select(); if(adminResult('ga_msg',res,'Photo enregistrée.')) adminLoadGalerie(); }catch(e){ document.getElementById('ga_msg').textContent='❌ '+e.message; } }
-async function adminEditGalerie(id){ var r=await window.enecSupabase.from('galerie').select('*').eq('id',id).single(); if(!r.error){ document.getElementById('ga_id').value=r.data.id; document.getElementById('ga_titre').value=r.data.titre||''; document.getElementById('ga_desc').value=r.data.description||''; document.getElementById('ga_ordre').value=r.data.ordre||''; } }
+async function adminSaveGalerie(){
+  try{
+    var input=document.getElementById('ga_images');
+    var urls=[];
+    if(input && input.files && input.files.length){
+      for(var i=0;i<input.files.length;i++){ var u=await adminUploadOneOptimized(input.files[i]); if(u) urls.push(u); }
+    }
+    var id=document.getElementById('ga_id').value;
+    var p={titre:document.getElementById('ga_titre').value,description:document.getElementById('ga_desc').value,categorie:document.getElementById('ga_cat').value,date_activite:document.getElementById('ga_date').value||null,lieu:document.getElementById('ga_lieu').value,ordre:parseInt(document.getElementById('ga_ordre').value||'99'),actif:true};
+    if(urls.length){ p.images=JSON.stringify(urls); p.image=urls[0]; }
+    if(!p.titre){ alert('Titre obligatoire'); return; }
+    var res=id?await window.enecSupabase.from('galerie').update(p).eq('id',id).select():await window.enecSupabase.from('galerie').insert([p]).select();
+    if(adminResult('ga_msg',res,'Publication enregistrée. Visible sur le site.')) adminLoadGalerie();
+  }catch(e){ document.getElementById('ga_msg').textContent='❌ '+e.message; }
+}
+async function adminEditGalerie(id){ var r=await window.enecSupabase.from('galerie').select('*').eq('id',id).single(); if(!r.error){ document.getElementById('ga_id').value=r.data.id; document.getElementById('ga_titre').value=r.data.titre||''; document.getElementById('ga_cat').value=r.data.categorie||'Formation'; document.getElementById('ga_date').value=r.data.date_activite||''; document.getElementById('ga_lieu').value=r.data.lieu||''; document.getElementById('ga_desc').value=r.data.description||''; document.getElementById('ga_ordre').value=r.data.ordre||''; window.scrollTo({top:document.getElementById('galerie-form').offsetTop,behavior:'smooth'}); } }
 async function adminToggleGalerie(id,v){ var res=await window.enecSupabase.from('galerie').update({actif:v}).eq('id',id).select(); if(!res.error) adminLoadGalerie(); else alert(res.error.message); }
-async function adminDeleteGalerie(id){ if(!confirm('Supprimer cette photo ?')) return; var res=await window.enecSupabase.from('galerie').delete().eq('id',id); if(!res.error) adminLoadGalerie(); else alert(res.error.message); }
+async function adminDeleteGalerie(id){ if(!confirm('Supprimer cette publication ? Elle disparaîtra aussi du site public.')) return; var res=await window.enecSupabase.from('galerie').delete().eq('id',id); if(!res.error) adminLoadGalerie(); else alert(res.error.message); }
 
-// VIDEOS
+// ===== VIDEOS =====
 async function adminLoadVideos(){
   var list=document.getElementById('videos-list'); if(!list) return; list.innerHTML='<p>Chargement...</p>';
   var r=await window.enecSupabase.from('videos').select('*').order('ordre',{ascending:true});
