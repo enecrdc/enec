@@ -201,5 +201,36 @@ window.ENEC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOi
 <script src="js/supabase.js?v=5"></script>
 <script src="js/lang.js?v=5"></script>
 <script src="js/main.js?v=5"></script>
+  <style>
+/* ENEC : SUPPRIME LA BARRE DU HAUT - RIEN AU-DESSUS DE ENEC */
+header > div:first-child{display:none !important}
+.topbar{display:none !important}
+div[class*="topbar"]{display:none !important}
+</style>
+<script>
+// Supprime définitivement la barre adresse / téléphone / email en haut
+(function(){
+  try{
+    var all=document.querySelectorAll('header div, header p, header span, div');
+    for(var i=0;i<all.length;i++){
+      var t=all[i].textContent||'';
+      if(t.indexOf('Avenue de la Bière')!==-1 && t.indexOf('970 204 871')!==-1){
+        // On remonte au bloc parent qui contient les 3 lignes
+        var el=all[i];
+        // Si c'est un petit élément, on remonte de 2 niveaux pour prendre tout le bloc bleu
+        if(el.parentElement) el=el.parentElement;
+        if(el.parentElement && el.parentElement.tagName==='DIV') el=el.parentElement;
+        if(el && el.offsetHeight<180) el.style.display='none';
+        break;
+      }
+    }
+    // Sécurité : si la 1ère bande bleue du header existe encore, on la cache
+    var h=document.querySelector('header');
+    if(h && h.firstElementChild && h.firstElementChild.textContent.indexOf('Bière')!==-1){
+      h.firstElementChild.style.display='none';
+    }
+  }catch(e){}
+})();
+      </script>
 </body>
                                             </html>
