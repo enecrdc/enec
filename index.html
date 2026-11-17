@@ -85,32 +85,36 @@ footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
 </head>
 <body>
 
-<header>
-  <div class="topbar">
-    <!-- CORRECTION 1 : SÉLECTEUR FR/EN TOUT À GAUCHE -->
-    <div class="enec-lang-left" aria-label="Choisir la langue">
-      <button type="button" class="lang-btn active" data-lang="fr" onclick="setLang('fr')">FR</button>
-      <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
-    </div>
-    <div class="logo-wrap">
+<!-- HEADER COMPACT — FR/EN AU PIED DE LA BARRE, À GAUCHE -->
+<header class="enec-header-compact">
+  <div class="topbar-compact">
+    <a href="#accueil" class="logo-compact">
       <img src="logo.png" alt="Logo ENEC">
-      <div>
-        <h1>ENEC</h1>
-        <p class="lang-fr">Entreprise Nouvel Espoir du Congo</p>
-        <p class="lang-en" style="display:none;">New Hope Enterprise of Congo</p>
-      </div>
-    </div>
+      <span>
+        <strong>ENEC</strong>
+        <small class="lang-fr">Entreprise Nouvel Espoir du Congo</small>
+        <small class="lang-en" style="display:none;">New Hope Enterprise of Congo</small>
+      </span>
+    </a>
+    <!-- BARRE DE TÂCHES COMPACTE, UNE SEULE LIGNE QUI DÉFILE -->
+    <nav class="main-nav-compact">
+      <a href="#accueil" class="active">Accueil</a>
+      <a href="#domaines">Domaines</a>
+      <a href="#equipe">Équipe</a>
+      <a href="#realisations">Réalisations</a>
+      <a href="#programme">Programme</a>
+      <a href="#actus">Actualités</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </div>
-  <!-- NAVIGATION SANS ADMINISTRATION -->
-  <nav class="main-nav">
-    <a href="#accueil" class="active">Accueil</a>
-    <a href="#domaines">Domaines</a>
-    <a href="#equipe">Équipe</a>
-    <a href="#realisations">Réalisations</a>
-    <a href="#programme">Programme</a>
-    <a href="#actus">Actualités</a>
-    <a href="#contact">Contact</a>
-  </nav>
+
+  <!-- PIED DE LA BARRE : FR/EN À GAUCHE, PETIT -->
+  <div class="enec-lang-bottom">
+    <button type="button" class="lang-btn active" data-lang="fr" onclick="setLang('fr')">FR</button>
+    <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <span class="lang-hint lang-fr">Bukavu • Sud-Kivu • RDC</span>
+    <span class="lang-hint lang-en" style="display:none;">Bukavu • South Kivu • DRC</span>
+  </div>
 </header>
 <!-- ============ ACCUEIL ============ -->
 <section class="hero" id="accueil">
