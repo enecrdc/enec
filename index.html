@@ -1,167 +1,81 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <!-- FIX BARRE DE TÂCHES TROP GROSSE + FR/EN AU PIED À GAUCHE -->
-<style>
-/* Barre compacte : moins haute, plus fine */
-header.enec-header-compact{
-  position:sticky; top:0; z-index:100;
-  background:#fff; border-bottom:1px solid #e6edf2;
-}
-.topbar-compact{
-  max-width:1200px; margin:auto;
-  padding:6px 12px 4px;
-  display:flex; align-items:center; gap:12px;
-}
-/* Logo petit */
-.logo-compact{display:flex; align-items:center; gap:8px; flex-shrink:0;}
-.logo-compact img{width:36px!important; height:36px!important; object-fit:contain;}
-.logo-compact span{display:flex; flex-direction:column; line-height:1.1;}
-.logo-compact strong{font-size:20px!important; color:#0a2540; letter-spacing:.5px;}
-.logo-compact small{font-size:10px!important; color:#0e7a4a; font-weight:800; white-space:nowrap;}
-/* Navigation : UNE SEULE LIGNE, qui défile sur téléphone, ne prend plus 3 lignes */
-.main-nav-compact{
-  display:flex!important; flex-wrap:nowrap!important; gap:6px!important;
-  overflow-x:auto!important; white-space:nowrap!important;
-  padding:2px 0 4px!important; scrollbar-width:none; flex:1;
-}
-.main-nav-compact::-webkit-scrollbar{display:none;}
-.main-nav-compact a{
-  background:#eef4f7; color:#0a2540;
-  padding:7px 12px!important; border-radius:999px;
-  font-weight:700; font-size:13px!important; flex-shrink:0;
-}
-.main-nav-compact a.active{background:#0a2540; color:#fff;}
-/* PIED DE LA BARRE : FR/EN à gauche, petit */
-.enec-lang-bottom{
-  max-width:1200px; margin:auto;
-  padding:4px 12px 7px;
-  display:flex; align-items:center; gap:6px;
-  border-top:1px solid #f0f3f5;
-}
-.enec-lang-bottom .lang-btn{
-  border:1.5px solid #0a2540; background:#fff; color:#0a2540;
-  padding:4px 11px!important; border-radius:999px;
-  font-weight:900; cursor:pointer; font-size:12px!important; line-height:1.4;
-}
-.enec-lang-bottom .lang-btn.active{background:#0a2540; color:#fff;}
-.enec-lang-bottom .lang-hint{font-size:11px; color:#7a8a99; font-weight:700; margin-left:6px;}
-/* Ancien gros header : on l'annule si il reste */
-header .topbar, header .main-nav{display:none!important;}
-@media(max-width:820px){
-  .topbar-compact{padding:5px 10px 3px; gap:8px;}
-  .logo-compact small{display:none;} /* sur téléphone, on garde juste ENEC pour gagner de la place */
-  .logo-compact strong{font-size:18px!important;}
-}
-</style>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ENEC — Entreprise Nouvel Espoir du Congo | Bukavu, RDC</title>
-<meta name="description" content="ENEC – Un nouvel espoir, de multiples opportunités ! Formation, services professionnels et solutions commerciales à Bukavu, Sud-Kivu, RDC.">
+<meta name="description" content="ENEC – Un nouvel espoir, de multiples opportunités ! Formation, services professionnels et solutions commerciales à Bukavu, RDC.">
 <link rel="icon" href="logo.png">
+<script src="admin-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--navy:#0a2540;--navy2:#0e3a5f;--green:#0e7a4a;--gold:#d4af37;--gold2:#f5d76e;--light:#f4f7f9;--dark:#1a2a3a}
+:root{--navy:#0a2540;--green:#0e7a4a;--gold:#d4af37;--gold2:#f5d76e;--light:#f4f7f9;--dark:#1a2a3a}
 body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--dark);background:#fff;line-height:1.65}
-a{text-decoration:none;color:inherit}
-img{max-width:100%}
-/* --- HEADER / NAVIGATION --- */
+a{text-decoration:none;color:inherit} img{max-width:100%}
+/* HEADER COMPACT */
 header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #e6edf2}
-.topbar{max-width:1200px;margin:auto;padding:12px 16px 10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.logo-wrap{display:flex;align-items:center;gap:12px}
-.logo-wrap img{width:56px;height:56px;object-fit:contain}
-.logo-wrap h1{font-size:32px;line-height:1;color:var(--navy);letter-spacing:.5px}
-.logo-wrap p{font-size:13px;color:var(--green);font-weight:800}
-/* CORRECTION 1 : FR/EN TOUT À GAUCHE, bien visible */
-.enec-lang-left{display:flex;gap:6px;align-items:center;order:-1;margin-right:auto}
-.enec-lang-left .lang-btn{border:1.5px solid var(--navy);background:#fff;color:var(--navy);padding:8px 15px;border-radius:999px;font-weight:900;cursor:pointer;font-size:14px}
-.enec-lang-left .lang-btn.active{background:var(--navy);color:#fff}
-nav.main-nav{max-width:1200px;margin:auto;padding:0 16px 12px;display:flex;gap:8px;flex-wrap:wrap}
-nav.main-nav a{background:#eef4f7;color:var(--navy);padding:9px 16px;border-radius:999px;font-weight:700;font-size:14px}
-nav.main-nav a:hover,nav.main-nav a.active{background:var(--navy);color:#fff}
-/* --- HERO / ACCUEIL --- */
-.hero{background:linear-gradient(135deg,#06233f 0%,#0a3a5e 45%,#0e5a4a 100%);color:#fff;padding:36px 16px 42px}
+.topbar-compact{max-width:1200px;margin:auto;padding:6px 12px 4px;display:flex;align-items:center;gap:12px}
+.logo-compact{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo-compact img{width:36px;height:36px;object-fit:contain}
+.logo-compact span{display:flex;flex-direction:column;line-height:1.1}
+.logo-compact strong{font-size:20px;color:var(--navy)}
+.logo-compact small{font-size:10px;color:var(--green);font-weight:800;white-space:nowrap}
+.main-nav-compact{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;white-space:nowrap;padding:2px 0 4px;scrollbar-width:none;flex:1}
+.main-nav-compact::-webkit-scrollbar{display:none}
+.main-nav-compact a{background:#eef4f7;color:var(--navy);padding:7px 12px;border-radius:999px;font-weight:700;font-size:13px;flex-shrink:0}
+.main-nav-compact a.active{background:var(--navy);color:#fff}
+/* FR/EN AU PIED DE LA BARRE, À GAUCHE, PETIT */
+.enec-lang-bottom{max-width:1200px;margin:auto;padding:4px 12px 7px;display:flex;align-items:center;gap:6px;border-top:1px solid #f0f3f5}
+.enec-lang-bottom .lang-btn{border:1.5px solid var(--navy);background:#fff;color:var(--navy);padding:4px 11px;border-radius:999px;font-weight:900;cursor:pointer;font-size:12px;line-height:1.4}
+.enec-lang-bottom .lang-btn.active{background:var(--navy);color:#fff}
+.enec-lang-bottom .lang-hint{font-size:11px;color:#7a8a99;font-weight:700;margin-left:6px}
+/* HERO — TEXTE INTÉGRAL, JAMAIS COUPÉ */
+.hero{background:linear-gradient(135deg,#06233f 0%,#0a3a5e 45%,#0e5a4a 100%);color:#fff;padding:32px 16px 38px}
 .hero-inner{max-width:1200px;margin:auto}
-.hero-badge{display:inline-block;border:1px solid rgba(255,255,255,.35);padding:6px 14px;border-radius:999px;font-size:12px;letter-spacing:2px;font-weight:800;margin-bottom:16px}
-.hero h2{font-size:44px;line-height:1.15;margin-bottom:16px}
+.hero-badge{display:inline-block;border:1px solid rgba(255,255,255,.35);padding:6px 14px;border-radius:999px;font-size:12px;letter-spacing:2px;font-weight:800;margin-bottom:14px}
+.hero h2{font-size:42px;line-height:1.15;margin-bottom:14px}
 .hero h2 span{color:var(--gold2)}
-.hero-subtitle{font-size:19px;font-weight:800;margin-bottom:16px}
-/* CORRECTION 3 : AUCUNE TRONCATURE */
-.hero p{font-size:17px;line-height:1.7;margin-bottom:14px;height:auto!important;max-height:none!important;overflow:visible!important;-webkit-line-clamp:unset!important;line-clamp:none!important;text-overflow:unset!important;white-space:normal!important}
-.hero,.hero-inner,.hero-content{height:auto!important;max-height:none!important;overflow:visible!important}
-.hero-buttons{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.hero-subtitle{font-size:19px;font-weight:800;margin-bottom:14px}
+.hero p{font-size:17px;line-height:1.7;margin-bottom:13px;height:auto!important;max-height:none!important;overflow:visible!important;-webkit-line-clamp:unset!important;line-clamp:none!important;text-overflow:unset!important;white-space:normal!important}
+.hero,.hero-inner{height:auto!important;max-height:none!important;overflow:visible!important}
+.hero-buttons{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
 .btn{display:inline-block;padding:13px 20px;border-radius:999px;font-weight:900;font-size:15px}
-.btn-gold{background:var(--gold);color:#1a1a1a}
-.btn-white{background:#fff;color:var(--navy)}
-.btn-navy{background:var(--navy);color:#fff}
-.btn-green{background:var(--green);color:#fff}
-/* --- SECTIONS --- */
-section{padding:44px 16px}
-.wrap{max-width:1200px;margin:auto}
-.sec-title{font-size:30px;color:var(--navy);margin-bottom:8px}
-.sec-sub{color:#5a6b7a;margin-bottom:22px}
+.btn-gold{background:var(--gold);color:#1a1a1a} .btn-white{background:#fff;color:var(--navy)} .btn-navy{background:var(--navy);color:#fff} .btn-green{background:var(--green);color:#fff}
+/* SECTIONS */
+section{padding:40px 16px} .wrap{max-width:1200px;margin:auto}
+.sec-title{font-size:30px;color:var(--navy);margin-bottom:8px} .sec-sub{color:#5a6b7a;margin-bottom:20px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .card{background:#fff;border:1px solid #e6edf2;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-.card h3{color:var(--navy);margin-bottom:8px;font-size:19px}
-.card p{color:#4a5a6a;font-size:15px}
-.card .icon{font-size:32px;margin-bottom:10px}
-.pill{display:inline-block;background:#e8f5ee;color:var(--green);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800}
+.card h3{color:var(--navy);margin-bottom:8px;font-size:19px} .card p{color:#4a5a6a;font-size:15px} .card .icon{font-size:32px;margin-bottom:10px}
 .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
 .member{background:#fff;border:1px solid #e6edf2;border-radius:16px;padding:20px;display:flex;gap:16px;align-items:flex-start}
-.member img{width:110px;height:110px;object-fit:cover;border-radius:50%;border:3px solid var(--gold)}
-.member h3{color:var(--navy)}
-.member .role{color:var(--green);font-weight:800;font-size:14px;margin:4px 0 8px}
-.member p{font-size:14px;color:#4a5a6a}
-.list{list-style:none}
-.list li{padding:10px 0;border-bottom:1px solid #eef2f5}
-.list li b{color:var(--navy)}
+.member img{width:110px;height:110px;object-fit:cover;border-radius:50%;border:3px solid var(--gold);flex-shrink:0}
+.member h3{color:var(--navy)} .member .role{color:var(--green);font-weight:800;font-size:14px;margin:4px 0 8px} .member p{font-size:14px;color:#4a5a6a}
+.list{list-style:none} .list li{padding:10px 0;border-bottom:1px solid #eef2f5} .list li b{color:var(--navy)}
 input,textarea,select{width:100%;padding:12px;border:1px solid #d6dee6;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit}
 label{font-weight:800;font-size:14px;color:var(--navy)}
-/* --- FOOTER --- */
-footer{background:var(--navy);color:#fff;padding:36px 16px 22px}
+footer{background:var(--navy);color:#fff;padding:32px 16px 20px}
 .footer-grid{max-width:1200px;margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-footer h4{margin-bottom:10px;color:var(--gold2)}
-footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
-.enec-footer-admin{text-align:center;padding:16px 0 4px;border-top:1px solid rgba(255,255,255,.18);margin-top:22px}
+footer h4{margin-bottom:10px;color:var(--gold2)} footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
+.enec-footer-admin{text-align:center;padding:16px 0 4px;border-top:1px solid rgba(255,255,255,.18);margin-top:20px}
 .enec-footer-admin a{color:#fff;font-weight:900;background:rgba(255,255,255,.12);padding:10px 18px;border-radius:999px;display:inline-block}
 .copy{max-width:1200px;margin:auto;text-align:center;font-size:13px;color:#a9bdcb;margin-top:14px}
-@media(max-width:820px){
-  .grid{grid-template-columns:1fr 1fr}
-  .team-grid,.footer-grid{grid-template-columns:1fr}
-  .hero h2{font-size:32px}
-  .topbar{flex-direction:column;align-items:flex-start}
-  .enec-lang-left{margin-right:0}
-  .hero-buttons a{width:100%;text-align:center}
-}
-@media(max-width:520px){.grid{grid-template-columns:1fr}.logo-wrap h1{font-size:26px}}
+@media(max-width:820px){.grid{grid-template-columns:1fr 1fr}.team-grid,.footer-grid{grid-template-columns:1fr}.hero h2{font-size:30px}.logo-compact small{display:none}.hero-buttons a{width:100%;text-align:center}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<!-- HEADER COMPACT — FR/EN AU PIED DE LA BARRE, À GAUCHE -->
-<header class="enec-header-compact">
+<header>
   <div class="topbar-compact">
     <a href="#accueil" class="logo-compact">
       <img src="logo.png" alt="Logo ENEC">
-      <span>
-        <strong>ENEC</strong>
-        <small class="lang-fr">Entreprise Nouvel Espoir du Congo</small>
-        <small class="lang-en" style="display:none;">New Hope Enterprise of Congo</small>
-      </span>
+      <span><strong>ENEC</strong><small class="lang-fr">Entreprise Nouvel Espoir du Congo</small><small class="lang-en" style="display:none;">New Hope Enterprise of Congo</small></span>
     </a>
-    <!-- BARRE DE TÂCHES COMPACTE, UNE SEULE LIGNE QUI DÉFILE -->
     <nav class="main-nav-compact">
-      <a href="#accueil" class="active">Accueil</a>
-      <a href="#domaines">Domaines</a>
-      <a href="#equipe">Équipe</a>
-      <a href="#realisations">Réalisations</a>
-      <a href="#programme">Programme</a>
-      <a href="#actus">Actualités</a>
-      <a href="#contact">Contact</a>
+      <a href="#accueil" class="active">Accueil</a><a href="#domaines">Domaines</a><a href="#equipe">Équipe</a><a href="#realisations">Réalisations</a><a href="#programme">Programme</a><a href="#actus">Actualités</a><a href="#contact">Contact</a>
     </nav>
   </div>
-
-  <!-- PIED DE LA BARRE : FR/EN À GAUCHE, PETIT -->
   <div class="enec-lang-bottom">
     <button type="button" class="lang-btn active" data-lang="fr" onclick="setLang('fr')">FR</button>
     <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
@@ -169,10 +83,9 @@ footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
     <span class="lang-hint lang-en" style="display:none;">Bukavu • South Kivu • DRC</span>
   </div>
 </header>
-<!-- ============ ACCUEIL ============ -->
+<!-- ACCUEIL — TEXTE INTÉGRAL -->
 <section class="hero" id="accueil">
   <div class="hero-inner">
-    <!-- FR -->
     <div class="hero-lang hero-fr">
       <span class="hero-badge">● BUKAVU • SUD-KIVU • RDC</span>
       <h2>ENEC – <span>Un nouvel espoir, de multiples opportunités !</span></h2>
@@ -181,12 +94,8 @@ footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
       <p>De l'éducation à l'entrepreneuriat, des services numériques à l'agriculture, en passant par la communication, la formation professionnelle et l'accompagnement des projets, ENEC met son expertise, son professionnalisme et son esprit d'innovation au service des opportunités et du développement durable.</p>
       <p><strong>Notre engagement : transformer les compétences en opportunités et les idées en réalisations concrètes.</strong></p>
       <p>Bienvenue chez ENEC, votre partenaire pour apprendre, entreprendre, innover et progresser.</p>
-      <div class="hero-buttons">
-        <a href="#domaines" class="btn btn-gold">Découvrir nos domaines d'intervention</a>
-        <a href="#contact" class="btn btn-white">Nous contacter</a>
-      </div>
+      <div class="hero-buttons"><a href="#domaines" class="btn btn-gold">Découvrir nos domaines d'intervention</a><a href="#contact" class="btn btn-white">Nous contacter</a></div>
     </div>
-    <!-- EN -->
     <div class="hero-lang hero-en" style="display:none;">
       <span class="hero-badge">● BUKAVU • SOUTH KIVU • DRC</span>
       <h2>ENEC – <span>A new hope, multiple opportunities!</span></h2>
@@ -195,37 +104,23 @@ footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
       <p>From education to entrepreneurship, from digital services to agriculture, through communication, vocational training and project support, ENEC puts its expertise, professionalism and spirit of innovation at the service of opportunities and sustainable development.</p>
       <p><strong>Our commitment: turning skills into opportunities and ideas into concrete achievements.</strong></p>
       <p>Welcome to ENEC, your partner to learn, undertake, innovate and progress.</p>
-      <div class="hero-buttons">
-        <a href="#domaines" class="btn btn-gold">Discover our areas of intervention</a>
-        <a href="#contact" class="btn btn-white">Contact us</a>
-      </div>
+      <div class="hero-buttons"><a href="#domaines" class="btn btn-gold">Discover our areas of intervention</a><a href="#contact" class="btn btn-white">Contact us</a></div>
     </div>
   </div>
 </section>
 
-<!-- ============ DOMAINES - 10 DOMAINES CONSERVÉS ============ -->
+<!-- DOMAINES — REMPLI DEPUIS SUPABASE, AVEC SECOURS SI SUPABASE EST VIDE -->
 <section id="domaines" style="background:var(--light)">
   <div class="wrap">
     <h2 class="sec-title lang-fr">Nos domaines d'intervention</h2>
     <h2 class="sec-title lang-en" style="display:none;">Our areas of intervention</h2>
-    <p class="sec-sub lang-fr">10 domaines pour apprendre, entreprendre et progresser.</p>
-    <p class="sec-sub lang-en" style="display:none;">10 areas to learn, undertake and progress.</p>
-    <div class="grid">
-      <div class="card"><div class="icon">🎓</div><h3>Formation Professionnelle</h3><p class="lang-fr">Formations pratiques pour développer des compétences utiles et employables.</p><p class="lang-en" style="display:none;">Practical training to develop useful and employable skills.</p></div>
-      <div class="card"><div class="icon">📚</div><h3>Éducation</h3><p class="lang-fr">Éducation, encadrement et appui aux apprenants et aux écoles.</p><p class="lang-en" style="display:none;">Education, mentoring and support for learners and schools.</p></div>
-      <div class="card"><div class="icon">💻</div><h3>Services Numériques</h3><p class="lang-fr">Informatique, digital, création de contenu et solutions numériques.</p><p class="lang-en" style="display:none;">IT, digital, content creation and digital solutions.</p></div>
-      <div class="card"><div class="icon">🎬</div><h3>Communication, Audiovisuel et Événementiel</h3><p class="lang-fr">Communication, production audiovisuelle et organisation d'événements.</p><p class="lang-en" style="display:none;">Communication, audiovisual production and event organisation.</p></div>
-      <div class="card"><div class="icon">🌾</div><h3>Agriculture et Élevage</h3><p class="lang-fr">Agriculture, élevage et valorisation des produits locaux.</p><p class="lang-en" style="display:none;">Agriculture, livestock and promotion of local products.</p></div>
-      <div class="card"><div class="icon">🐟</div><h3>Pisciculture</h3><p class="lang-fr">Élevage de poissons, étangs piscicoles et développement de la filière.</p><p class="lang-en" style="display:none;">Fish farming, fish ponds and development of the sector.</p></div>
-      <div class="card"><div class="icon">🚀</div><h3>Entrepreneuriat et Accompagnement des Projets</h3><p class="lang-fr">De l'idée au projet : accompagnement, coaching et suivi.</p><p class="lang-en" style="display:none;">From idea to project: support, coaching and follow-up.</p></div>
-      <div class="card"><div class="icon">🎨</div><h3>Nettoyage, Peinture, Décoration et Services Généraux</h3><p class="lang-fr">Nettoyage professionnel, peinture, décoration et services généraux.</p><p class="lang-en" style="display:none;">Professional cleaning, painting, decoration and general services.</p></div>
-      <div class="card"><div class="icon">🛒</div><h3>Commerce et Solutions Commerciales</h3><p class="lang-fr">Solutions commerciales, distribution et appui aux activités économiques.</p><p class="lang-en" style="display:none;">Business solutions, distribution and support for economic activities.</p></div>
-      <div class="card"><div class="icon">🤝</div><h3>Services Professionnels</h3><p class="lang-fr">Conseil, appui administratif et services aux organisations.</p><p class="lang-en" style="display:none;">Consulting, administrative support and services for organisations.</p></div>
-    </div>
+    <p class="sec-sub lang-fr">Géré depuis l'admin — tes modifications apparaissent ici.</p>
+    <p class="sec-sub lang-en" style="display:none;">Managed from the admin — your changes appear here.</p>
+    <div id="domain-list" class="grid"><p>Chargement des domaines...</p></div>
   </div>
 </section>
 
-<!-- ============ POURQUOI ENEC ============ -->
+<!-- POURQUOI ENEC -->
 <section id="pourquoi">
   <div class="wrap">
     <h2 class="sec-title lang-fr">Pourquoi choisir ENEC ?</h2>
@@ -237,73 +132,48 @@ footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
     </div>
   </div>
 </section>
-<!-- ============ ÉQUIPE ============ -->
+<!-- ÉQUIPE — REMPLIE DEPUIS SUPABASE -->
 <section id="equipe" style="background:var(--light)">
   <div class="wrap">
     <h2 class="sec-title lang-fr">Notre équipe</h2>
     <h2 class="sec-title lang-en" style="display:none;">Our team</h2>
-    <p class="sec-sub lang-fr">Des responsables engagés au service des opportunités.</p>
-    <p class="sec-sub lang-en" style="display:none;">Dedicated managers serving opportunities.</p>
-    <div class="team-grid">
-      <div class="member">
-        <img src="daniel-basima.jpg" alt="Daniel Basima" onerror="this.src='logo.png'">
-        <div>
-          <h3>Daniel Basima</h3>
-          <div class="role lang-fr">Responsable du Département de Nettoyage, Peinture, Décoration et Services Généraux</div>
-          <div class="role lang-en" style="display:none;">Head of Cleaning, Painting, Decoration and General Services Department</div>
-          <p class="lang-fr">Il coordonne les services de nettoyage, peinture, décoration et services généraux avec rigueur et professionnalisme.</p>
-          <p class="lang-en" style="display:none;">He coordinates cleaning, painting, decoration and general services with rigour and professionalism.</p>
-        </div>
-      </div>
-      <div class="member">
-        <img src="samy-bayongwa.jpg" alt="Samy Bayongwa" onerror="this.src='logo.png'">
-        <div>
-          <h3>Samy Bayongwa</h3>
-          <div class="role lang-fr">Responsable du Département de Communication, Audiovisuel et Événementiel</div>
-          <div class="role lang-en" style="display:none;">Head of Communication, Audiovisual and Events Department</div>
-          <p class="lang-fr">Il pilote la communication, la production audiovisuelle et l'organisation des événements ENEC.</p>
-          <p class="lang-en" style="display:none;">He leads ENEC communication, audiovisual production and event organisation.</p>
-        </div>
-      </div>
-    </div>
+    <p class="sec-sub lang-fr">Gérée depuis l'admin — tes modifications apparaissent ici.</p>
+    <p class="sec-sub lang-en" style="display:none;">Managed from the admin — your changes appear here.</p>
+    <div id="team-list" class="team-grid"><p>Chargement de l'équipe...</p></div>
   </div>
 </section>
 
-<!-- ============ RÉALISATIONS / PROGRAMME / ACTUS ============ -->
+<!-- RÉALISATIONS — REMPLIES DEPUIS SUPABASE -->
 <section id="realisations">
   <div class="wrap">
     <h2 class="sec-title lang-fr">Nos réalisations</h2>
     <h2 class="sec-title lang-en" style="display:none;">Our achievements</h2>
-    <ul class="list">
-      <li><b class="lang-fr">Formations dispensées</b><b class="lang-en" style="display:none;">Training delivered</b> — <span class="lang-fr">des apprenants formés aux compétences pratiques.</span><span class="lang-en" style="display:none;">learners trained in practical skills.</span></li>
-      <li><b class="lang-fr">Projets accompagnés</b><b class="lang-en" style="display:none;">Projects supported</b> — <span class="lang-fr">des entrepreneurs accompagnés de l'idée à la réalisation.</span><span class="lang-en" style="display:none;">entrepreneurs supported from idea to delivery.</span></li>
-      <li><b class="lang-fr">Services rendus</b><b class="lang-en" style="display:none;">Services delivered</b> — <span class="lang-fr">des entreprises et organisations servies à Bukavu.</span><span class="lang-en" style="display:none;">businesses and organisations served in Bukavu.</span></li>
-    </ul>
+    <div id="real-list"><p>Chargement des réalisations...</p></div>
   </div>
 </section>
 
+<!-- PROGRAMME -->
 <section id="programme" style="background:var(--light)">
   <div class="wrap">
     <h2 class="sec-title lang-fr">Programme d'Appui aux Entrepreneurs</h2>
     <h2 class="sec-title lang-en" style="display:none;">Entrepreneur Support Programme</h2>
-    <p class="lang-fr">Un programme pour transformer les idées en entreprises : formation, coaching, mise en réseau et suivi.</p>
-    <p class="lang-en" style="display:none;">A programme to turn ideas into businesses: training, coaching, networking and follow-up.</p>
-    <br><a href="#contact" class="btn btn-green lang-fr">Rejoindre le programme</a>
-    <a href="#contact" class="btn btn-green lang-en" style="display:none;">Join the programme</a>
+    <div id="prog-list"><p class="lang-fr">Un programme pour transformer les idées en entreprises : formation, coaching, mise en réseau et suivi.</p><p class="lang-en" style="display:none;">A programme to turn ideas into businesses: training, coaching, networking and follow-up.</p></div>
+    <br><a href="#contact" class="btn btn-green lang-fr">Rejoindre le programme</a><a href="#contact" class="btn btn-green lang-en" style="display:none;">Join the programme</a>
   </div>
 </section>
 
+<!-- ACTUALITÉS — REMPLIES DEPUIS SUPABASE -->
 <section id="actus">
   <div class="wrap">
     <h2 class="sec-title lang-fr">Actualités</h2>
     <h2 class="sec-title lang-en" style="display:none;">News</h2>
     <p class="sec-sub lang-fr">Suivez les activités et les nouvelles d'ENEC.</p>
     <p class="sec-sub lang-en" style="display:none;">Follow ENEC activities and news.</p>
-    <div class="card"><h3 class="lang-fr">Bienvenue sur le nouveau site ENEC</h3><h3 class="lang-en" style="display:none;">Welcome to the new ENEC website</h3><p class="lang-fr">Découvrez nos domaines, notre équipe et notre programme d'appui aux entrepreneurs.</p><p class="lang-en" style="display:none;">Discover our areas, our team and our entrepreneur support programme.</p></div>
+    <div id="news-list" class="grid"><p>Chargement des actualités...</p></div>
   </div>
 </section>
 
-<!-- ============ CONTACT ============ -->
+<!-- CONTACT -->
 <section id="contact" style="background:var(--light)">
   <div class="wrap">
     <h2 class="sec-title lang-fr">Nous contacter</h2>
@@ -312,8 +182,7 @@ footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
     <form onsubmit="alert('Merci ! Votre message a été envoyé.');return false;">
       <label class="lang-fr">Nom complet</label><label class="lang-en" style="display:none;">Full name</label>
       <input type="text" required placeholder="Votre nom">
-      <label>Email</label>
-      <input type="email" required placeholder="votre@email.com">
+      <label>Email</label><input type="email" required placeholder="votre@email.com">
       <label class="lang-fr">Message</label><label class="lang-en" style="display:none;">Message</label>
       <textarea rows="4" required placeholder="Votre message..."></textarea>
       <button class="btn btn-navy" type="submit"><span class="lang-fr">Envoyer le message</span><span class="lang-en" style="display:none;">Send message</span></button>
@@ -321,55 +190,110 @@ footer p,footer a{font-size:14px;color:#dbe6ee;line-height:1.8}
   </div>
 </section>
 
-<!-- ============ FOOTER — ADMINISTRATION ICI SEULEMENT ============ -->
+<!-- FOOTER — ADMINISTRATION ICI SEULEMENT -->
 <footer>
   <div class="footer-grid">
-    <div>
-      <h4>ENEC</h4>
-      <p class="lang-fr">Entreprise Nouvel Espoir du Congo — Un nouvel espoir, de multiples opportunités !</p>
-      <p class="lang-en" style="display:none;">New Hope Enterprise of Congo — A new hope, multiple opportunities!</p>
-    </div>
-    <div>
-      <h4 class="lang-fr">Navigation</h4><h4 class="lang-en" style="display:none;">Navigation</h4>
-      <p><a href="#accueil">Accueil</a><br><a href="#domaines">Domaines</a><br><a href="#equipe">Équipe</a><br><a href="#contact">Contact</a></p>
-    </div>
-    <div>
-      <h4>Contact</h4>
-      <p>Bukavu • Sud-Kivu • RDC<br>ENEC — Apprendre, Entreprendre, Innover, Progresser</p>
-    </div>
+    <div><h4>ENEC</h4><p class="lang-fr">Entreprise Nouvel Espoir du Congo — Un nouvel espoir, de multiples opportunités !</p><p class="lang-en" style="display:none;">New Hope Enterprise of Congo — A new hope, multiple opportunities!</p></div>
+    <div><h4>Navigation</h4><p><a href="#accueil">Accueil</a><br><a href="#domaines">Domaines</a><br><a href="#equipe">Équipe</a><br><a href="#contact">Contact</a></p></div>
+    <div><h4>Contact</h4><p>Bukavu • Sud-Kivu • RDC<br>ENEC — Apprendre, Entreprendre, Innover, Progresser</p></div>
   </div>
-  <!-- CORRECTION 2 : ADMINISTRATION TOUT EN BAS, DANS LE FOOTER -->
-  <div class="enec-footer-admin">
-    <a href="admin.html">🔐 Administration</a>
-  </div>
+  <div class="enec-footer-admin"><a href="admin.html">🔐 Administration</a></div>
   <div class="copy">© 2026 ENEC — Entreprise Nouvel Espoir du Congo. Tous droits réservés.</div>
-</footer>
-
-<script>
-// Bascule FR / EN — toute la page, sans toucher à admin.html
+                                                                                                  </footer>
+                                                                                                  <script>
+// --- FR / EN ---
 function setLang(lang){
   document.querySelectorAll('.hero-fr,.lang-fr').forEach(function(el){ el.style.display = (lang==='fr') ? '' : 'none'; });
   document.querySelectorAll('.hero-en,.lang-en').forEach(function(el){ el.style.display = (lang==='en') ? '' : 'none'; });
-  // Le hero FR/EN utilise block, pas inline
   var frHero=document.querySelector('.hero-fr'); if(frHero && lang==='fr') frHero.style.display='block';
   var enHero=document.querySelector('.hero-en'); if(enHero && lang==='en') enHero.style.display='block';
-  document.querySelectorAll('.enec-lang-left .lang-btn').forEach(function(b){
-    b.classList.toggle('active', b.dataset.lang===lang);
-  });
+  document.querySelectorAll('.enec-lang-bottom .lang-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.lang===lang); });
   document.documentElement.lang=lang;
   try{ localStorage.setItem('enec_lang', lang); }catch(e){}
 }
-try{
-  var saved=localStorage.getItem('enec_lang');
-  if(saved) setLang(saved);
-}catch(e){}
-// Navigation active au clic
-document.querySelectorAll('nav.main-nav a').forEach(function(a){
+try{ var saved=localStorage.getItem('enec_lang'); if(saved) setLang(saved); }catch(e){}
+document.querySelectorAll('.main-nav-compact a').forEach(function(a){
   a.addEventListener('click',function(){
-    document.querySelectorAll('nav.main-nav a').forEach(function(x){x.classList.remove('active')});
+    document.querySelectorAll('.main-nav-compact a').forEach(function(x){x.classList.remove('active')});
     a.classList.add('active');
   });
 });
+
+// --- LECTURE SITE DEPUIS SUPABASE : MÊME CONFIG QUE ADMIN.HTML ---
+(function(){
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  // La config vient de admin-config.js — ne pas mettre de clé ici en dur
+  var URL = window.ENEC_SUPABASE_URL || window.SUPABASE_URL || window.enecSupabaseUrl;
+  var KEY = window.ENEC_SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY || window.SUPABASE_KEY || window.enecSupabaseKey;
+  // Si admin-config.js expose un objet
+  if(!URL && window.ENEC_CONFIG){ URL = window.ENEC_CONFIG.url || window.ENEC_CONFIG.supabaseUrl; KEY = window.ENEC_CONFIG.anonKey || window.ENEC_CONFIG.key; }
+  if(!URL || !KEY || !window.supabase){
+    console.warn('ENEC: Supabase non branché sur le site — vérifie admin-config.js');
+    document.getElementById('team-list').innerHTML = '<p>Équipe : vérifie admin-config.js dans le site.</p>';
+    document.getElementById('domain-list').innerHTML = '<p>Domaines : vérifie admin-config.js dans le site.</p>';
+    return;
+  }
+  var sb = window.supabase.createClient(URL, KEY);
+  var lang = 'fr';
+  try{ lang = localStorage.getItem('enec_lang') || 'fr'; }catch(e){}
+
+  async function loadTeam(){
+    var box=document.getElementById('team-list'); if(!box) return;
+    var r=await sb.from('enec_team').select('*').order('ordre',{ascending:true});
+    if(r.error){ box.innerHTML='<p>Équipe indisponible.</p>'; return; }
+    var list=(r.data||[]).filter(function(m){ return m.publie!==false && m.visible!==false && m.actif!==false; });
+    if(!list.length){ box.innerHTML='<p>Aucun membre publié pour le moment.</p>'; return; }
+    box.innerHTML=list.map(function(m){
+      var photo=m.photo_url||m.image_url||m.photo||'logo.png';
+      var nom=m.nom||''; var role=(lang==='en'?(m.role_en||m.fonction_en||m.role_fr||''):(m.role_fr||m.fonction_fr||m.role_en||''));
+      var bio=(lang==='en'?(m.bio_en||m.description_en||m.bio_fr||''):(m.bio_fr||m.description_fr||m.bio_en||''));
+      return '<div class="member"><img src="'+esc(photo)+'" alt="'+esc(nom)+'" onerror="this.src=\'logo.png\'"><div><h3>'+esc(nom)+'</h3><div class="role">'+esc(role)+'</div><p>'+esc(bio)+'</p></div></div>';
+    }).join('');
+  }
+  async function loadDomains(){
+    var box=document.getElementById('domain-list'); if(!box) return;
+    var r=await sb.from('enec_domains').select('*').order('ordre',{ascending:true});
+    if(r.error){ box.innerHTML='<p>Domaines indisponibles.</p>'; return; }
+    var list=(r.data||[]).filter(function(d){ return d.publie!==false && d.visible!==false && d.actif!==false; });
+    if(!list.length){
+      // Secours : les 10 domaines ENEC si la table est vide
+      list=[
+        {titre_fr:'Formation Professionnelle',description_fr:'Formations pratiques pour développer des compétences utiles et employables.',icone:'🎓'},
+        {titre_fr:'Éducation',description_fr:'Éducation, encadrement et appui aux apprenants et aux écoles.',icone:'📚'},
+        {titre_fr:'Services Numériques',description_fr:'Informatique, digital, création de contenu et solutions numériques.',icone:'💻'},
+        {titre_fr:'Communication, Audiovisuel et Événementiel',description_fr:'Communication, production audiovisuelle et organisation d\'événements.',icone:'🎬'},
+        {titre_fr:'Agriculture et Élevage',description_fr:'Agriculture, élevage et valorisation des produits locaux.',icone:'🌾'},
+        {titre_fr:'Pisciculture',description_fr:'Élevage de poissons, étangs piscicoles et développement de la filière.',icone:'🐟'},
+        {titre_fr:'Entrepreneuriat et Accompagnement des Projets',description_fr:'De l\'idée au projet : accompagnement, coaching et suivi.',icone:'🚀'},
+        {titre_fr:'Nettoyage, Peinture, Décoration et Services Généraux',description_fr:'Nettoyage professionnel, peinture, décoration et services généraux.',icone:'🎨'},
+        {titre_fr:'Commerce et Solutions Commerciales',description_fr:'Solutions commerciales, distribution et appui aux activités économiques.',icone:'🛒'},
+        {titre_fr:'Services Professionnels',description_fr:'Conseil, appui administratif et services aux organisations.',icone:'🤝'}
+      ];
+    }
+    box.innerHTML=list.map(function(d){
+      var t=(lang==='en'?(d.titre_en||d.titre_fr||''):(d.titre_fr||d.titre_en||''));
+      var desc=(lang==='en'?(d.description_en||d.description_fr||''):(d.description_fr||d.description_en||''));
+      return '<div class="card"><div class="icon">'+(d.icone||d.icon||'📌')+'</div><h3>'+esc(t)+'</h3><p>'+esc(desc)+'</p></div>';
+    }).join('');
+  }
+  async function loadReal(){
+    var box=document.getElementById('real-list'); if(!box) return;
+    var r=await sb.from('enec_achievements').select('*').order('ordre',{ascending:true});
+    if(r.error || !r.data || !r.data.length){ box.innerHTML='<ul class="list"><li><b>Formations dispensées</b> — des apprenants formés aux compétences pratiques.</li><li><b>Projets accompagnés</b> — des entrepreneurs accompagnés de l\'idée à la réalisation.</li><li><b>Services rendus</b> — des entreprises et organisations servies à Bukavu.</li></ul>'; return; }
+    box.innerHTML='<ul class="list">'+r.data.map(function(x){ return '<li><b>'+esc(x.titre_fr||'')+'</b> — '+esc(x.description_fr||''); }).join('')+'</ul>';
+  }
+  async function loadNews(){
+    var box=document.getElementById('news-list'); if(!box) return;
+    var r=await sb.from('enec_news').select('*').order('date_pub',{ascending:false});
+    if(r.error || !r.data || !r.data.length){ box.innerHTML='<div class="card"><h3>Bienvenue sur le nouveau site ENEC</h3><p>Découvrez nos domaines, notre équipe et notre programme d\'appui aux entrepreneurs.</p></div>'; return; }
+    var list=r.data.filter(function(n){ return n.publie!==false; }).slice(0,6);
+    box.innerHTML=list.map(function(n){
+      var img=n.image_url?'<img src="'+esc(n.image_url)+'" alt="" style="width:100%;height:180px;object-fit:cover;border-radius:12px;margin-bottom:10px;">':'';
+      return '<div class="card">'+img+'<h3>'+esc(n.titre_fr||'')+'</h3><p>'+esc(n.resume_fr||n.contenu_fr||'').slice(0,220)+'</p></div>';
+    }).join('') || '<p>Aucune actualité publiée.</p>';
+  }
+  loadTeam(); loadDomains(); loadReal(); loadNews();
+})();
 </script>
 </body>
 </html>
