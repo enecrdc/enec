@@ -33,3 +33,22 @@ async function adminUploadImage(inputId){
   if(up.error) throw up.error;
   return window.enecSupabase.storage.from('enec-images').getPublicUrl(name).data.publicUrl;
 }
+// Optimise la photo : redimensionne à 1200px max + convertit en WebP pour économiser le stockage
+async function adminUploadOneOptimized(file){
+  if(!file) return null;
+  var bitmap=await createImageBitmap(file);
+  var max=1200; var w=bitmap.width, h=bitmap.height;
+  if(w>max){ h=Math.round(h*max/w); w=max; }
+  var canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+  canvas.getContext('2d').drawImage(bitmap,0,0,w,h);
+  var blob=await new Promise(function(res){ canvas.toBlob(res,'image/webp',0.82); });
+  var name='img-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.webp';
+  var up=await window.enecSupabase.storage.from('enec-images').upload(name,blob,{upsert:true,contentType:'image/webp'});
+  if(up.error) throw up.error;
+  return window.enecSupabase.storage.from('enec-images').getPublicUrl(name).data.publicUrl;
+}
+async function adminUploadImageOptimized(inputId){
+  var input=document.getElementById(inputId);
+  if(!input || !input.files || !input.files[0]) return null;
+  return adminUploadOneOptimized(input.files[0]);
+}
