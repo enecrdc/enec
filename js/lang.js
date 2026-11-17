@@ -1,94 +1,49 @@
-// ENEC - Bilingue FR / EN - VERSION CORRIGÉE v9
-var ENEC_LANG = 'fr';
-try { ENEC_LANG = localStorage.getItem('enec_lang') || 'fr'; } catch(e){ ENEC_LANG = 'fr'; }
-
-var ENEC_TEXT = {
-  fr: {
-    nav_accueil: "Accueil", nav_apropos: "À propos", nav_equipe: "Notre équipe",
-    nav_domaines: "Domaines", nav_realisations: "Réalisations", nav_programme: "Programme",
-    nav_actualites: "Actualités", nav_contact: "Contact",
-    hero_titre: "Un nouvel espoir, de multiples opportunités !",
-    hero_texte: "Bienvenue chez ENEC. Formations professionnelles, services et solutions commerciales à Bukavu, Sud-Kivu.",
-    btn_whatsapp: "💬 WhatsApp", btn_contact: "Nous contacter",
-    apropos_titre: "À propos de ENEC",
-    apropos_texte: "ENEC est une entreprise congolaise basée à Bukavu. Notre mission est d'offrir des formations pratiques, des services professionnels et des solutions adaptées au contexte local.",
-    mission_titre: "Notre Mission", mission_texte: "Former, accompagner et connecter les talents et les entreprises du Congo.",
-    vision_titre: "Notre Vision", vision_texte: "Un Congo où chaque jeune et chaque entrepreneur a les outils pour réussir.",
-    valeurs_titre: "Nos Valeurs",
-    equipe_titre: "Notre équipe", equipe_texte: "Une équipe locale, engagée et polyvalente.",
-    domaines_titre: "Nos domaines d'intervention", domaines_texte: "9 domaines, une seule coordination.",
-    realisations_titre: "Nos réalisations",
-    programme_titre: "Programme d'Appui aux Entrepreneurs",
-    programme_texte: "Nous accompagnons les entrepreneurs : idée, business plan, formation, mise en relation et suivi.",
-    actualites_titre: "Nos actualités",
-    contact_titre: "Nous contacter",
-    contact_adresse: "Adresse :", contact_tel: "Téléphones :", contact_email: "Email :",
-    contact_horaires: "Horaires :", contact_horaires_val: "Lun - Ven : 08h00 - 17h00, Sam : 09h00 - 13h00",
-    contact_btn: "💬 Écrire sur WhatsApp",
-    footer_nom: "ENEC - Entreprise Nouvel Espoir du Congo",
-    footer_slogan: "Un nouvel espoir, de multiples opportunités !",
-    footer_droits: "© 2026 ENEC - Tous droits réservés. Bukavu, Sud-Kivu, RDC"
-  },
-  en: {
-    nav_accueil: "Home", nav_apropos: "About", nav_equipe: "Our Team",
-    nav_domaines: "Areas", nav_realisations: "Achievements", nav_programme: "Programme",
-    nav_actualites: "News", nav_contact: "Contact",
-    hero_titre: "A new hope, multiple opportunities!",
-    hero_texte: "Welcome to ENEC. Professional training, services and business solutions in Bukavu, South Kivu.",
-    btn_whatsapp: "💬 WhatsApp", btn_contact: "Contact us",
-    apropos_titre: "About ENEC",
-    apropos_texte: "ENEC is a Congolese company based in Bukavu. Our mission is to provide practical training, professional services and solutions adapted to the local context.",
-    mission_titre: "Our Mission", mission_texte: "To train, support and connect the talents and companies of Congo.",
-    vision_titre: "Our Vision", vision_texte: "A Congo where every young person and every entrepreneur has the tools to succeed.",
-    valeurs_titre: "Our Values",
-    equipe_titre: "Our Team", equipe_texte: "A local, committed and versatile team.",
-    domaines_titre: "Our areas of intervention", domaines_texte: "9 areas, one coordination.",
-    realisations_titre: "Our achievements",
-    programme_titre: "Entrepreneur Support Programme",
-    programme_texte: "We support entrepreneurs: idea, business plan, training, networking and follow-up.",
-    actualites_titre: "Our news",
-    contact_titre: "Contact us",
-    contact_adresse: "Address:", contact_tel: "Phones:", contact_email: "Email:",
-    contact_horaires: "Hours:", contact_horaires_val: "Mon - Fri: 08:00 - 17:00, Sat: 09:00 - 13:00",
-    contact_btn: "💬 Write on WhatsApp",
-    footer_nom: "ENEC - New Hope Company of Congo",
-    footer_slogan: "A new hope, multiple opportunities!",
-    footer_droits: "© 2026 ENEC - All rights reserved. Bukavu, South Kivu, DRC"
-  }
+var ENEC_LANG = {
+fr: {
+  nav_home:"Accueil", nav_domains:"Domaines", nav_team:"Équipe", nav_work:"Réalisations", nav_news:"Actualités", nav_contact:"Contact",
+  hero_badge:"BUKAVU • SUD-KIVU • RDC",
+  hero_slogan:"Un nouvel espoir, de multiples opportunités !",
+  hero_lead:"Des compétences, des services et des solutions pour bâtir un avenir meilleur.",
+  hero_p1:"L'Entreprise Nouvel Espoir du Congo (ENEC) est une entreprise multisectorielle qui œuvre dans la formation, les services professionnels et les solutions commerciales. À travers la diversité de ses domaines d'intervention, elle accompagne les particuliers, les entrepreneurs, les entreprises et les organisations dans le développement de leurs compétences, la réalisation de leurs projets et la concrétisation de leurs ambitions.",
+  hero_p2:"De l'éducation à l'entrepreneuriat, des services numériques à l'agriculture, en passant par la communication, la formation professionnelle et l'accompagnement des projets, ENEC met son expertise, son professionnalisme et son esprit d'innovation au service des opportunités et du développement durable.",
+  hero_eng_label:"Notre engagement :",
+  hero_eng_text:"transformer les compétences en opportunités et les idées en réalisations concrètes.",
+  hero_welcome:"Bienvenue chez ENEC, votre partenaire pour apprendre, entreprendre, innover et progresser.",
+  hero_btn1:"Découvrir nos domaines d'intervention",
+  hero_btn2:"Nous contacter",
+  domains_title:"Nos domaines d'intervention", domains_sub:"9 domaines pour vous accompagner.",
+  team_title:"Notre Équipe", team_sub:"Une équipe engagée à vos côtés.",
+  work_title:"Nos Réalisations", gallery_title:"Galerie Photos", videos_title:"Vidéos", news_title:"Actualités",
+  program_title:"Programme d'Appui aux Entrepreneurs",
+  contact_title:"Nous contacter", contact_send:"Envoyer"
+},
+en: {
+  nav_home:"Home", nav_domains:"Areas", nav_team:"Team", nav_work:"Achievements", nav_news:"News", nav_contact:"Contact",
+  hero_badge:"BUKAVU • SOUTH KIVU • DRC",
+  hero_slogan:"A new hope, multiple opportunities!",
+  hero_lead:"Skills, services and solutions to build a better future.",
+  hero_p1:"The Entreprise Nouvel Espoir du Congo (ENEC) is a multisectoral company working in training, professional services and business solutions. Through the diversity of its areas of intervention, it supports individuals, entrepreneurs, businesses and organisations in developing their skills, carrying out their projects and achieving their ambitions.",
+  hero_p2:"From education to entrepreneurship, from digital services to agriculture, through communication, vocational training and project support, ENEC puts its expertise, professionalism and spirit of innovation at the service of opportunities and sustainable development.",
+  hero_eng_label:"Our commitment:",
+  hero_eng_text:"turning skills into opportunities and ideas into concrete achievements.",
+  hero_welcome:"Welcome to ENEC, your partner to learn, undertake, innovate and progress.",
+  hero_btn1:"Discover our areas of intervention",
+  hero_btn2:"Contact us",
+  domains_title:"Our Areas of Intervention", domains_sub:"9 areas to support you.",
+  team_title:"Our Team", team_sub:"A committed team by your side.",
+  work_title:"Our Achievements", gallery_title:"Photo Gallery", videos_title:"Videos", news_title:"News",
+  program_title:"Entrepreneur Support Programme",
+  contact_title:"Contact Us", contact_send:"Send"
+}
 };
-
-function enecApplyLang(lang){
-  ENEC_LANG = lang;
-  try{ localStorage.setItem('enec_lang', lang); }catch(e){}
-  document.documentElement.lang = lang;
-  var T = ENEC_TEXT[lang] || ENEC_TEXT.fr;
-  var els = document.querySelectorAll('[data-i18n]');
-  for(var i=0;i<els.length;i++){
-    var key = els[i].getAttribute('data-i18n');
-    if(T[key]) els[i].textContent = T[key];
-  }
-  var btns = document.querySelectorAll('.lang button');
-  for(var j=0;j<btns.length;j++){
-    if(btns[j].getAttribute('data-lang')===lang) btns[j].classList.add('active');
-    else btns[j].classList.remove('active');
-  }
-}
-
 function enecSetLang(lang){
-  enecApplyLang(lang);
-  // Re-appliquer après le chargement Supabase qui peut écraser le texte
-  setTimeout(function(){ enecApplyLang(lang); }, 500);
-  setTimeout(function(){ enecApplyLang(lang); }, 1500);
+  localStorage.setItem('enec_lang', lang);
+  document.documentElement.lang = lang;
+  var dict = ENEC_LANG[lang] || ENEC_LANG.fr;
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k = el.getAttribute('data-i18n');
+    if(dict[k]) el.textContent = dict[k];
+  });
+  document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-lang')===lang); });
 }
-
-function enecInitLang(){
-  var lang = 'fr';
-  try{ lang = localStorage.getItem('enec_lang') || 'fr'; }catch(e){}
-  enecApplyLang(lang);
-}
-
-if(document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', enecInitLang);
-} else {
-  enecInitLang();
-  }
+window.addEventListener('DOMContentLoaded', function(){ enecSetLang(localStorage.getItem('enec_lang') || 'fr'); });
